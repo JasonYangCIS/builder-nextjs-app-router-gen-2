@@ -6,6 +6,7 @@ export const config = {
   models: {
     page: "page",
     blogArticle: "blog-article",
-    blogArticleSection: "blog-article-section"
+    blogArticleSection: "blog-article-section",
+    blogArticleTemplate: "blog-article-template"
   }
 }

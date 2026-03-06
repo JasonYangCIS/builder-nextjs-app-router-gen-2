@@ -8,8 +8,8 @@ const builderModelName = config.models.blogArticle;
 export const revalidate = 5;
 
 export const metadata = {
-  title: "Blog",
-  description: "Articles and updates",
+  title: "Blog - Data Model",
+  description: "Articles and updates using data model approach",
 };
 
 export default async function BlogPage() {
