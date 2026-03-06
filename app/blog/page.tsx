@@ -1,6 +1,6 @@
 import { fetchEntries } from "@builder.io/sdk-react";
 import { config } from "@/config";
-import { BlogArticleList } from "@/app/components/BlogArticleList/BlogArticleList";
+import { BlogArticleList } from "@/components/BlogArticleList/BlogArticleList";
 import type { BlogArticle } from "@/types/blog.types";
 
 const builderModelName = config.models.blogArticle;

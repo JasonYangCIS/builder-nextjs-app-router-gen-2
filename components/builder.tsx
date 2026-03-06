@@ -1,15 +1,13 @@
 "use client";
 import { BuilderContent, isPreviewing, Content } from "@builder.io/sdk-react";
 import DefaultErrorPage from "next/error";
+import { config } from "@/config";
 import { CUSTOM_COMPONENTS } from "../builder-registry";
 
 interface BuilderPageProps {
   content: BuilderContent | null;
   model: string;
 }
-
-// Builder Public API Key set in .env file
-const builderApiKey = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
 
 export function RenderBuilderContent({ content, model }: BuilderPageProps) {
   // Call the isPreviewing hook to determine if
@@ -20,7 +18,7 @@ export function RenderBuilderContent({ content, model }: BuilderPageProps) {
     return (
       <Content
         content={content}
-        apiKey={builderApiKey}
+        apiKey={config.envs.builderApiKey}
         model={model}
         customComponents={CUSTOM_COMPONENTS}
       />

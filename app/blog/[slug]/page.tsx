@@ -3,9 +3,9 @@ import { RenderBuilderContent } from "@/components/builder";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
 import type { BlogArticle, BlogArticleWithContent } from "@/types/blog.types";
-import { BlogArticleBody } from "@/app/components/BlogArticleBody/BlogArticleBody";
-import { BlogArticleHeader } from "@/app/components/BlogArticleHeader/BlogArticleHeader";
-import { BlogArticleHero } from "@/app/components/BlogArticleHero/BlogArticleHero";
+import { BlogArticleBody } from "@/components/BlogArticleBody/BlogArticleBody";
+import { BlogArticleHeader } from "@/components/BlogArticleHeader/BlogArticleHeader";
+import { BlogArticleHero } from "@/components/BlogArticleHero/BlogArticleHero";
 
 const builderModelName = config.models.blogArticle;
 
