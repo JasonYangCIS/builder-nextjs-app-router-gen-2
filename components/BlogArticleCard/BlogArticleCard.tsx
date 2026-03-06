@@ -3,11 +3,11 @@ import Link from "next/link";
 import { formatBlogDate } from "@/utils/date";
 import type { BlogArticleCardProps } from "./BlogArticleCard.types";
 
-export function BlogArticleCard({ article }: BlogArticleCardProps) {
+export function BlogArticleCard({ article, route = '/blog' }: BlogArticleCardProps) {
   return (
     <li className="flex">
       <Link
-        href={`/blog/${article.slug}`}
+        href={`${route}/${article.slug}`}
         className="group flex flex-1 flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-sm transition hover:border-gray-300 hover:shadow-md"
       >
         {article.image ? (

@@ -7,9 +7,11 @@ import { CUSTOM_COMPONENTS } from "../builder-registry";
 interface BuilderPageProps {
   content: BuilderContent | null;
   model: string;
+  /** Optional data to inject (e.g. for Hybrid pattern: data={{ article: articleContent }}) */
+  data?: Record<string, unknown>;
 }
 
-export function RenderBuilderContent({ content, model }: BuilderPageProps) {
+export function RenderBuilderContent({ content, model, data }: BuilderPageProps) {
   // Call the isPreviewing hook to determine if
   // the page is being previewed in Builder
   // If "content" has a value or the page is being previewed in Builder,
@@ -21,6 +23,7 @@ export function RenderBuilderContent({ content, model }: BuilderPageProps) {
         apiKey={config.envs.builderApiKey}
         model={model}
         customComponents={CUSTOM_COMPONENTS}
+        {...(data && { data })}
       />
     );
   }

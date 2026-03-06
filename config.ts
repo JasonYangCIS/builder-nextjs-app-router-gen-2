@@ -4,7 +4,8 @@ export const config = {
     builderApiKey: process.env.NEXT_PUBLIC_BUILDER_API_KEY!
   },
   models: {
+    page: "page",
     blogArticle: "blog-article",
-    page: "page"
+    blogArticleSection: "blog-article-section"
   }
 }
