@@ -8,6 +8,7 @@ export interface BlogArticle {
   blurb?: string | null;
   image?: string | null;
   date?: string | null;
+  category?: string | null;
 }
 
 /**

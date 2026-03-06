@@ -37,7 +37,9 @@ export default async function BlogArticleSectionPage() {
           Blog Section Model
         </h1>
         <p className="mt-3 text-lg text-gray-500">
-          Articles and updates using section model approach
+          A blog that is populated by a Section model where the first fold's content is fixed in code.
+          <br />
+          The rest of the content is drag-and-drop via the Builder.io visual editor.
           <br />
           <a href="https://www.builder.io/blog/builder-drag-drop-blog#section-model" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">
             https://www.builder.io/blog/builder-drag-drop-blog#section-model

@@ -37,7 +37,7 @@ export default async function BlogArticleTemplatePage() {
           Blog Hybrid Approach
         </h1>
         <p className="mt-3 text-lg text-gray-500">
-          Articles and updates using hybrid approach
+          A blog powered by data bindings and templates within the Section model.
           <br />
           <a href="https://www.builder.io/blog/builder-drag-drop-blog#hybrid-approach" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">
             https://www.builder.io/blog/builder-drag-drop-blog#hybrid-approach

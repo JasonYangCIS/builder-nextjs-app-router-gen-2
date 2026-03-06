@@ -37,7 +37,7 @@ export default async function BlogPage() {
           Blog
         </h1>
         <p className="mt-3 text-lg text-gray-500">
-          Articles and updates using data model approach
+          A blog that is purely in code that is populated by a Data model.
           <br />
           <a href="https://www.builder.io/blog/builder-drag-drop-blog#data-model" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">
             https://www.builder.io/blog/builder-drag-drop-blog#data-model
