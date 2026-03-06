@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Builder.io Sandbox (Gen 2)
 
-## Getting Started
+A sandbox for the [Builder.io](https://www.builder.io) Gen 2 SDK (`@builder.io/sdk-react`) with **Next.js 16** App Router and **React 19**. It demonstrates three blog patterns: **Data model**, **Section model**, and **Hybrid** (data bindings + templates).
 
-First, run the development server:
+## Tech stack
+
+- **Next.js 16** (App Router)
+- **React 19**
+- **Builder.io SDK** (`@builder.io/sdk-react`) and Dev Tools
+- **Tailwind CSS 4**
+
+## Getting started
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Configure Builder.io
+
+Copy the example env file and add your Builder.io public API key:
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` and set:
+
+```env
+NEXT_PUBLIC_BUILDER_API_KEY=your_builder_io_public_api_key
+```
+
+Get your key from [Builder.io → Account → Space](https://builder.io/account/space).
+
+### 3. Run the dev server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000). Use the **Blog** link to try the three blog patterns.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Blog patterns
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Route | Pattern | Description |
+|-------|---------|-------------|
+| `/blog-article` | **Data model** | Fixed template in code; content fields (title, slug, body, etc.) come from Builder data. |
+| `/blog-article-section` | **Section model** | Hero/header in code; article body is drag-and-drop sections in the Builder.io visual editor. |
+| `/blog-article-template` | **Hybrid** | Data bindings and templates inside a Section model; content driven by data with flexible layouts. |
 
-## Learn More
+Details and Gen 1 → Gen 2 API mapping are in [`docs/BUILDER_BLOG_PATTERNS_GEN2.md`](docs/BUILDER_BLOG_PATTERNS_GEN2.md).
 
-To learn more about Next.js, take a look at the following resources:
+## Project structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **`app/`** – App Router pages: home, blog index, and blog pattern routes (`blog-article`, `blog-article-section`, `blog-article-template`).
+- **`components/`** – Reusable UI (Header, Footer, blog hero/card/body/list) and Builder.io wrapper (`components/builder.tsx`).
+- **`config.ts`** – Builder API key and model names (`page`, `blog-article`, etc.).
+- **`builder-registry.ts`** – Builder block registration for visual editing.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Scripts
 
-## Deploy on Vercel
+| Command | Description |
+|---------|-------------|
+| `npm run dev` | Start dev server (Next.js with webpack) |
+| `npm run build` | Production build |
+| `npm run start` | Start production server |
+| `npm run lint` | Run ESLint |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Learn more
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [Builder.io Documentation](https://www.builder.io/docs)
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Builder drag-and-drop blog guide](https://www.builder.io/blog/builder-drag-drop-blog)
