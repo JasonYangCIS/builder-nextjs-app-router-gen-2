@@ -6,7 +6,7 @@ export const Header = () => {
           Builder Sandbox
         </a>
         <nav className="flex gap-6 text-sm text-gray-600">
-          <a href="/blog" className="hover:text-gray-900">Articles</a>
+          <a href="/blog" className="hover:text-gray-900">Blog (data model)</a>
           <a href="/about" className="hover:text-gray-900">About</a>
         </nav>
       </div>
