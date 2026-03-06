@@ -1,35 +1,32 @@
-import { fetchEntries } from "@builder.io/sdk-react";
-import { config } from "@/config";
-import { BlogArticleList } from "@/components/BlogArticleList/BlogArticleList";
-import type { BlogArticle } from "@/types/blog.types";
-
-const builderModelName = config.models.blogArticle;
-
-export const revalidate = 5;
+import Link from "next/link";
 
 export const metadata = {
-  title: "Blog - Data Model",
-  description: "Articles and updates using data model approach",
+  title: "Blog",
+  description: "Builder.io blog patterns: Data model, Section model, and Hybrid approach",
 };
 
-export default async function BlogPage() {
-  const articles = await fetchEntries({
-    model: builderModelName,
-    apiKey: config.envs.builderApiKey,
-    limit: 100,
-  });
+const blogRoutes = [
+  {
+    href: "/blog-article",
+    title: "Data Model",
+    description:
+      "A blog purely in code, populated by a Data model. Content structure is fixed in code; data comes from Builder.",
+  },
+  {
+    href: "/blog-article-section",
+    title: "Section Model",
+    description:
+      "First fold (hero, header) is fixed in code; the rest is drag-and-drop in the Builder.io visual editor.",
+  },
+  {
+    href: "/blog-article-template",
+    title: "Hybrid Approach",
+    description:
+      "Data bindings and templates within the Section model. Content is driven by data with flexible layouts.",
+  },
+] as const;
 
-  const items = (articles ?? [])
-    .map((entry) => ({
-      ...(entry.data as unknown as BlogArticle),
-    }))
-    .filter((a) => a.slug)
-    .sort((a, b) => {
-      const dateA = a.date ? new Date(a.date).getTime() : 0;
-      const dateB = b.date ? new Date(b.date).getTime() : 0;
-      return dateB - dateA;
-    });
-
+export default function BlogPage() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-14">
       <header className="mb-14">
@@ -37,19 +34,28 @@ export default async function BlogPage() {
           Blog
         </h1>
         <p className="mt-3 text-lg text-gray-500">
-          A blog that is purely in code that is populated by a Data model.
-          <br />
-          <a href="https://www.builder.io/blog/builder-drag-drop-blog#data-model" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">
-            https://www.builder.io/blog/builder-drag-drop-blog#data-model
-          </a>
+          Choose a blog pattern to browse articles.
         </p>
       </header>
 
-      <BlogArticleList articles={items} />
-
-      {items.length === 0 && (
-        <p className="text-gray-500">No articles yet.</p>
-      )}
+      <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        {blogRoutes.map((route) => (
+          <li key={route.href} className="flex">
+            <Link
+              href={route.href}
+              className="group flex flex-1 flex-col rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:border-gray-300 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+            >
+              <h2 className="text-xl font-semibold text-gray-900 group-hover:text-gray-700">
+                {route.title}
+              </h2>
+              <p className="mt-2 flex-1 text-gray-600">{route.description}</p>
+              <span className="mt-4 text-sm font-medium text-blue-600 group-hover:text-blue-700">
+                View articles →
+              </span>
+            </Link>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
