@@ -1,16 +1,12 @@
 import { fetchOneEntry } from "@builder.io/sdk-react";
-import { RenderBuilderContent } from "../../components/builder";
+import { RenderBuilderContent } from "@/components/builder";
+import { config } from "@/config";
 
-// Builder Public API Key set in .env file
-const PUBLIC_API_KEY = process.env.NEXT_PUBLIC_BUILDER_API_KEY!;
-
-interface PageProps {
+export default async function Page(props: {
   params: Promise<{
     page: string[];
   }>;
-}
-
-export default async function Page(props: PageProps) {
+}) {
   const builderModelName = "page";
 
   // Use the page path specified in the URL to fetch the content
@@ -18,7 +14,7 @@ export default async function Page(props: PageProps) {
 
   const content = await fetchOneEntry({
     // Get the page content from Builder with the specified options
-    apiKey: PUBLIC_API_KEY,
+    apiKey: config.envs.builderApiKey,
     model: builderModelName,
     userAttributes: { urlPath },
   });
