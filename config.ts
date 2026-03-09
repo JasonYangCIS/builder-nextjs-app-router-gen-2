@@ -7,6 +7,7 @@ export const config = {
     page: "page",
     blogArticle: "blog-article",
     blogArticleSection: "blog-article-section",
-    blogArticleTemplate: "blog-article-template"
+    blogArticleTemplate: "blog-article-template",
+    headerNavMenu: "header-nav-menu"
   }
 }
