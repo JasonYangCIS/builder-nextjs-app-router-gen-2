@@ -100,7 +100,7 @@ export function Button({
         )
       )}
 
-      {content && <span>{content}</span>}
+      {content}
 
       {!loading && rightIcon && (
         <span className={cn("shrink-0", iconSizeClasses[size])} aria-hidden="true">

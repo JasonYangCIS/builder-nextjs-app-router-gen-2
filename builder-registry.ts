@@ -19,6 +19,7 @@ export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
   {
     component: Button,
     name: "DS Button",
+    canHaveChildren: true,
     inputs: [
       {
         name: "label",
