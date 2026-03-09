@@ -8,12 +8,16 @@ export const Header = async () => {
     apiKey: config.envs.builderApiKey,
     model: config.models.headerNavMenu,
     limit: 5,
-    fields: 'data'
+    fields: 'id,data'
   });
 
   const navMenuEntries = (raw ?? [])
-    .map((entry) => entry.data as { text: string; url: string } | undefined)
-    .filter((d): d is { text: string; url: string } => !!d?.text && !!d?.url);
+    .filter((entry) => entry.data?.text && entry.data?.url)
+    .map((entry) => ({
+      id: entry.id ?? "",
+      text: entry.data!.text as string,
+      url: entry.data!.url as string,
+    }));
 
   return (
     <header className="relative border-b border-gray-200">
