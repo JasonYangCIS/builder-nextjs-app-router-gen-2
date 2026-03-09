@@ -1,6 +1,6 @@
 "use client";
-import React, { useState } from "react";
-import styles from "./styles.module.css";
+import { useState } from "react";
+import { Button } from "@/components/design-system";
 
 interface CounterProps {
   initialCount?: number;
@@ -9,23 +9,25 @@ interface CounterProps {
 function Counter({ initialCount = 99 }: CounterProps) {
   const [count, setCount] = useState(initialCount);
 
-  const increment = () => {
-    setCount((prevCount) => prevCount + 1);
-  };
-
-  const decrement = () => {
-    setCount((prevCount) => prevCount - 1);
-  };
-
   return (
-    <div className={styles.counter}>
-      <button className={styles.btn} onClick={decrement}>
-        -
-      </button>
-      <span className={styles.count}>{count}</span>
-      <button className={styles.btn} onClick={increment}>
-        +
-      </button>
+    <div className="inline-flex items-center gap-4">
+      <Button
+        variant="secondary"
+        size="sm"
+        label="−"
+        aria-label="Decrement"
+        onClick={() => setCount((c) => c - 1)}
+      />
+      <span className="w-10 text-center text-xl font-semibold tabular-nums text-zinc-900">
+        {count}
+      </span>
+      <Button
+        variant="secondary"
+        size="sm"
+        label="+"
+        aria-label="Increment"
+        onClick={() => setCount((c) => c + 1)}
+      />
     </div>
   );
 }

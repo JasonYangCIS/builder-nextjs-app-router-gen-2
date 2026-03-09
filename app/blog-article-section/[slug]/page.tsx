@@ -8,11 +8,11 @@
  */
 import { fetchEntries, fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
 import { getBuilderSearchParams } from '@builder.io/sdk-react/edge';
-import { RenderBuilderContent } from "@/components/builder";
+import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
-import { BlogArticleHeader } from "@/components/BlogArticleHeader/BlogArticleHeader";
-import { BlogArticleHero } from "@/components/BlogArticleHero/BlogArticleHero";
+import { BlogArticleHeader } from "@/components/blog/BlogArticleHeader/BlogArticleHeader";
+import { BlogArticleHero } from "@/components/blog/BlogArticleHero/BlogArticleHero";
 import type { BlogArticle, BlogArticleWithContent } from "@/types/blog.types";
 
 const builderModelName = config.models.blogArticleSection;
@@ -85,7 +85,7 @@ export default async function Page(props: {
           date={data?.date}
         />
 
-        <hr className="my-10 border-gray-200" />
+        <hr className="my-10 border-zinc-200" />
 
         <RenderBuilderContent content={content} model={builderModelName} />
       </div>

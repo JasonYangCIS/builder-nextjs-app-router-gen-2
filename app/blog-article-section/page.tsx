@@ -1,6 +1,7 @@
 import { fetchEntries } from "@builder.io/sdk-react";
 import { config } from "@/config";
-import { BlogArticleList } from "@/components/BlogArticleList/BlogArticleList";
+import { BlogArticleList } from "@/components/blog/BlogArticleList/BlogArticleList";
+import { Typography } from "@/components/design-system";
 import type { BlogArticle } from "@/types/blog.types";
 
 const builderModelName = config.models.blogArticleSection;
@@ -33,26 +34,27 @@ export default async function BlogArticleSectionPage() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-14">
       <header className="mb-14">
-        <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
-          Blog Section Model
-        </h1>
-        <p className="mt-3 text-lg text-gray-500">
-          A blog that is populated by a Section model where the first fold's content is fixed in code.
-          <br />
-          The rest of the content is drag-and-drop via the Builder.io visual editor.
-          <br />
-          <a href="https://www.builder.io/blog/builder-drag-drop-blog#section-model" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:text-blue-700">
-            https://www.builder.io/blog/builder-drag-drop-blog#section-model
+        <Typography variant="h1" className="gradient-brand-text sm:text-5xl">
+          Blog (Section Model)
+        </Typography>
+        <Typography variant="body-lg" color="muted" className="mt-3">
+          First fold is fixed in code; the rest is drag-and-drop in Builder.{" "}
+          <a
+            href="https://www.builder.io/blog/builder-drag-drop-blog#section-model"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-brand-600 hover:text-brand-700"
+          >
+            Learn more ↗
           </a>
-        </p>
+        </Typography>
       </header>
 
-      <BlogArticleList articles={items} route={'/blog-article-section'} />
+      <BlogArticleList articles={items} route="/blog-article-section" />
 
       {items.length === 0 && (
-        <p className="text-gray-500">No articles yet.</p>
+        <Typography variant="body" color="muted">No articles yet.</Typography>
       )}
-
     </div>
   );
 }

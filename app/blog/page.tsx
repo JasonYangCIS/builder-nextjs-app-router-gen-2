@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Typography } from "@/components/design-system";
 
 export const metadata = {
   title: "Blog",
@@ -30,12 +31,12 @@ export default function BlogPage() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-14">
       <header className="mb-14">
-        <h1 className="text-4xl font-extrabold tracking-tight text-foreground sm:text-5xl">
+        <Typography variant="h1" className="gradient-brand-text sm:text-5xl">
           Blog
-        </h1>
-        <p className="mt-3 text-lg text-gray-500">
+        </Typography>
+        <Typography variant="body-lg" color="muted" className="mt-3">
           Choose a blog pattern to browse articles.
-        </p>
+        </Typography>
       </header>
 
       <ul className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -43,13 +44,15 @@ export default function BlogPage() {
           <li key={route.href} className="flex">
             <Link
               href={route.href}
-              className="group flex flex-1 flex-col rounded-2xl border border-gray-200 bg-white p-6 shadow-sm transition hover:border-gray-300 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-gray-900 focus-visible:ring-offset-2"
+              className="group flex flex-1 flex-col rounded-xl border border-zinc-200 bg-white p-6 shadow-sm transition-all hover:border-brand-200 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
             >
-              <h2 className="text-xl font-semibold text-gray-900 group-hover:text-gray-700">
+              <Typography variant="h5" as="h2" className="group-hover:text-brand-600 transition-colors">
                 {route.title}
-              </h2>
-              <p className="mt-2 flex-1 text-gray-600">{route.description}</p>
-              <span className="mt-4 text-sm font-medium text-blue-600 group-hover:text-blue-700">
+              </Typography>
+              <Typography variant="body-sm" color="muted" className="mt-2 flex-1">
+                {route.description}
+              </Typography>
+              <span className="mt-4 text-sm font-medium text-brand-600 group-hover:text-brand-700 transition-colors">
                 View articles →
               </span>
             </Link>

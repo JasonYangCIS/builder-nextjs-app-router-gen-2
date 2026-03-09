@@ -1,11 +1,11 @@
 import { fetchEntries, fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
-import { RenderBuilderContent } from "@/components/builder";
+import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
 import type { BlogArticle, BlogArticleWithContent } from "@/types/blog.types";
-import { BlogArticleBody } from "@/components/BlogArticleBody/BlogArticleBody";
-import { BlogArticleHeader } from "@/components/BlogArticleHeader/BlogArticleHeader";
-import { BlogArticleHero } from "@/components/BlogArticleHero/BlogArticleHero";
+import { BlogArticleBody } from "@/components/blog/BlogArticleBody/BlogArticleBody";
+import { BlogArticleHeader } from "@/components/blog/BlogArticleHeader/BlogArticleHeader";
+import { BlogArticleHero } from "@/components/blog/BlogArticleHero/BlogArticleHero";
 
 const builderModelName = config.models.blogArticle;
 
@@ -73,7 +73,7 @@ export default async function Page(props: {
           date={data?.date}
         />
 
-        <hr className="my-10 border-gray-200" />
+        <hr className="my-10 border-zinc-200" />
 
         {data?.content && <BlogArticleBody htmlContent={data.content} />}
 

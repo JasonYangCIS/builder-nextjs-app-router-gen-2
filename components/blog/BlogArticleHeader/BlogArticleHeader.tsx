@@ -1,26 +1,27 @@
 import { formatBlogDate } from "@/utils/date";
+import { Typography } from "@/components/design-system";
 import type { BlogArticleHeaderProps } from "./BlogArticleHeader.types";
 
 export function BlogArticleHeader({ title, blurb, date }: BlogArticleHeaderProps) {
   const formattedDate = formatBlogDate(date);
 
   return (
-    <>
+    <div className="flex flex-col gap-4">
       {title && (
-        <h1 className="text-4xl font-extrabold leading-tight tracking-tight sm:text-5xl">
+        <Typography variant="h1" className="sm:text-5xl">
           {title}
-        </h1>
+        </Typography>
       )}
       {blurb && (
-        <p className="mt-4 text-lg text-gray-500 leading-relaxed">
+        <Typography variant="body-lg" color="muted">
           {blurb}
-        </p>
+        </Typography>
       )}
       {formattedDate && (
-        <div className="mt-6 flex items-center gap-3">
-          <time dateTime={date ?? undefined}>{formattedDate}</time>
-        </div>
+        <time dateTime={date ?? undefined} className="text-sm text-zinc-500">
+          {formattedDate}
+        </time>
       )}
-    </>
+    </div>
   );
 }

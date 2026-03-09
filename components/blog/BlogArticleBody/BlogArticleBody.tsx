@@ -9,7 +9,7 @@ export function BlogArticleBody({ htmlContent }: BlogArticleBodyProps) {
   const sanitized = DOMPurify.sanitize(htmlContent, SANITIZE_OPTIONS);
 
   return (
-    <section className="mb-12 overflow-hidden rounded-2xl">
+    <section className="mb-12 overflow-hidden rounded-xl">
       <div
         className="prose prose-gray max-w-none"
         dangerouslySetInnerHTML={{ __html: sanitized }}

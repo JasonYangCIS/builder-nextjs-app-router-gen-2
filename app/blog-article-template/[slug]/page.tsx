@@ -7,7 +7,7 @@
  * - Data model: use only hero/header from data; the rest is drag-and-drop via <Content />.
  */
 import { fetchEntries, fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
-import { RenderBuilderContent } from "@/components/builder";
+import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
 import type { BlogArticle } from "@/types/blog.types";

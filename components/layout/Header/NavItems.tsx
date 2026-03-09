@@ -54,38 +54,38 @@ export function NavItems({ entries: initialEntries }: NavItemsProps) {
   return (
     <>
       {/* Desktop nav */}
-      <nav className="hidden md:flex items-center gap-6 text-sm text-gray-600">
+      <nav className="hidden items-center gap-6 text-sm text-zinc-600 md:flex">
         {entries.map((entry) => (
           <Link
             key={entry.id}
             href={entry.url}
-            className="hover:text-gray-900 transition-colors"
+            className="transition-colors hover:text-zinc-900"
           >
             {entry.text}
           </Link>
         ))}
       </nav>
 
-      {/* Mobile hamburger button */}
+      {/* Mobile hamburger */}
       <button
-        className="md:hidden flex flex-col justify-center gap-1.5 p-1"
+        className="flex flex-col justify-center gap-1.5 p-1 md:hidden"
         onClick={() => setOpen((prev) => !prev)}
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
       >
-        <span className={`block h-0.5 w-6 bg-gray-600 transition-transform duration-200 ${open ? "translate-y-2 rotate-45" : ""}`} />
-        <span className={`block h-0.5 w-6 bg-gray-600 transition-opacity duration-200 ${open ? "opacity-0" : ""}`} />
-        <span className={`block h-0.5 w-6 bg-gray-600 transition-transform duration-200 ${open ? "-translate-y-2 -rotate-45" : ""}`} />
+        <span className={`block h-0.5 w-6 bg-zinc-600 transition-transform duration-200 ${open ? "translate-y-2 rotate-45" : ""}`} />
+        <span className={`block h-0.5 w-6 bg-zinc-600 transition-opacity duration-200 ${open ? "opacity-0" : ""}`} />
+        <span className={`block h-0.5 w-6 bg-zinc-600 transition-transform duration-200 ${open ? "-translate-y-2 -rotate-45" : ""}`} />
       </button>
 
       {/* Mobile dropdown */}
       {open && (
-        <nav className="md:hidden absolute top-full left-0 right-0 border-b border-gray-200 bg-white px-6 py-4 flex flex-col gap-4 text-sm text-gray-600 z-50">
+        <nav className="absolute left-0 right-0 top-full z-50 flex flex-col gap-4 border-b border-zinc-200 bg-white px-6 py-4 text-sm text-zinc-600 md:hidden">
           {entries.map((entry) => (
             <Link
               key={entry.id}
               href={entry.url}
-              className="hover:text-gray-900 transition-colors"
+              className="transition-colors hover:text-zinc-900"
               onClick={() => setOpen(false)}
             >
               {entry.text}

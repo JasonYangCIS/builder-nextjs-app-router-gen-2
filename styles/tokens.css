@@ -1,0 +1,109 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   Design System Tokens
+   Single source of truth for the entire site's visual language.
+
+   Color scales generate Tailwind utilities automatically:
+     bg-brand-600, text-accent-500, border-success-100, etc.
+
+   Gradient utilities are available as:
+     className="gradient-brand"         → indigo → violet (primary)
+     className="gradient-brand-subtle"  → tinted indigo → violet wash
+     className="gradient-brand-dark"    → deep indigo → deep violet
+     className="gradient-mesh"          → multi-stop mesh (hero use)
+───────────────────────────────────────────────────────────────────────────── */
+@theme {
+
+  /* ── Brand / Primary — Indigo ───────────────────────────────────────────
+     Signature color. Used for interactive elements, focus rings, CTAs.
+     Reference: Linear, Stripe, Vercel, GitHub Copilot.
+  ── */
+  --color-brand-50:  #eef2ff;
+  --color-brand-100: #e0e7ff;
+  --color-brand-200: #c7d2fe;
+  --color-brand-300: #a5b4fc;
+  --color-brand-400: #818cf8;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-brand-800: #3730a3;
+  --color-brand-900: #312e81;
+  --color-brand-950: #1e1b4b;
+
+  /* ── Accent — Violet ────────────────────────────────────────────────────
+     Gradient pair for brand. Use as the `to-*` stop alongside brand.
+     e.g. from-brand-500 to-accent-500 → indigo → violet.
+  ── */
+  --color-accent-50:  #f5f3ff;
+  --color-accent-100: #ede9fe;
+  --color-accent-200: #ddd6fe;
+  --color-accent-300: #c4b5fd;
+  --color-accent-400: #a78bfa;
+  --color-accent-500: #8b5cf6;
+  --color-accent-600: #7c3aed;
+  --color-accent-700: #6d28d9;
+  --color-accent-800: #5b21b6;
+  --color-accent-900: #4c1d95;
+  --color-accent-950: #2e1065;
+
+  /* ── Success — Emerald ──────────────────────────────────────────────────
+     Cooler than pure green. Reads "technical" rather than "marketing".
+  ── */
+  --color-success-50:  #ecfdf5;
+  --color-success-100: #d1fae5;
+  --color-success-600: #059669;
+  --color-success-700: #047857;
+
+  /* ── Warning — Amber ────────────────────────────────────────────────────*/
+  --color-warning-50:  #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+
+  /* ── Error — Rose ───────────────────────────────────────────────────────
+     Cooler hue than pure red. Less alarming, more precise.
+  ── */
+  --color-error-50:  #fff1f2;
+  --color-error-100: #ffe4e6;
+  --color-error-600: #e11d48;
+  --color-error-700: #be123c;
+
+}
+
+/* ── Gradient utilities ─────────────────────────────────────────────────────
+   Pre-built gradient combinations. Apply directly as className values.
+── */
+@layer utilities {
+
+  /* Primary: indigo → violet — use on CTAs, hero sections, active states */
+  .gradient-brand {
+    background: linear-gradient(135deg, var(--color-brand-500), var(--color-accent-500));
+  }
+
+  /* Subtle: light tinted wash — use on section backgrounds, cards */
+  .gradient-brand-subtle {
+    background: linear-gradient(135deg, var(--color-brand-50), var(--color-accent-50));
+  }
+
+  /* Dark: deep indigo → deep violet — use on dark hero sections, banners */
+  .gradient-brand-dark {
+    background: linear-gradient(135deg, var(--color-brand-800), var(--color-accent-800));
+  }
+
+  /* Mesh: multi-stop — use on hero backgrounds, marketing sections */
+  .gradient-mesh {
+    background:
+      radial-gradient(ellipse at 20% 50%, color-mix(in srgb, var(--color-brand-500) 25%, transparent) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, color-mix(in srgb, var(--color-accent-500) 20%, transparent) 0%, transparent 60%),
+      radial-gradient(ellipse at 60% 80%, color-mix(in srgb, var(--color-brand-400) 15%, transparent) 0%, transparent 50%),
+      var(--color-brand-950);
+  }
+
+  /* Text gradient — use on headings */
+  .gradient-brand-text {
+    background: linear-gradient(135deg, var(--color-brand-600), var(--color-accent-600));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+}

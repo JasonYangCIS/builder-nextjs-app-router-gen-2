@@ -1,5 +1,5 @@
 import { fetchOneEntry, getBuilderSearchParams, isEditing, isPreviewing } from "@builder.io/sdk-react";
-import { RenderBuilderContent } from "@/components/builder";
+import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
 

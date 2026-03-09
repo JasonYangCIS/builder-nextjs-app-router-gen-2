@@ -8,7 +8,7 @@ export const Header = async () => {
     apiKey: config.envs.builderApiKey,
     model: config.models.headerNavMenu,
     limit: 5,
-    fields: 'id,data'
+    fields: "id,data",
   });
 
   const navMenuEntries = (raw ?? [])
@@ -20,12 +20,23 @@ export const Header = async () => {
     }));
 
   return (
-    <header className="relative border-b border-gray-200">
+    <header className="relative border-b border-zinc-200">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-        <Link href="/" className="text-xl font-bold tracking-tight hover:text-gray-900">
+        <Link
+          href="/"
+          className="gradient-brand-text text-xl font-bold tracking-tight transition-opacity hover:opacity-80"
+        >
           Jason Yang - Builder.io
         </Link>
-        <NavItems entries={navMenuEntries} />
+        <div className="flex items-center gap-6">
+          <Link
+            href="/design-system"
+            className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
+          >
+            Design System
+          </Link>
+          <NavItems entries={navMenuEntries} />
+        </div>
       </div>
     </header>
   );

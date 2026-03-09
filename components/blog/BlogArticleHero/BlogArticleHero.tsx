@@ -11,7 +11,7 @@ export function BlogArticleHero({ image, alt }: BlogArticleHeroProps) {
         className="object-cover"
         priority
       />
-      <div className="absolute inset-0 bg-black/40" aria-hidden />
+      <div className="absolute inset-0 bg-gradient-to-tr from-brand-950/60 to-accent-900/20" aria-hidden />
     </div>
   );
 }
