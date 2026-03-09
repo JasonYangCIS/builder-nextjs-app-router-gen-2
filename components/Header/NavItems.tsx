@@ -22,6 +22,13 @@ export function NavItems({ entries: initialEntries }: NavItemsProps) {
   useEffect(() => {
     if (!isPreviewing()) return;
 
+    // Only subscribe when previewing the header-nav-menu model specifically.
+    // Without this guard, the subscription fires on every Builder-previewed page
+    // (including the page model), causing a model name mismatch error.
+    const params = new URLSearchParams(window.location.search);
+    const previewModel = params.get("builder.preview");
+    if (previewModel && previewModel !== config.models.headerNavMenu) return;
+
     const unsubscribe = subscribeToEditor({
       model: config.models.headerNavMenu,
       apiKey: config.envs.builderApiKey,
