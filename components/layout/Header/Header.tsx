@@ -24,7 +24,7 @@ export const Header = async () => {
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         <Link
           href="/"
-          className="gradient-brand-text text-xl font-bold tracking-tight transition-opacity hover:opacity-80"
+          className="text-xl font-bold tracking-tight transition-opacity hover:opacity-80"
         >
           Jason Yang - Builder.io
         </Link>
