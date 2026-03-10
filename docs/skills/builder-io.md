@@ -123,7 +123,7 @@ if (!content && !isEditing() && !isPreviewing()) return notFound();
 Builder renders pages inside an iframe — `notFound()` in edit mode will break the editor.
 
 ### getBuilderSearchParams — detail pages only
-Only pass `options: getBuilderSearchParams(searchParams)` on pages where live preview needs URL params (detail/slug pages). Not needed on list/index pages.
+`getBuilderSearchParams` converts Next.js `searchParams` into Builder SDK options, forwarding params like `builder.preview`, `builder.overrides.*`, and `builder.cachebust` that Builder injects during visual editing. Only pass it on detail/slug pages where live preview needs these URL params — not on list/index pages.
 
 ### revalidate
 Set `export const revalidate = 5` on all Builder-connected pages for near-real-time publish updates.
@@ -207,7 +207,35 @@ Access from a Builder entry: `entry.data?.slug`, `entry.data?.title`
 
 ## HTML Safety
 
-`BlogArticleBody` sanitizes HTML from Builder data fields with DOMPurify before `dangerouslySetInnerHTML`. Always do the same for any component that renders HTML strings from Builder.
+Always sanitize HTML strings from Builder data fields with DOMPurify before `dangerouslySetInnerHTML` — not just in `BlogArticleBody`, but in any component that renders a Builder HTML field.
+
+---
+
+## Builder Rules
+
+Builder's AI reads two types of rule files to generate code consistently:
+
+### `.builderrules` (root file)
+A single file at the project root. Edit it via the cog icon in Builder's prompt window, or directly in your editor. Builder's AI reads it every session — rules provide the persistent context that AI lacks between sessions.
+
+### `.builder/rules/*.mdc` (scoped rules)
+Granular rules in `.mdc` files under `.builder/rules/`. Support metadata header:
+```markdown
+---
+description: Component structure
+globs: src/components/**
+alwaysApply: false
+---
+```
+- `alwaysApply: true` — always loaded; `false` — AI decides contextually based on globs
+- Files closer to the current working directory take precedence over parent directories
+- Builder will **never** modify your rule files
+
+### Rules best practices
+- Keep each file under 500 lines — split large rules into composable files
+- Be specific and actionable — write rules like clear internal docs
+- Avoid conflicts between rule files
+- Reference concrete examples or existing files where possible
 
 ---
 
