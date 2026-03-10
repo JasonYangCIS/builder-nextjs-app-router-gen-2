@@ -67,7 +67,7 @@ export function Button({
   "aria-label": ariaLabel,
 }: ButtonProps) {
   const isDisabled = disabled || loading;
-  const content = children ?? label;
+  const content = label ?? children;
 
   return (
     <button
