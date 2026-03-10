@@ -1,0 +1,29 @@
+# Builder.io Fusion — Project Rules
+
+These rules apply to every task. Do not deviate from them.
+
+## Dev Server
+- Always start the dev server with `npm run dev -- --webpack`
+- Never use `next dev` without `--webpack` — Turbopack is incompatible with Builder Dev Tools
+
+## Config & Model Names
+- Never hardcode Builder model names as string literals in pages or components
+- All model names and the API key live in `config.ts` — always read from there:
+  - `config.envs.builderApiKey`
+  - `config.models.page`, `config.models.blogArticle`, etc.
+- When adding a new model, add its name to `config.ts` first before using it anywhere
+
+## Builder SDK Usage
+- Never use `<Content>` directly — always use the wrapper:
+  `import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent"`
+- Always guard `notFound()` with both editing and preview checks:
+  `if (!content && !isEditing() && !isPreviewing()) return notFound()`
+- Always guard `subscribeToEditor` with a `builder.preview` URL param check to prevent
+  "Model Name Mismatch" errors — see `docs/skills/builder-io.md` for the exact pattern
+
+## Security
+- Never use `dangerouslySetInnerHTML` on Builder HTML fields without DOMPurify sanitization
+
+## Imports & Paths
+- Always use the `@/` path alias for internal imports — never use relative paths like `../../`
+- Import design system components from the barrel: `@/components/design-system`
