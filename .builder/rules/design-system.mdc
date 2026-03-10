@@ -1,0 +1,17 @@
+# Design System Rules
+
+Full conventions and token reference: `docs/skills/design-system.md`
+
+## Critical Rules
+
+- Always import from the barrel: `import { Button, Typography, Badge, Input, Card } from "@/components/design-system"`
+- Never hardcode color values — always use tokens from `styles/tokens.css`
+- Never use `text-zinc-400` or lower for body text — fails WCAG AA (minimum 4.5:1 contrast)
+- Use `gradient-brand-text` only on headings/display text, never on body text
+- Use `cn()` from `@/utils/cn` for conditional Tailwind class composition
+
+## Extending the Design System
+
+- New component → `components/design-system/MyComponent/` + export from `index.ts` + register in `builder-registry.ts` + add to `app/design-system/page.tsx`
+- New token → add to `@theme` block in `styles/tokens.css` (Tailwind utility is auto-generated)
+- Before adding a color: verify contrast ratio against the approved table in `docs/skills/design-system.md`

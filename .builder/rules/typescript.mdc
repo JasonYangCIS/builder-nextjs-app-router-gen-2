@@ -1,0 +1,30 @@
+# TypeScript Conventions
+
+## Builder Data Fields
+
+- `slug: string` — always required, no null (used as identifier and routing key)
+- All other Builder data fields: `string | null` for optional — never `string | undefined`
+- Builder may return `null` for empty fields; `undefined` will cause type errors
+
+```ts
+// types/mymodel.types.ts
+export interface MyModel {
+  slug: string;
+  title?: string | null;
+  image?: string | null;
+}
+
+// Extend for detail-page variants — don't duplicate
+export interface MyModelWithContent extends MyModel {
+  content?: string | null;
+}
+```
+
+## Access Pattern
+
+Always use optional chaining from a Builder entry: `entry.data?.slug`, `entry.data?.title`
+
+## File Conventions
+
+- Type files live in `types/` — one file per model: `types/mymodel.types.ts`
+- Always use `@/` path alias — never relative paths like `../../`

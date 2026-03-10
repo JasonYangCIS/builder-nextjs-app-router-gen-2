@@ -1,0 +1,18 @@
+# Builder SDK Rules
+
+Full patterns and gotchas: `docs/skills/builder-io.md`
+
+## Critical Rules
+
+- Never use `<Content>` directly — always use `RenderBuilderContent` from `@/components/builder/RenderBuilderContent`
+- Never hardcode model names — always read from `config.models.*` in `config.ts`
+- Always guard `notFound()` with both checks: `if (!content && !isEditing() && !isPreviewing()) return notFound()`
+- Always guard `subscribeToEditor` with a `builder.preview` URL param check — see `docs/skills/builder-io.md` for the exact pattern
+- Never use `dangerouslySetInnerHTML` on Builder HTML fields without DOMPurify sanitization
+
+## Adding a New Model (checklist)
+
+1. Add name to `config.ts` → `models: { myModel: "my-model" }`
+2. Create `types/mymodel.types.ts`
+3. Create route following patterns in `docs/skills/builder-io.md`
+4. Register custom components in `builder-registry.ts` if needed

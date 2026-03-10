@@ -80,3 +80,36 @@ For task-specific patterns and gotchas, consult the relevant skill:
 | `design-system` | UI components, tokens, WCAG contrast, Tailwind composition |
 
 Skills are defined in `.builder/skills/` and reference full docs in `docs/skills/`.
+
+---
+
+## Commands
+
+Prefer file-scoped checks:
+
+```bash
+npx tsc --noEmit path/to/file.tsx
+npm run lint -- path/to/file.tsx
+```
+
+Full build (only when explicitly requested):
+
+```bash
+npm run build
+```
+
+---
+
+## Safety and Permissions
+
+**Allowed without prompt:**
+- Read files, list files, search codebase
+- File-scoped TypeScript and ESLint checks
+- Running the dev server
+
+**Ask first:**
+- Installing or removing packages
+- `git push` or creating PRs
+- Deleting files or directories
+- Running a full build
+- Any change to `config.ts` model names (affects Builder admin mappings)

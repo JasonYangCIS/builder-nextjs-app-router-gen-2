@@ -1,0 +1,26 @@
+# Routing Conventions
+
+Full route code patterns: `docs/skills/builder-io.md`
+
+## Critical Rules
+
+- `app/[...page]/page.tsx` does NOT match `/` — `app/page.tsx` must separately implement Builder with `userAttributes: { urlPath: "/" }`
+- Only pass `options: getBuilderSearchParams(searchParams)` on detail/slug pages — not on list or index pages
+- Always set `export const revalidate = 5` on Builder-connected pages for near-real-time publish updates
+
+## Route Types
+
+| Route type | File | Builder fetch |
+|---|---|---|
+| Catch-all (Builder pages) | `app/[...page]/page.tsx` | `fetchOneEntry` with `userAttributes: { urlPath }` |
+| Root route | `app/page.tsx` | `fetchOneEntry` with `userAttributes: { urlPath: "/" }` |
+| List page | `app/[model]/page.tsx` | `fetchEntries` |
+| Detail/slug page | `app/[model]/[slug]/page.tsx` | `fetchOneEntry` with `query: { "data.slug": slug }` |
+
+## Three Blog Patterns
+
+| Pattern | Model type | Body source |
+|---|---|---|
+| Data model | Data | `data.content` HTML field → `BlogArticleBody` |
+| Section model | Section | Builder visual blocks → `<RenderBuilderContent>` |
+| Hybrid | Section + Data | Data bindings in template → `<RenderBuilderContent data={{ article }}>` |

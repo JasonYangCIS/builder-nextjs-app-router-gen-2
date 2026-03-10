@@ -20,6 +20,8 @@ These rules apply to every task. Do not deviate from them.
   `if (!content && !isEditing() && !isPreviewing()) return notFound()`
 - Always guard `subscribeToEditor` with a `builder.preview` URL param check to prevent
   "Model Name Mismatch" errors — see `docs/skills/builder-io.md` for the exact pattern
+- For full SDK patterns, route types, and blog model patterns: `docs/skills/builder-io.md`
+- For design system components, tokens, and WCAG rules: `docs/skills/design-system.md`
 
 ## Security
 - Never use `dangerouslySetInnerHTML` on Builder HTML fields without DOMPurify sanitization
