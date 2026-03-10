@@ -29,12 +29,6 @@ export const Header = async () => {
           Jason Yang - Builder.io
         </Link>
         <div className="flex items-center gap-6">
-          <Link
-            href="/design-system"
-            className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
-          >
-            Design System
-          </Link>
           <NavItems entries={navMenuEntries} />
         </div>
       </div>

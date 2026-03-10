@@ -55,6 +55,12 @@ export function NavItems({ entries: initialEntries }: NavItemsProps) {
     <>
       {/* Desktop nav */}
       <nav className="hidden items-center gap-6 text-sm text-zinc-600 md:flex">
+        <Link
+          href="/design-system"
+          className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
+        >
+          Design System
+        </Link>
         {entries.map((entry) => (
           <Link
             key={entry.id}
@@ -81,6 +87,13 @@ export function NavItems({ entries: initialEntries }: NavItemsProps) {
       {/* Mobile dropdown */}
       {open && (
         <nav className="absolute left-0 right-0 top-full z-50 flex flex-col gap-4 border-b border-zinc-200 bg-white px-6 py-4 text-sm text-zinc-600 md:hidden">
+          <Link
+            href="/design-system"
+            className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
+            onClick={() => setOpen(false)}
+          >
+            Design System
+          </Link>
           {entries.map((entry) => (
             <Link
               key={entry.id}
