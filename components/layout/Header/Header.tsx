@@ -23,14 +23,23 @@ export const Header = async () => {
   return (
     <header className="relative border-b transition-colors" style={{ borderColor: "var(--header-border)", backgroundColor: "var(--header-bg)" }}>
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-        <Link
-          href="/"
-          className="text-xl font-bold tracking-tight transition-opacity hover:opacity-80"
-        >
-          Jason Yang - Builder.io
-        </Link>
-        <div className="flex items-center gap-4">
-          <NavItems entries={navMenuEntries} />
+        {/* Mobile: hamburger on left, logo in center */}
+        {/* Desktop: logo on left, nav on right */}
+        <div className="flex items-center gap-4 md:flex-1">
+          <div className="md:hidden">
+            <NavItems entries={navMenuEntries} onlyMobileMenu />
+          </div>
+          <Link
+            href="/"
+            className="text-xl font-bold tracking-tight transition-opacity hover:opacity-80"
+          >
+            Jason Yang - Builder.io
+          </Link>
+        </div>
+
+        {/* Desktop nav and theme switcher */}
+        <div className="hidden items-center gap-4 md:flex">
+          <NavItems entries={navMenuEntries} onlyDesktopNav />
           <ThemeSwitch />
         </div>
       </div>
