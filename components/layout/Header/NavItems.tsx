@@ -34,6 +34,26 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
     return () => document.removeEventListener("keydown", handleEscape);
   }, [open]);
 
+  // Disable body scroll when mobile menu is open
+  useEffect(() => {
+    if (open) {
+      // Save current scroll position
+      const scrollY = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = "100%";
+    } else {
+      // Restore scroll position
+      const scrollY = document.body.style.top;
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.width = "";
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY || "0") * -1);
+      }
+    }
+  }, [open]);
+
   useEffect(() => {
     if (!isPreviewing()) return;
 
@@ -143,8 +163,8 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
       {/* Mobile dropdown */}
       {!onlyDesktopNav && (
         <div
-          className={`absolute left-0 right-0 top-full z-50 overflow-hidden transition-all ease-out motion-reduce:transition-none ${
-            open ? "max-h-[500px] opacity-100 duration-300" : "max-h-0 opacity-0 duration-200"
+          className={`absolute left-0 right-0 top-full z-50 transition-all ease-out motion-reduce:transition-none ${
+            open ? "max-h-[600px] opacity-100 duration-300" : "max-h-0 opacity-0 duration-200 overflow-hidden"
           }`}
         >
           <nav

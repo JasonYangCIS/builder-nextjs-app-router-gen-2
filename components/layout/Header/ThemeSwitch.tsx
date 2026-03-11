@@ -99,7 +99,7 @@ export const ThemeSwitch = () => {
 
       {isOpen && (
         <div
-          className="theme-dropdown absolute right-0 mt-2 w-40 rounded-md border shadow-lg ring-1 ring-black ring-opacity-5"
+          className="theme-dropdown absolute left-0 right-0 mt-2 rounded-md border shadow-lg ring-1 ring-black ring-opacity-5 md:left-auto md:right-0 md:w-40"
           style={{
             borderColor: "var(--card-border)",
             backgroundColor: "var(--card-bg)",
