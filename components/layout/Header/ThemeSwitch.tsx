@@ -58,7 +58,7 @@ export const ThemeSwitch = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="theme-switch-button flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2"
+        className="theme-switch-button flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
         style={{
           borderColor: "var(--header-border)",
           backgroundColor: "var(--card-bg)",
@@ -115,23 +115,25 @@ export const ThemeSwitch = () => {
               <button
                 key={theme.value}
                 onClick={() => handleThemeChange(theme.value)}
-                className={`flex w-full items-center px-4 py-2 text-left text-sm transition-colors ${
+                className={`flex w-full items-center rounded px-4 py-2 text-left text-sm transition-colors hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-inset ${
                   currentTheme === theme.value
-                    ? "bg-brand-50 font-medium text-brand-700"
+                    ? "font-medium"
                     : ""
                 }`}
                 style={{
-                  color:
+                  backgroundColor:
                     currentTheme === theme.value
-                      ? undefined
-                      : "var(--foreground)",
+                      ? "var(--muted-bg)"
+                      : "transparent",
+                  color: "var(--foreground)",
                 }}
                 role="menuitem"
               >
                 {theme.label}
                 {currentTheme === theme.value && (
                   <svg
-                    className="ml-auto h-4 w-4 text-brand-600"
+                    className="ml-auto h-4 w-4"
+                    style={{ color: "var(--color-brand-600)" }}
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -147,15 +149,6 @@ export const ThemeSwitch = () => {
           </div>
         </div>
       )}
-
-      <style jsx>{`
-        .theme-switch-button:hover {
-          background-color: var(--muted-bg);
-        }
-        .theme-dropdown button:hover {
-          background-color: var(--muted-bg);
-        }
-      `}</style>
     </div>
   );
 };

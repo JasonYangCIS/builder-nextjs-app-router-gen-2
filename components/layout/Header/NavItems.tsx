@@ -124,13 +124,11 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
       {/* Mobile hamburger - WCAG 2.1 AA compliant: 44x44px touch target */}
       {!onlyDesktopNav && (
         <button
-          className="menu-button relative flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:scale-100"
+          className="menu-button relative flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all duration-300 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:scale-100"
           style={{
             borderColor: open ? "var(--foreground)" : "var(--header-border)",
             backgroundColor: open ? "var(--muted-bg)" : "transparent",
-            // Focus ring color with proper contrast
-            "--tw-ring-color": "var(--color-brand-500)",
-          } as React.CSSProperties}
+          }}
           onClick={() => setOpen((prev) => !prev)}
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
