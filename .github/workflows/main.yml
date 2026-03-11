@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 24
       - name: Index repository components
         run: npx "@builder.io/dev-tools@latest" index-repo --skipHeader --designSystemName DESIGN_SYSTEM_NAME
         env:
