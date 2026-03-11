@@ -14,7 +14,7 @@ jobs:
         with:
           node-version: 24
       - name: Index repository components
-        run: npx "@builder.io/dev-tools@latest" index-repo --skipHeader --designSystemName DESIGN_SYSTEM_NAME
+        run: npx "@builder.io/dev-tools@latest" index-repo --skipHeader --designSystemName builder-sandbox
         env:
           BUILDER_PUBLIC_KEY: ${{ secrets.BUILDER_PUBLIC_KEY }}
           BUILDER_PRIVATE_KEY: ${{ secrets.BUILDER_PRIVATE_KEY }}
