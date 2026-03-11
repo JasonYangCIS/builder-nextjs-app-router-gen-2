@@ -77,6 +77,15 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
         </nav>
       )}
 
+      {/* Backdrop overlay for mobile menu */}
+      {!onlyDesktopNav && open && (
+        <div
+          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px] transition-opacity duration-300"
+          onClick={() => setOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+
       {/* Mobile hamburger */}
       {!onlyDesktopNav && (
         <button
@@ -116,40 +125,66 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
       )}
 
       {/* Mobile dropdown */}
-      {!onlyDesktopNav && open && (
-        <nav
-          className="absolute left-0 right-0 top-full z-50 flex flex-col gap-4 border-b px-6 py-4 text-sm transition-colors"
-          style={{
-            borderColor: "var(--header-border)",
-            backgroundColor: "var(--header-bg)",
-            color: "var(--foreground)",
-          }}
+      {!onlyDesktopNav && (
+        <div
+          className={`absolute left-0 right-0 top-full z-50 overflow-hidden transition-all duration-300 ease-out ${
+            open ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"
+          }`}
         >
-          <Link
-            href="/design-system"
-            className="transition-colors hover:opacity-80"
-            style={{ color: "var(--muted)" }}
-            onClick={() => setOpen(false)}
+          <nav
+            className={`flex flex-col gap-4 border-b px-6 py-4 text-sm shadow-lg backdrop-blur-sm transition-all duration-300 ${
+              open ? "translate-y-0" : "-translate-y-4"
+            }`}
+            style={{
+              borderColor: "var(--header-border)",
+              backgroundColor: "color-mix(in srgb, var(--header-bg) 95%, transparent)",
+              color: "var(--foreground)",
+            }}
           >
-            Design System
-          </Link>
-          {entries.map((entry) => (
             <Link
-              key={entry.id}
-              href={entry.url}
-              className="transition-colors hover:opacity-80"
+              href="/design-system"
+              className={`menu-link transition-all duration-300 hover:opacity-80 hover:translate-x-1 ${
+                open ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"
+              }`}
+              style={{
+                color: "var(--muted)",
+                transitionDelay: open ? "50ms" : "0ms",
+              }}
               onClick={() => setOpen(false)}
             >
-              {entry.text}
+              Design System
             </Link>
-          ))}
-          <div className="border-t pt-4" style={{ borderColor: "var(--header-border)" }}>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--muted)" }}>
-              Theme
-            </p>
-            <ThemeSwitch />
-          </div>
-        </nav>
+            {entries.map((entry, index) => (
+              <Link
+                key={entry.id}
+                href={entry.url}
+                className={`menu-link transition-all duration-300 hover:opacity-80 hover:translate-x-1 ${
+                  open ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"
+                }`}
+                style={{
+                  transitionDelay: open ? `${(index + 1) * 50 + 50}ms` : "0ms",
+                }}
+                onClick={() => setOpen(false)}
+              >
+                {entry.text}
+              </Link>
+            ))}
+            <div
+              className={`border-t pt-4 transition-all duration-300 ${
+                open ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"
+              }`}
+              style={{
+                borderColor: "var(--header-border)",
+                transitionDelay: open ? `${(entries.length + 1) * 50 + 50}ms` : "0ms",
+              }}
+            >
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--muted)" }}>
+                Theme
+              </p>
+              <ThemeSwitch />
+            </div>
+          </nav>
+        </div>
       )}
     </>
   );
