@@ -90,10 +90,11 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
     <>
       {/* Desktop nav */}
       {!onlyMobileMenu && (
-        <nav className="flex items-center gap-6 text-sm text-zinc-600">
+        <nav className="flex items-center gap-6 text-sm">
           <Link
             href="/design-system"
-            className="text-sm text-zinc-500 hover:text-zinc-900 transition-colors"
+            className="text-sm transition-colors hover:opacity-80"
+            style={{ color: "var(--muted)" }}
           >
             Design System
           </Link>
@@ -101,7 +102,8 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
             <Link
               key={entry.id}
               href={entry.url}
-              className="transition-colors hover:text-zinc-900"
+              className="transition-colors hover:opacity-80"
+              style={{ color: "var(--foreground)" }}
             >
               {entry.text}
             </Link>
