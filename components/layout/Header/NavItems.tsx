@@ -80,14 +80,38 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
       {/* Mobile hamburger */}
       {!onlyDesktopNav && (
         <button
-          className="flex flex-col justify-center gap-1.5 p-1"
+          className="menu-button relative flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 hover:scale-110"
+          style={{
+            borderColor: open ? "var(--foreground)" : "var(--header-border)",
+            backgroundColor: open ? "var(--muted-bg)" : "transparent",
+          }}
           onClick={() => setOpen((prev) => !prev)}
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
         >
-          <span className={`block h-0.5 w-6 transition-transform duration-200 ${open ? "translate-y-2 rotate-45" : ""}`} style={{ backgroundColor: "var(--foreground)" }} />
-          <span className={`block h-0.5 w-6 transition-opacity duration-200 ${open ? "opacity-0" : ""}`} style={{ backgroundColor: "var(--foreground)" }} />
-          <span className={`block h-0.5 w-6 transition-transform duration-200 ${open ? "-translate-y-2 -rotate-45" : ""}`} style={{ backgroundColor: "var(--foreground)" }} />
+          <div className="relative h-4 w-4">
+            {/* Top line */}
+            <span
+              className={`absolute left-0 block h-0.5 w-4 rounded-full transition-all duration-300 ${
+                open ? "top-1.5 rotate-45" : "top-0"
+              }`}
+              style={{ backgroundColor: "var(--foreground)" }}
+            />
+            {/* Middle dot/line */}
+            <span
+              className={`absolute left-1/2 top-1.5 block rounded-full transition-all duration-300 ${
+                open ? "h-0 w-0 opacity-0" : "h-1 w-1 -translate-x-1/2 opacity-100"
+              }`}
+              style={{ backgroundColor: "var(--foreground)" }}
+            />
+            {/* Bottom line */}
+            <span
+              className={`absolute left-0 block h-0.5 w-4 rounded-full transition-all duration-300 ${
+                open ? "top-1.5 -rotate-45" : "top-3"
+              }`}
+              style={{ backgroundColor: "var(--foreground)" }}
+            />
+          </div>
         </button>
       )}
 
