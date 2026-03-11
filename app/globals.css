@@ -25,6 +25,77 @@
   --card-border: #27272a;
   --muted: #a1a1aa;
   --muted-bg: #27272a;
+
+  /* Brand color scale - Lighter indigo for dark mode */
+  --color-brand-50: #1e1b4b;
+  --color-brand-100: #312e81;
+  --color-brand-200: #3730a3;
+  --color-brand-300: #4338ca;
+  --color-brand-400: #6366f1;
+  --color-brand-500: #818cf8;
+  --color-brand-600: #a5b4fc;
+  --color-brand-700: #c7d2fe;
+  --color-brand-800: #e0e7ff;
+  --color-brand-900: #eef2ff;
+  --color-brand-950: #f5f6ff;
+
+  /* Accent color scale - Lighter violet for dark mode */
+  --color-accent-50: #2e1065;
+  --color-accent-100: #4c1d95;
+  --color-accent-200: #5b21b6;
+  --color-accent-300: #6d28d9;
+  --color-accent-400: #8b5cf6;
+  --color-accent-500: #a78bfa;
+  --color-accent-600: #c4b5fd;
+  --color-accent-700: #ddd6fe;
+  --color-accent-800: #ede9fe;
+  --color-accent-900: #f5f3ff;
+  --color-accent-950: #faf8ff;
+
+  /* Success - Brighter emerald for dark mode */
+  --color-success-50: #064e3b;
+  --color-success-100: #065f46;
+  --color-success-600: #10b981;
+  --color-success-700: #34d399;
+
+  /* Warning - Brighter amber for dark mode */
+  --color-warning-50: #78350f;
+  --color-warning-100: #92400e;
+  --color-warning-600: #f59e0b;
+  --color-warning-700: #fbbf24;
+
+  /* Error - Brighter rose for dark mode */
+  --color-error-50: #881337;
+  --color-error-100: #9f1239;
+  --color-error-600: #f43f5e;
+  --color-error-700: #fb7185;
+}
+
+[data-theme="dark"] .gradient-brand {
+  background: linear-gradient(135deg, #818cf8, #a78bfa);
+}
+
+[data-theme="dark"] .gradient-brand-subtle {
+  background: linear-gradient(135deg, #312e81, #4c1d95);
+}
+
+[data-theme="dark"] .gradient-brand-dark {
+  background: linear-gradient(135deg, #1e1b4b, #2e1065);
+}
+
+[data-theme="dark"] .gradient-mesh {
+  background:
+    radial-gradient(ellipse at 20% 50%, color-mix(in srgb, #818cf8 25%, transparent) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, color-mix(in srgb, #a78bfa 20%, transparent) 0%, transparent 60%),
+    radial-gradient(ellipse at 60% 80%, color-mix(in srgb, #6366f1 15%, transparent) 0%, transparent 50%),
+    #09090b;
+}
+
+[data-theme="dark"] .gradient-brand-text {
+  background: linear-gradient(135deg, #a5b4fc, #c4b5fd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Ritual theme (inspired by ritual.com) */
@@ -39,6 +110,50 @@
   --muted-bg: #eaeef0;
   --accent: #ffd600;
   --accent-hover: #ffde33;
+
+  /* Brand color scale - Indigo Blue (#142b6f) */
+  --color-brand-50: #f0f3f9;
+  --color-brand-100: #d0d5e2;
+  --color-brand-200: #a1aac5;
+  --color-brand-300: #8290b3;
+  --color-brand-400: #62719f;
+  --color-brand-500: #43558c;
+  --color-brand-600: #142b6f;
+  --color-brand-700: #0e1e4f;
+  --color-brand-800: #0c1a44;
+  --color-brand-900: #081231;
+  --color-brand-950: #050b1f;
+
+  /* Accent color scale - Yellow Ochre (#ffd600) */
+  --color-accent-50: #fff7cc;
+  --color-accent-100: #ffef99;
+  --color-accent-200: #ffe666;
+  --color-accent-300: #ffde33;
+  --color-accent-400: #ffd600;
+  --color-accent-500: #ffd600;
+  --color-accent-600: #e6c100;
+  --color-accent-700: #ccab00;
+  --color-accent-800: #b39600;
+  --color-accent-900: #998000;
+  --color-accent-950: #665500;
+
+  /* Success color scale - Green (#4c840d) */
+  --color-success-50: #f2f8ed;
+  --color-success-100: #d9edcc;
+  --color-success-600: #4c840d;
+  --color-success-700: #3d6a0b;
+
+  /* Warning color scale - Orange (#db7f16) */
+  --color-warning-50: #fef5eb;
+  --color-warning-100: #fce5c7;
+  --color-warning-600: #db7f16;
+  --color-warning-700: #b46612;
+
+  /* Error color scale - Red (#c83d1e) */
+  --color-error-50: #fef2f0;
+  --color-error-100: #fcddd8;
+  --color-error-600: #c83d1e;
+  --color-error-700: #a13118;
 }
 
 /* Ritual theme accent effects */
@@ -49,6 +164,22 @@
 
 [data-theme="ritual"] .gradient-brand {
   background: linear-gradient(135deg, #142b6f, #96bacc);
+}
+
+[data-theme="ritual"] .gradient-brand-subtle {
+  background: linear-gradient(135deg, #f0f3f9, #fff7cc);
+}
+
+[data-theme="ritual"] .gradient-brand-dark {
+  background: linear-gradient(135deg, #0c1a44, #050b1f);
+}
+
+[data-theme="ritual"] .gradient-mesh {
+  background:
+    radial-gradient(ellipse at 20% 50%, color-mix(in srgb, #142b6f 25%, transparent) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 20%, color-mix(in srgb, #ffd600 20%, transparent) 0%, transparent 60%),
+    radial-gradient(ellipse at 60% 80%, color-mix(in srgb, #43558c 15%, transparent) 0%, transparent 50%),
+    #050b1f;
 }
 
 [data-theme="ritual"] .gradient-brand-text {
