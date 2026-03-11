@@ -1,10 +1,61 @@
 @import "tailwindcss";
 @import "../styles/tokens.css";
 
-/* ─── App theme ──────────────────────────────────────────────────────────── */
-:root {
+/* ─── Theme System ───────────────────────────────────────────────────────── */
+/* Default theme (light) */
+:root,
+[data-theme="default"] {
   --background: #ffffff;
   --foreground: #171717;
+  --header-bg: #ffffff;
+  --header-border: #e4e4e7;
+  --card-bg: #ffffff;
+  --card-border: #e4e4e7;
+  --muted: #71717a;
+  --muted-bg: #f4f4f5;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --background: #09090b;
+  --foreground: #fafafa;
+  --header-bg: #18181b;
+  --header-border: #27272a;
+  --card-bg: #18181b;
+  --card-border: #27272a;
+  --muted: #a1a1aa;
+  --muted-bg: #27272a;
+}
+
+/* Ritual theme (inspired by ritual.com) */
+[data-theme="ritual"] {
+  --background: #f5f7f8;
+  --foreground: #142b6f;
+  --header-bg: #ffffff;
+  --header-border: #c3cfd5;
+  --card-bg: #ffffff;
+  --card-border: #dbe2e6;
+  --muted: #62719f;
+  --muted-bg: #eaeef0;
+  --accent: #ffd600;
+  --accent-hover: #ffde33;
+}
+
+/* Ritual theme accent effects */
+[data-theme="ritual"] a:hover,
+[data-theme="ritual"] button:hover {
+  color: var(--accent);
+}
+
+[data-theme="ritual"] .gradient-brand {
+  background: linear-gradient(135deg, #142b6f, #96bacc);
+}
+
+[data-theme="ritual"] .gradient-brand-text {
+  background: linear-gradient(135deg, #142b6f, #0b38bd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 @theme inline {
@@ -19,6 +70,7 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1,
