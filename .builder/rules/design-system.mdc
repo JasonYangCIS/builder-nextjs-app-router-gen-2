@@ -1,6 +1,12 @@
+---
+description: Design system components, tokens, and WCAG rules
+globs: components/design-system/**,styles/**,app/design-system/**
+alwaysApply: false
+---
 # Design System Rules
 
 Full conventions and token reference: `docs/skills/design-system.md`
+Token scoped rules: `styles/.builderrules`
 
 ## Critical Rules
 
@@ -9,6 +15,41 @@ Full conventions and token reference: `docs/skills/design-system.md`
 - Never use `text-zinc-400` or lower for body text — fails WCAG AA (minimum 4.5:1 contrast)
 - Use `gradient-brand-text` only on headings/display text, never on body text
 - Use `cn()` from `@/utils/cn` for conditional Tailwind class composition
+
+## Design Tokens
+
+Two layers of Builder design token integration exist in this repo:
+
+### 1. Publish — Visual Editor token registration
+`components/builder/BuilderDesignTokens.ts` calls `register("editor.settings", { designTokens })`
+to surface tokens in the Style tab of the Builder visual editor (color pickers, background image fields).
+Imported as a side-effect in `builder-registry.ts`.
+
+To add or change a token: update `BuilderDesignTokens.ts` and `styles/tokens.css` together.
+Set `styleStrictMode: true` in that file to prevent editors from entering off-palette values.
+
+### 2. Fusion — DSI indexing
+`builder.config.json` + `styles/.builderrules` configure `index-repo` to catalog CSS variables
+from `styles/tokens.css` into Builder's Design System Intelligence.
+Run: `npx "@builder.io/dev-tools@latest" index-repo`
+
+### Token tiers (color scales in `styles/tokens.css`)
+
+| Tier | Suffixes | Use |
+|------|----------|-----|
+| Backgrounds | 50, 100 | Section fills, card tints, status backgrounds |
+| Interactive / text | 600, 700 | Buttons, links, body text on white — all pass WCAG AA |
+| Deep / dark | 800–950 | Dark hero backgrounds |
+
+### Gradient utilities (also registered as `backgroundImage` tokens)
+
+| Class | Value alias in BuilderDesignTokens.ts |
+|-------|-----|
+| `gradient-brand` | "Gradient Brand · indigo → violet" |
+| `gradient-brand-subtle` | "Gradient Brand Subtle · tinted wash" |
+| `gradient-brand-dark` | "Gradient Brand Dark · deep indigo → violet" |
+| `gradient-mesh` | Not registered — multi-stop radial, use CSS class directly |
+| `gradient-brand-text` | Not registered — CSS clip technique, use CSS class directly |
 
 ## Extending the Design System
 

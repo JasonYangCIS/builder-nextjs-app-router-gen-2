@@ -1,5 +1,6 @@
 "use client";
 import type { RegisteredComponent } from "@builder.io/sdk-react";
+import "@/components/builder/BuilderDesignTokens";
 import Counter from "./components/Counter/Counter";
 import { Button } from "./components/design-system/Button/Button";
 import { Typography } from "./components/design-system/Typography/Typography";

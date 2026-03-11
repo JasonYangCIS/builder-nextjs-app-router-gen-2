@@ -1,0 +1,43 @@
+# styles/.builderrules — Token & Theming Rules
+
+## Token usage
+
+- Always prefer CSS custom properties (tokens) over hardcoded values for color, spacing,
+  typography, border-radius, shadow, and z-index.
+- Token file: `styles/tokens.css` — `@theme` block auto-generates Tailwind utilities.
+- If a token is missing, add it to the `@theme` block rather than using a raw value.
+
+## Color token tiers
+
+The color scales have three tiers; use the right one:
+
+| Tier | Suffixes | Use |
+|------|----------|-----|
+| Backgrounds | 50, 100 | Section fills, card tints, status backgrounds |
+| Interactive / text | 600, 700 | Buttons, links, body text on white — all pass WCAG AA |
+| Deep / dark | 800, 900, 950 | Dark hero backgrounds, high-contrast accents |
+
+Do NOT use 200–500 tier tokens for text on white backgrounds — they fail WCAG AA contrast.
+
+## Gradient utilities
+
+Use the pre-built gradient classes instead of writing gradient CSS from scratch:
+
+| Class | Use |
+|-------|-----|
+| `gradient-brand` | CTAs, active states, primary backgrounds |
+| `gradient-brand-subtle` | Section fills, card tints |
+| `gradient-brand-dark` | Dark hero sections, banners |
+| `gradient-mesh` | Hero backgrounds, marketing splash sections |
+| `gradient-brand-text` | Heading text — never use on body copy |
+
+## Design System Indexing rules
+
+When indexing design tokens for Builder DSI:
+
+- Include the 600 and 700 level color tokens as the primary interactive palette.
+- Include the 50 and 100 level tokens as the background/surface palette.
+- Include all five gradient utility classes as named utilities.
+- Exclude primitive mid-range tokens (200–500 suffix) from the indexed palette —
+  they exist for fine-tuning, not as primary choices.
+- Group tokens by semantic role: `brand`, `accent`, `success`, `warning`, `error`.
