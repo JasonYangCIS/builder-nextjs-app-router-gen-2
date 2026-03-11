@@ -2,11 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/design-system";
 
-interface CounterProps {
-  initialCount?: number;
-}
-
-function Counter({ initialCount = 99 }: CounterProps) {
+function Counter({ initialCount = 99 }: { initialCount?: number; }) {
   const [count, setCount] = useState(initialCount);
 
   return (

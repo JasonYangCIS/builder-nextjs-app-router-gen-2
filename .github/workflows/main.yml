@@ -3,7 +3,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "src/components/**"
+      - "components/**"
 
 jobs:
   index-components:
