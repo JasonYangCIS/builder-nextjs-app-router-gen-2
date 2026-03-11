@@ -4,6 +4,7 @@ import { Typography } from "@/components/design-system/Typography/Typography";
 import { Badge } from "@/components/design-system/Badge/Badge";
 import { Input } from "@/components/design-system/Input/Input";
 import { Card } from "@/components/design-system/Card/Card";
+import Counter from "@/components/Counter/Counter";
 
 export const metadata: Metadata = {
   title: "Design System",
@@ -137,6 +138,7 @@ const NAV = [
   { id: "badge",      label: "Badge" },
   { id: "input",      label: "Input" },
   { id: "card",       label: "Card" },
+  { id: "counter",    label: "Counter" },
 ];
 
 export default function DesignSystemPage() {
@@ -455,6 +457,27 @@ export default function DesignSystemPage() {
                     <p className="text-sm font-medium text-zinc-800">Floating card</p>
                     <p className="mt-1 text-sm text-zinc-500">No border, elevated with shadow.</p>
                   </Card>
+                </DemoItem>
+              </DemoRow>
+            </Section>
+
+            {/* ── Counter ────────────────────────────────────────────────── */}
+            <Section
+              id="counter"
+              title="Counter"
+              description="Stateful counter widget. Uses Button (secondary, sm) internally."
+            >
+              <DemoRow label="default">
+                <DemoItem label="initialCount=99">
+                  <Counter />
+                </DemoItem>
+              </DemoRow>
+              <DemoRow label="initialCount">
+                <DemoItem label="initialCount=0">
+                  <Counter initialCount={0} />
+                </DemoItem>
+                <DemoItem label="initialCount=10">
+                  <Counter initialCount={10} />
                 </DemoItem>
               </DemoRow>
             </Section>

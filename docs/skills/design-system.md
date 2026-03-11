@@ -10,8 +10,9 @@ Conventions for working with the custom design system in this repo.
 |-------|----------|---------|
 | Tokens | `styles/tokens.css` | Single source of truth — colors, gradients |
 | Primitives | `components/design-system/` | Button, Typography, Badge, Input, Card |
+| Other components | `components/Counter/Counter.tsx` | Example client component with state |
 | Barrel | `components/design-system/index.ts` | Public API for all DS imports |
-| Showcase | `app/design-system/page.tsx` | Storybook-style visual reference at `/design-system` |
+| Showcase | `app/design-system/page.tsx` | Storybook-style visual reference at `/design-system`; also the Playwright test harness for all DS components and Counter |
 
 ---
 

@@ -29,3 +29,11 @@ These rules apply to every task. Do not deviate from them.
 ## Imports & Paths
 - Always use the `@/` path alias for internal imports — never use relative paths like `../../`
 - Import design system components from the barrel: `@/components/design-system`
+
+## Testing
+- Tests live in `tests/` — mirroring the component structure (`tests/design-system/`, `tests/blog/`, `tests/layout/`)
+- Run with `npm test` (headless) or `npm run test:ui` (interactive)
+- Two fixture pages serve as test harnesses — do not link them from the app:
+  - `app/design-system/page.tsx` — design system components (Button, Badge, Input, Card, Typography, Counter)
+  - `app/test/blog-components/page.tsx` — blog components with static mock data
+- For full conventions, gotchas, and fixture page patterns: `docs/skills/testing.md`
