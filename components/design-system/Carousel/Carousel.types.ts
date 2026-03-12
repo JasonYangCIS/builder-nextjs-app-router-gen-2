@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
+import type { SwiperOptions } from "swiper/types";
 
-export type CarouselEffect = "slide" | "fade" | "cube" | "coverflow" | "flip";
-export type CarouselDirection = "horizontal" | "vertical";
+// Re-export Swiper's native types for effect and direction
+export type CarouselEffect = NonNullable<SwiperOptions["effect"]>;
+export type CarouselDirection = NonNullable<SwiperOptions["direction"]>;
 
 export interface CarouselProps {
   /**
