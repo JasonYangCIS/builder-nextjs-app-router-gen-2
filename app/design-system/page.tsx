@@ -27,12 +27,12 @@ function Section({
   return (
     <section id={id} className="scroll-mt-8">
       <div className="mb-5">
-        <h2 className="text-base font-semibold text-zinc-900">{title}</h2>
+        <h2 className="text-base font-semibold" style={{ color: "var(--foreground)" }}>{title}</h2>
         {description && (
-          <p className="mt-0.5 text-sm text-zinc-500">{description}</p>
+          <p className="mt-0.5 text-sm" style={{ color: "var(--muted)" }}>{description}</p>
         )}
       </div>
-      <div className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+      <div className="overflow-hidden rounded-xl border transition-colors" style={{ borderColor: "var(--card-border)", backgroundColor: "var(--card-bg)" }}>
         {children}
       </div>
     </section>
@@ -49,10 +49,10 @@ function DemoRow({
   className?: string;
 }) {
   return (
-    <div className="border-b border-zinc-100 last:border-b-0">
+    <div className="border-b last:border-b-0" style={{ borderColor: "var(--card-border)" }}>
       {label && (
-        <div className="border-b border-zinc-100 bg-zinc-50 px-5 py-2">
-          <span className="font-mono text-[11px] text-zinc-500">{label}</span>
+        <div className="border-b px-5 py-2" style={{ borderColor: "var(--card-border)", backgroundColor: "var(--muted-bg)" }}>
+          <span className="font-mono text-[11px]" style={{ color: "var(--muted)" }}>{label}</span>
         </div>
       )}
       <div className={className ?? "flex flex-wrap items-end gap-4 px-5 py-5"}>
@@ -74,7 +74,7 @@ function DemoItem({
   return (
     <div className={`flex flex-col gap-2 ${align === "center" ? "items-center" : "items-start"}`}>
       {children}
-      <span className="font-mono text-[11px] text-zinc-500">{label}</span>
+      <span className="font-mono text-[11px]" style={{ color: "var(--muted)" }}>{label}</span>
     </div>
   );
 }
@@ -89,7 +89,7 @@ function ColorSwatch({ token, label }: { token: string; label?: string }) {
         style={{ backgroundColor: `var(${token})` }}
         title={token}
       />
-      <span className="font-mono text-[10px] text-zinc-500">{label}</span>
+      <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>{label}</span>
     </div>
   );
 }
@@ -97,7 +97,7 @@ function ColorSwatch({ token, label }: { token: string; label?: string }) {
 function ColorScale({ name, shades }: { name: string; shades: number[] }) {
   return (
     <div>
-      <p className="mb-2.5 font-mono text-xs font-medium text-zinc-500">{name}</p>
+      <p className="mb-2.5 font-mono text-xs font-medium" style={{ color: "var(--muted)" }}>{name}</p>
       <div className="flex flex-wrap gap-2">
         {shades.map((shade) => (
           <ColorSwatch
@@ -131,7 +131,8 @@ function StatusRow({ name }: { name: string }) {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 const NAV = [
-  { id: "tokens",     label: "Tokens" },
+  { id: "theme-tokens", label: "Theme Tokens" },
+  { id: "tokens",     label: "Color Tokens" },
   { id: "gradients",  label: "Gradients" },
   { id: "typography", label: "Typography" },
   { id: "button",     label: "Button" },
@@ -143,18 +144,18 @@ const NAV = [
 
 export default function DesignSystemPage() {
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="min-h-screen transition-colors" style={{ backgroundColor: "var(--background)" }}>
       <div className="mx-auto max-w-5xl px-6 py-12">
 
         {/* Page header */}
         <div className="mb-10">
-          <span className="font-mono text-xs font-semibold uppercase tracking-widest text-zinc-500">
+          <span className="font-mono text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
             v1.0
           </span>
-          <h1 className="mt-1.5 text-3xl font-bold tracking-tight text-zinc-900">
+          <h1 className="mt-1.5 text-3xl font-bold tracking-tight" style={{ color: "var(--foreground)" }}>
             Design System
           </h1>
-          <p className="mt-2 max-w-lg text-sm text-zinc-500">
+          <p className="mt-2 max-w-lg text-sm" style={{ color: "var(--muted)" }}>
             Component library and design token reference. Built with Tailwind CSS. WCAG 2.1 AA compliant.
           </p>
         </div>
@@ -164,14 +165,15 @@ export default function DesignSystemPage() {
           {/* Sidebar */}
           <aside className="hidden lg:block w-40 shrink-0">
             <nav className="sticky top-8 flex flex-col">
-              <p className="mb-2 px-3 font-mono text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+              <p className="mb-2 px-3 font-mono text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
                 Components
               </p>
               {NAV.map((item) => (
                 <a
                   key={item.id}
                   href={`#${item.id}`}
-                  className="rounded-md px-3 py-1.5 text-sm text-zinc-600 transition-colors hover:bg-zinc-200 hover:text-zinc-900"
+                  className="rounded-md px-3 py-1.5 text-sm transition-colors hover:opacity-80"
+                  style={{ color: "var(--foreground)" }}
                 >
                   {item.label}
                 </a>
@@ -182,11 +184,78 @@ export default function DesignSystemPage() {
           {/* Main content */}
           <main className="min-w-0 flex-1 space-y-12">
 
+            {/* ── Theme Tokens ───────────────────────────────────────────── */}
+            <Section
+              id="theme-tokens"
+              title="Theme Tokens"
+              description="Dynamic tokens that change based on the selected theme (Default, Dark, or Ritual). Switch themes using the dropdown in the header."
+            >
+              <div className="flex flex-col gap-6 p-5">
+                <div className="grid grid-cols-2 gap-6 sm:grid-cols-3">
+                  <div className="flex flex-col gap-2">
+                    <div
+                      className="h-20 w-full rounded-lg ring-1 ring-inset ring-black/10"
+                      style={{ backgroundColor: "var(--background)" }}
+                    />
+                    <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>--background</span>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div
+                      className="h-20 w-full rounded-lg ring-1 ring-inset ring-black/10"
+                      style={{ backgroundColor: "var(--foreground)" }}
+                    />
+                    <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>--foreground</span>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div
+                      className="h-20 w-full rounded-lg ring-1 ring-inset ring-black/10"
+                      style={{ backgroundColor: "var(--header-bg)" }}
+                    />
+                    <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>--header-bg</span>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div
+                      className="h-20 w-full rounded-lg ring-1 ring-inset ring-black/10"
+                      style={{ backgroundColor: "var(--card-bg)" }}
+                    />
+                    <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>--card-bg</span>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div
+                      className="h-20 w-full rounded-lg ring-1 ring-inset"
+                      style={{
+                        backgroundColor: "var(--muted-bg)",
+                        borderColor: "var(--card-border)",
+                        borderWidth: "1px"
+                      }}
+                    />
+                    <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>--muted-bg</span>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <div
+                      className="h-20 w-full rounded-lg flex items-center justify-center"
+                      style={{ backgroundColor: "var(--muted-bg)" }}
+                    >
+                      <span className="font-mono text-xs" style={{ color: "var(--muted)" }}>Muted text</span>
+                    </div>
+                    <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>--muted</span>
+                  </div>
+                </div>
+                <div className="rounded-lg p-4" style={{ backgroundColor: "var(--muted-bg)" }}>
+                  <p className="text-sm font-medium" style={{ color: "var(--foreground)" }}>Theme Preview</p>
+                  <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>
+                    This section demonstrates how the theme tokens adapt to your selected theme.
+                    Try switching between Default, Dark, and Ritual themes to see the changes.
+                  </p>
+                </div>
+              </div>
+            </Section>
+
             {/* ── Tokens ─────────────────────────────────────────────────── */}
             <Section
               id="tokens"
               title="Color Tokens"
-              description="Reference via CSS custom properties (var(--color-brand-600)) or Tailwind utilities (bg-brand-600)."
+              description="Static brand tokens. Reference via CSS custom properties (var(--color-brand-600)) or Tailwind utilities (bg-brand-600)."
             >
               <div className="flex flex-col gap-6 p-5">
                 <ColorScale
@@ -237,27 +306,27 @@ export default function DesignSystemPage() {
                   dark: true,
                 },
               ].map(({ cls, label, desc, dark }) => (
-                <div key={cls} className="border-b border-zinc-100 last:border-b-0">
-                  <div className="border-b border-zinc-100 bg-zinc-50 px-5 py-2">
-                    <span className="font-mono text-[11px] text-zinc-500">{label}</span>
+                <div key={cls} className="border-b last:border-b-0" style={{ borderColor: "var(--card-border)" }}>
+                  <div className="border-b px-5 py-2" style={{ borderColor: "var(--card-border)", backgroundColor: "var(--muted-bg)" }}>
+                    <span className="font-mono text-[11px]" style={{ color: "var(--muted)" }}>{label}</span>
                   </div>
                   <div className="flex items-center gap-6 px-5 py-5">
                     <div className={`${cls} h-20 w-52 shrink-0 rounded-xl`} />
-                    <p className="text-sm text-zinc-500">{desc}</p>
+                    <p className="text-sm" style={{ color: "var(--muted)" }}>{desc}</p>
                   </div>
                 </div>
               ))}
 
               {/* Text gradient */}
-              <div className="border-b border-zinc-100 last:border-b-0">
-                <div className="border-b border-zinc-100 bg-zinc-50 px-5 py-2">
-                  <span className="font-mono text-[11px] text-zinc-500">gradient-brand-text</span>
+              <div className="border-b last:border-b-0" style={{ borderColor: "var(--card-border)" }}>
+                <div className="border-b px-5 py-2" style={{ borderColor: "var(--card-border)", backgroundColor: "var(--muted-bg)" }}>
+                  <span className="font-mono text-[11px]" style={{ color: "var(--muted)" }}>gradient-brand-text</span>
                 </div>
                 <div className="flex items-center gap-6 px-5 py-5">
                   <p className="gradient-brand-text shrink-0 text-3xl font-bold">
                     Hello World
                   </p>
-                  <p className="text-sm text-zinc-500">
+                  <p className="text-sm" style={{ color: "var(--muted)" }}>
                     Text gradient — headings, display type.
                   </p>
                 </div>

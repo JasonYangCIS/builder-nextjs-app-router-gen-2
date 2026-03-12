@@ -70,6 +70,61 @@ utils/cn.ts                  # className joiner
 
 ---
 
+## WCAG 2.1 AA Compliance Checklist
+
+**Every code change MUST meet WCAG 2.1 Level AA accessibility standards.**
+
+### Required Checks Before Committing
+
+#### Color Contrast
+- [ ] Normal text (< 24px): minimum 4.5:1 contrast ratio
+- [ ] Large text (≥ 24px or ≥ 19px bold): minimum 3:1 contrast ratio
+- [ ] UI components and graphics: minimum 3:1 contrast ratio
+- [ ] Use theme variables that maintain proper contrast across all themes
+
+#### Interactive Elements
+- [ ] Touch targets: minimum 44×44px (mobile) or 24×24px (desktop)
+- [ ] Visible focus indicators on all focusable elements
+- [ ] Focus ring with sufficient contrast (2px outline, offset from element)
+- [ ] Hover states that don't rely solely on color
+
+#### Keyboard Navigation
+- [ ] All interactive elements accessible via keyboard (Tab, Enter, Space)
+- [ ] Escape key closes modals, dropdowns, and overlays
+- [ ] Arrow keys for navigation where appropriate
+- [ ] No keyboard traps
+
+#### ARIA and Semantics
+- [ ] Proper semantic HTML (nav, button, header, main, etc.)
+- [ ] ARIA labels on icon-only buttons (`aria-label`)
+- [ ] `aria-expanded` on toggleable elements
+- [ ] `aria-controls` linking controls to their targets
+- [ ] `aria-hidden="true"` on decorative elements
+- [ ] Proper heading hierarchy (h1 → h2 → h3)
+
+#### Content and Structure
+- [ ] Descriptive link text (avoid "click here")
+- [ ] Alt text on all images (or `alt=""` for decorative)
+- [ ] Form labels properly associated with inputs
+- [ ] Error messages clearly describe the issue
+- [ ] Loading states announced to screen readers
+
+#### Motion and Animation
+- [ ] Respect `prefers-reduced-motion` for users with vestibular disorders
+- [ ] Animations can be paused or disabled
+- [ ] No auto-playing video/audio without controls
+
+### Testing Tools
+- Browser DevTools: Lighthouse accessibility audit
+- Color contrast: WebAIM Contrast Checker or similar
+- Keyboard: Navigate entire UI using only keyboard
+- Screen reader: Test with NVDA (Windows) or VoiceOver (Mac)
+
+### Reference
+Full guidelines: [WCAG 2.1 Quick Reference](https://www.w3.org/WAI/WCAG21/quickref/?versions=2.1&levels=aa)
+
+---
+
 ## Skills
 
 For task-specific patterns and gotchas, consult the relevant skill:

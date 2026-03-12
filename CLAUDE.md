@@ -8,6 +8,20 @@ Next.js App Router sandbox for Builder.io Gen 2 SDK integration with a custom de
 
 @.builderrules
 
+## WCAG 2.1 AA Compliance
+
+**CRITICAL:** All code changes MUST meet WCAG 2.1 Level AA accessibility standards.
+
+See full checklist in @AGENTS.md under "WCAG 2.1 AA Compliance Checklist"
+
+### Key Requirements (must verify for every change):
+- Color contrast: 4.5:1 for normal text, 3:1 for large text and UI components
+- Touch targets: Minimum 44×44px on mobile, 24×24px on desktop
+- Keyboard navigation: All interactive elements accessible via keyboard, Escape closes overlays
+- Focus states: Visible focus rings on all focusable elements with 2px outline
+- ARIA: Proper labels, expanded states, controls, and semantic HTML
+- Motion: Respect `prefers-reduced-motion` for animations
+
 ## Builder.io SDK Patterns
 
 @docs/skills/builder-io.md

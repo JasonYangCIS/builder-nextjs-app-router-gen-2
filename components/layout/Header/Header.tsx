@@ -2,6 +2,7 @@ import Link from "next/link";
 import { fetchEntries } from "@builder.io/sdk-react";
 import { config } from "@/config";
 import { NavItems } from "./NavItems";
+import { ThemeSwitch } from "./ThemeSwitch";
 
 export const Header = async () => {
   const raw = await fetchEntries({
@@ -20,7 +21,7 @@ export const Header = async () => {
     }));
 
   return (
-    <header className="relative border-b border-zinc-200">
+    <header className="relative border-b transition-colors" style={{ borderColor: "var(--header-border)", backgroundColor: "var(--header-bg)" }}>
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         <Link
           href="/"
@@ -28,8 +29,18 @@ export const Header = async () => {
         >
           Jason Yang - Builder.io
         </Link>
-        <div className="flex items-center gap-6">
-          <NavItems entries={navMenuEntries} />
+
+        <div className="flex items-center gap-4">
+          {/* Desktop nav and theme switcher */}
+          <div className="hidden items-center gap-4 md:flex">
+            <NavItems entries={navMenuEntries} onlyDesktopNav />
+            <ThemeSwitch />
+          </div>
+
+          {/* Mobile hamburger menu */}
+          <div className="md:hidden">
+            <NavItems entries={navMenuEntries} onlyMobileMenu />
+          </div>
         </div>
       </div>
     </header>
