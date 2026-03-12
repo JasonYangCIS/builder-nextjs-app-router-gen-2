@@ -1,4 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
+import * as dotenv from "dotenv";
+import * as path from "path";
+
+// Load .env.test to set PLAYWRIGHT_TEST=true
+dotenv.config({ path: path.resolve(__dirname, ".env.test") });
 
 export default defineConfig({
   testDir: "./tests",
@@ -18,12 +23,9 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "npm run dev",
+    command: "npm run dev:test",
     url: "http://localhost:3000",
-    reuseExistingServer: true,
+    reuseExistingServer: !process.env.CI, // Don't reuse in CI to ensure clean start
     timeout: 120_000,
-    env: {
-      PLAYWRIGHT_TEST: 'true',
-    },
   },
 });
