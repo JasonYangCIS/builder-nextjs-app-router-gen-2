@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "playwright test",
-    "tests": "playwright test",
+    "test:install": "playwright install --with-deps chromium",
+    "tests": "npm run test:install && playwright test",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug"
   },
