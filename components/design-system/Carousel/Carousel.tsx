@@ -67,7 +67,23 @@ export function Carousel({
   if (autoplay) modules.push(Autoplay);
 
   // Convert children to array for proper rendering
-  const slides = Children.toArray(children).filter((child) => isValidElement(child));
+  // Builder.io may pass children as a wrapper element with children inside
+  let slides = Children.toArray(children).filter((child) => isValidElement(child));
+
+  // If there's only one child and it has children of its own (Builder wrapper),
+  // use those children as individual slides instead
+  if (slides.length === 1 && isValidElement(slides[0])) {
+    const firstChild = slides[0];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const props = firstChild.props as any;
+    if (props?.children) {
+      const nestedChildren = Children.toArray(props.children).filter((child) => isValidElement(child));
+      // Only use nested children if there are multiple, otherwise keep the single child
+      if (nestedChildren.length > 1) {
+        slides = nestedChildren;
+      }
+    }
+  }
 
   return (
     <div

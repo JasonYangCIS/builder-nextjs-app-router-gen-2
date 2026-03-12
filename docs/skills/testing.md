@@ -89,11 +89,27 @@ expect(text?.trim().length).toBeGreaterThan(0);
 
 ## Gotchas
 
-### Builder DevTools injects extra elements — scope by class
+### Builder DevTools — Automatically Disabled During Tests
 
-Builder DevTools (active in dev mode) injects its own `<header>`, `<footer>`, and `<button aria-label="...">` elements into every page. Using bare `page.locator("header")` or `page.locator("footer")` in Playwright strict mode causes "resolved to N elements" failures.
+**IMPORTANT:** Builder DevTools is automatically disabled when running Playwright tests to prevent pointer event interception and element conflicts.
 
-**Always scope to the app's element using a unique class:**
+**How it works:**
+- `playwright.config.ts` sets `PLAYWRIGHT_TEST=true` environment variable
+- `next.config.ts` conditionally skips `BuilderDevTools()` wrapper when this flag is detected
+- Tests run against a clean app without the DevTools overlay
+
+**Why this matters:**
+- DevTools injects `<builder-dev-tools-overview>` which intercepts clicks
+- DevTools adds extra `<header>`, `<footer>`, and buttons that conflict with selectors
+- Without this flag, interactive tests (clicks, typing) will timeout
+
+**Testing locally:**
+```bash
+npm test           # DevTools disabled automatically
+npm run dev        # DevTools enabled for normal development
+```
+
+**Always scope to the app's element using a unique class** (defensive practice):
 
 ```ts
 // Header — scoped by its unique class combination
