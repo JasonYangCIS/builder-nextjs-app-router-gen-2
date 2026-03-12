@@ -7,6 +7,7 @@ import { Typography } from "./components/design-system/Typography/Typography";
 import { Badge } from "./components/design-system/Badge/Badge";
 import { Input } from "./components/design-system/Input/Input";
 import { Card } from "./components/design-system/Card/Card";
+import { Carousel } from "./components/design-system/Carousel/Carousel";
 
 export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
   // ─── Existing ────────────────────────────────────────────────────────────
@@ -190,6 +191,115 @@ export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
         name: "borderless",
         type: "boolean",
         defaultValue: false,
+      },
+    ],
+  },
+
+  {
+    component: Carousel,
+    name: "DS Carousel",
+    canHaveChildren: true,
+    childRequirements: {
+      message: "You can drop any content here to create carousel slides",
+    },
+    inputs: [
+      {
+        name: "slidesPerView",
+        type: "number",
+        defaultValue: 1,
+        helperText: "Number of slides visible at once",
+      },
+      {
+        name: "spaceBetween",
+        type: "number",
+        defaultValue: 0,
+        helperText: "Space between slides in pixels",
+      },
+      {
+        name: "navigation",
+        type: "boolean",
+        defaultValue: true,
+        helperText: "Show navigation arrows",
+      },
+      {
+        name: "pagination",
+        type: "boolean",
+        defaultValue: true,
+        helperText: "Show pagination dots",
+      },
+      {
+        name: "paginationClickable",
+        type: "boolean",
+        defaultValue: true,
+        helperText: "Make pagination dots clickable",
+      },
+      {
+        name: "scrollbar",
+        type: "boolean",
+        defaultValue: false,
+        helperText: "Show scrollbar",
+      },
+      {
+        name: "autoplay",
+        type: "boolean",
+        defaultValue: false,
+        helperText: "Enable autoplay",
+      },
+      {
+        name: "autoplayDelay",
+        type: "number",
+        defaultValue: 3000,
+        helperText: "Autoplay delay in milliseconds",
+      },
+      {
+        name: "pauseOnHover",
+        type: "boolean",
+        defaultValue: true,
+        helperText: "Pause autoplay on hover",
+      },
+      {
+        name: "loop",
+        type: "boolean",
+        defaultValue: false,
+        helperText: "Loop slides continuously",
+      },
+      {
+        name: "effect",
+        type: "string",
+        enum: ["slide", "fade", "cube", "coverflow", "flip"],
+        defaultValue: "slide",
+        helperText: "Transition effect",
+      },
+      {
+        name: "direction",
+        type: "string",
+        enum: ["horizontal", "vertical"],
+        defaultValue: "horizontal",
+        helperText: "Slide direction",
+      },
+      {
+        name: "centeredSlides",
+        type: "boolean",
+        defaultValue: false,
+        helperText: "Center active slide",
+      },
+      {
+        name: "keyboard",
+        type: "boolean",
+        defaultValue: true,
+        helperText: "Enable keyboard navigation (arrow keys)",
+      },
+      {
+        name: "mousewheel",
+        type: "boolean",
+        defaultValue: false,
+        helperText: "Enable mousewheel control",
+      },
+      {
+        name: "minHeight",
+        type: "number",
+        defaultValue: 300,
+        helperText: "Minimum height in pixels",
       },
     ],
   },

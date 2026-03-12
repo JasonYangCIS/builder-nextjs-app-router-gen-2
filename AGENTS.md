@@ -67,6 +67,48 @@ utils/cn.ts                  # className joiner
 - **Path alias:** `@/` maps to repo root — always use it for internal imports
 - **Model names:** Read from `config.ts`, never as string literals
 - **Design system:** Import from barrel `@/components/design-system`
+- **Library types:** Import and re-export types from third-party libraries instead of redefining them (see TypeScript Conventions below)
+
+---
+
+## TypeScript Conventions
+
+### Using Library Types (Single Source of Truth)
+
+**CRITICAL:** When building components that wrap third-party libraries, always import and re-export the library's native types instead of redefining them.
+
+**Why:**
+- Maintains single source of truth
+- Ensures type compatibility with the underlying library
+- Prevents type drift when the library updates
+- Reduces maintenance burden
+
+**Pattern:**
+
+```ts
+// ❌ BAD: Redefining library types
+export type MyEffect = "slide" | "fade" | "cube";
+export type MyDirection = "horizontal" | "vertical";
+
+// ✅ GOOD: Import and re-export library types
+import type { SwiperOptions } from "swiper/types";
+
+export type CarouselEffect = NonNullable<SwiperOptions["effect"]>;
+export type CarouselDirection = NonNullable<SwiperOptions["direction"]>;
+```
+
+**When to use this pattern:**
+- Component wraps a third-party library (Swiper, Leaflet, Chart.js, etc.)
+- The library exports TypeScript types
+- Your component props mirror library options
+
+**When NOT to use:**
+- Library doesn't export types
+- Your component significantly transforms the API
+- You're adding custom values beyond what the library supports
+
+**Example from this codebase:**
+- `components/design-system/Carousel/Carousel.types.ts` imports types from `swiper/types` instead of redefining `effect` and `direction` types
 
 ---
 

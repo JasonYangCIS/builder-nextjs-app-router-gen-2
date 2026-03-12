@@ -163,12 +163,46 @@ Maps to `text-zinc-500` (~4.95:1). Do not use `text-zinc-400` directly for reada
 
 ## Extending the Design System
 
+### Using Library Types (Single Source of Truth)
+
+**CRITICAL:** When building components that wrap third-party libraries, always import and re-export the library's native types instead of redefining them.
+
+**Why:**
+- Maintains single source of truth
+- Ensures type compatibility with the underlying library
+- Prevents type drift when the library updates
+- Reduces maintenance burden
+
+**Pattern:**
+
+```ts
+// ❌ BAD: Redefining library types
+export type MyEffect = "slide" | "fade" | "cube";
+
+// ✅ GOOD: Import and re-export library types
+import type { SwiperOptions } from "swiper/types";
+
+export type CarouselEffect = NonNullable<SwiperOptions["effect"]>;
+export type CarouselDirection = NonNullable<SwiperOptions["direction"]>;
+```
+
+**When to use this pattern:**
+- Component wraps a third-party library (Swiper, Leaflet, etc.)
+- The library exports TypeScript types
+- Your component props mirror library options
+
+**When NOT to use:**
+- Library doesn't export types
+- Your component significantly transforms the API
+- You're adding custom values beyond what the library supports
+
 ### Adding a new component
 
 1. Create `components/design-system/MyComponent/MyComponent.tsx` and `MyComponent.types.ts`
-2. Export from `components/design-system/index.ts`
-3. Register in `builder-registry.ts` with `RegisteredComponent` schema
-4. Add a section to `app/design-system/page.tsx` using `Section` + `DemoRow`/`DemoItem` helpers (see below)
+2. **If wrapping a library:** Import and re-export its types (see "Using Library Types" above)
+3. Export from `components/design-system/index.ts`
+4. Register in `builder-registry.ts` with `RegisteredComponent` schema
+5. Add a section to `app/design-system/page.tsx` using `Section` + `DemoRow`/`DemoItem` helpers (see below)
 
 ### Showcase page helpers (`app/design-system/page.tsx`)
 

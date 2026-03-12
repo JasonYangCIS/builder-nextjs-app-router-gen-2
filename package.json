@@ -8,6 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test": "playwright test",
+    "test:install": "playwright install --with-deps chromium",
+    "tests": "npm run test:install && playwright test",
     "test:ui": "playwright test --ui",
     "test:debug": "playwright test --debug"
   },
@@ -17,7 +19,8 @@
     "isomorphic-dompurify": "^3.0.0",
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "swiper": "^12.1.2"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",
