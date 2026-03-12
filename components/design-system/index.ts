@@ -12,3 +12,6 @@ export type { InputProps } from "./Input/Input.types";
 
 export { Card } from "./Card/Card";
 export type { CardProps, CardPadding, CardShadow } from "./Card/Card.types";
+
+export { Carousel } from "./Carousel/Carousel";
+export type { CarouselProps, CarouselEffect, CarouselDirection } from "./Carousel/Carousel.types";
