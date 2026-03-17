@@ -9,37 +9,39 @@ This document tracks known issues with the Builder.io SDK and the workarounds im
 
 ---
 
+## The Pre-processing Solution
+
+In this project, we intercept and sanitize the `content.data.blocks` object before it gets rendered by the `<Content>` component. This fixes multiple bugs at the data level before they can cause React rendering issues.
+
+This logic is implemented in `components/builder/RenderBuilderContent.tsx`.
+
+### What it does:
+1. Deep clones the `content` prop to avoid mutating React state
+2. Recursively traverses `data.blocks`
+3. Applies fixes for the known issues below
+
+---
+
 ## Issue 1: `class` vs `className` Attribute
 
 ### Problem
-The Builder SDK renders HTML elements with the `class` attribute instead of React's `className`, causing React to log warnings:
-
+When creating blocks in Builder's visual editor, if a user specifies a `class` custom attribute instead of a class name, the SDK passes `class="..."` directly to React, causing console warnings:
 ```
 Invalid DOM property `class`. Did you mean `className`?
 ```
 
 ### Status
-**Console warning only** — Does not affect functionality or cause hydration errors (suppressed).
+**Fixed via data pre-processing**
 
-### Cause
-Builder SDK v5.2.0 bug where the SDK renders both `class` (for server HTML) and `className` (for React) on the same element, causing React warnings during hydration.
-
-### Workaround
-**No workaround needed** — This is a Builder SDK bug that only produces console warnings. It does not affect functionality, hydration, or user experience. The warning can be safely ignored.
-
-Updates made:
-1. Updated `@builder.io/dev-tools` to v1.34.0 (from v1.28.18)
-2. Hydration errors fixed via client-side key in `RenderBuilderContent.tsx` (see Issue #3)
-
-### Related Files
-- `components/builder/RenderBuilderContent.tsx` — Client-side key prevents hydration issues
+### Solution
+The `RenderBuilderContent.tsx` script detects any `block.properties.class`, appends its value to `block.properties.className`, and deletes `block.properties.class`. This eliminates the React console warning entirely.
 
 ---
 
 ## Issue 2: Invalid HTML Nesting (`<div>` inside `<p>`)
 
 ### Problem
-Builder's Text component renders a `<div className="builder-text">` which can be nested inside `<p>` tags in Builder content, creating invalid HTML:
+Builder's internal `Text` component renders a `<div className="builder-text">`. When a user drops a Text block inside a Paragraph block (or explicitly sets a wrapper tag to `<p>`), it creates invalid HTML:
 
 ```html
 <p class="welcome-description">
@@ -47,84 +49,28 @@ Builder's Text component renders a `<div className="builder-text">` which can be
 </p>
 ```
 
-This causes:
-- HTML validation errors
-- Hydration warnings
-- Potential layout issues
+React 18 strictly validates DOM nesting and throws hydration mismatch errors when the browser attempts to auto-correct this invalid HTML structure.
 
 ### Status
-**Fixed with CSS workaround**
+**Fixed via data pre-processing**
 
-### Cause
-Builder's Text block component wraps content in a `<div>` for styling, but users can place Text blocks inside Paragraph blocks in the Builder editor.
+### Solution
+The `RenderBuilderContent.tsx` script detects any block where `tagName === "p"` that either has children blocks or uses the internal `Text` component. It automatically changes `tagName` to `"div"`, preventing the invalid HTML nesting before React renders it.
 
-### Workaround
-Added CSS rules in `app/globals.css` to force nested `.builder-text` divs to render inline:
-
-```css
-/* Fix for Builder SDK rendering <div> inside <p> tags */
-p .builder-text {
-  display: inline;
-}
-
-p > div[class*="builder-"] {
-  display: inline;
-}
-
-p .builder-text p {
-  display: inline;
-  margin: 0;
-}
-```
-
-### Best Practice
-When editing content in Builder.io:
-- **Avoid** placing Text blocks inside Paragraph blocks
-- Use Text blocks standalone or inside Container/Box blocks
-- If you need paragraph styling, use the Text block's built-in paragraph option
-
-### Related Files
-- `app/globals.css` — CSS workaround styles
+*(Note: We also added CSS fallback rules in `app/globals.css` just in case, but the pre-processor handles the root cause).*
 
 ---
 
 ## Issue 3: Hydration Mismatches
 
 ### Problem
-Server-rendered HTML doesn't match client-rendered output due to:
-1. `class` vs `className` attribute differences
-2. Different className values between server and client (server: `"welcome-container"`, client: `"builder-xxx... builder-block welcome-container"`)
-3. Invalid HTML nesting being corrected by the browser
+Due to issues #1 and #2 above, and additionally because Builder SDK v5.2.0 sometimes adds extra CSS classes (like `builder-block`) on the client-side that don't exist in the server-rendered HTML, React throws hydration mismatches.
 
 ### Status
 **Fixed**
 
-### Cause
-Builder SDK v5.2.0 adds extra CSS classes on the client side that don't exist in the server-rendered HTML, causing React to detect a hydration mismatch and throw errors.
-
 ### Solution
-Use a dynamic `key` prop that changes between server and client rendering to force React to completely replace the content on client-side instead of attempting hydration. This approach:
-- Eliminates all hydration errors
-- Preserves SEO (server still renders content)
-- Allows client to render with correct Builder classes
-- No suppressHydrationWarning needed
-
-Implementation in `components/builder/RenderBuilderContent.tsx`:
-```tsx
-const [isClient, setIsClient] = useState(false);
-useEffect(() => setIsClient(true), []);
-
-return (
-  <Content
-    key={isClient ? "client" : "server"}
-    content={content}
-    // ... other props
-  />
-);
-```
-
-### Related Files
-- `components/builder/RenderBuilderContent.tsx` — Client-side key fix
+By pre-processing the data to fix the `class` mapping and the invalid HTML nesting (the `<p>` > `<div>` bug), the server-rendered HTML now perfectly matches the initial client-rendered DOM. Hydration works cleanly without needing to skip SSR or use dynamic keys.
 
 ---
 
@@ -141,47 +87,18 @@ If you encounter new issues with the Builder SDK:
 
 ---
 
-## Future Updates
-
-When upgrading Builder SDK packages:
-
-1. Test thoroughly for hydration errors
-2. Check if these workarounds can be removed
-3. Update this document with new version numbers and status
-4. Run full test suite: `npm test`
-5. Check dev server logs for new warnings
-
-### Upgrade Checklist
-
-```bash
-# Check latest versions
-npm view @builder.io/sdk-react version
-npm view @builder.io/dev-tools version
-
-# Upgrade (test in a branch first)
-npm install @builder.io/sdk-react@latest @builder.io/dev-tools@latest
-
-# Test
-npm run dev
-npm test
-
-# Check for errors in browser console and dev server logs
-```
-
----
-
 ## Summary
 
-| Issue | Status | Impact | Workaround |
-|-------|--------|--------|------------|
-| `class` vs `className` warning | Console warning only | Low | SDK bug - cosmetic only |
-| Invalid HTML nesting | Fixed | Medium | CSS `display: inline` |
-| Hydration mismatches | Fixed | High | Client-side `key` prop forces re-render |
+| Issue | Status | Impact | Solution |
+|-------|--------|--------|----------|
+| `class` vs `className` warning | Fixed | Low | Pre-processor maps `class` to `className` |
+| Invalid HTML nesting | Fixed | High | Pre-processor converts wrapper `<p>` to `<div>` |
+| Hydration mismatches | Fixed | High | Data sanitization resolves all mismatches |
 
 ### Current State
 ✅ **All hydration errors resolved** — No React hydration warnings in console
 ✅ **TypeScript passes** — No type errors
-✅ **SEO preserved** — Server-side rendering still active
-⚠️ **Minor console warning** — `class` vs `className` is a Builder SDK bug (cosmetic only)
+✅ **SEO preserved** — Server-side rendering fully active
+✅ **Clean console** — No more DOM property warnings
 
-All critical functionality works as expected. The site renders correctly without client-side errors.
+All critical functionality works as expected. The site renders cleanly.

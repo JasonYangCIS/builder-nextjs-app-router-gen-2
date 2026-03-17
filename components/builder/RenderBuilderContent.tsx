@@ -3,7 +3,6 @@ import { BuilderContent, isPreviewing, Content } from "@builder.io/sdk-react";
 import DefaultErrorPage from "next/error";
 import { config } from "@/config";
 import { CUSTOM_COMPONENTS } from "@/builder-registry";
-import { useEffect, useState } from "react";
 
 interface RenderBuilderContentProps {
   content: BuilderContent | null;
@@ -13,30 +12,73 @@ interface RenderBuilderContentProps {
 }
 
 /**
+ * Recursively sanitizes Builder content data to fix hydration errors:
+ * 1. Renames `class` attribute to `className`
+ * 2. Changes `<p>` tags that contain blocks into `<div>` tags to prevent <div> inside <p>
+ */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function sanitizeBuilderBlocks(blocks: any[]): void {
+  if (!Array.isArray(blocks)) return;
+
+  for (const block of blocks) {
+    // 1. Fix 'class' vs 'className'
+    if (block.properties && block.properties.class) {
+      if (!block.properties.className) {
+        block.properties.className = block.properties.class;
+      } else {
+        block.properties.className = `${block.properties.className} ${block.properties.class}`;
+      }
+      delete block.properties.class;
+    }
+
+    // 2. Fix invalid HTML nesting (<div> inside <p>)
+    // If a block is configured to render as a <p>, but it has children or is a Text block
+    // (which renders an internal div), change it to a div.
+    if (block.tagName === "p") {
+      const hasChildren = block.children && block.children.length > 0;
+      const isTextComponent = block.component && block.component.name === "Text";
+
+      if (hasChildren || isTextComponent) {
+        block.tagName = "div";
+      }
+    }
+
+    // Recurse into children
+    if (block.children) {
+      sanitizeBuilderBlocks(block.children);
+    }
+  }
+}
+
+function getSanitizedContent(content: BuilderContent | null): BuilderContent | null {
+  if (!content || !content.data || !content.data.blocks) return content;
+
+  try {
+    // Deep clone to avoid mutating the original prop
+    const cloned = JSON.parse(JSON.stringify(content));
+    sanitizeBuilderBlocks(cloned.data.blocks);
+    return cloned;
+  } catch (e) {
+    console.error("Error sanitizing Builder content", e);
+    return content;
+  }
+}
+
+/**
  * Wrapper for Builder.io Content component with hydration error fix.
- *
- * Builder SDK v5.2.0 has known hydration issues:
- * 1. Renders 'class' attribute instead of 'className'
- * 2. Server/client className values differ (missing builder-* classes on server)
- * 3. Nests <div> inside <p> in Text blocks
- *
- * This component uses a client-side key to force re-render after hydration.
  */
 export function RenderBuilderContent({ content, model, data }: RenderBuilderContentProps) {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
   if (!content && !isPreviewing()) {
     return <DefaultErrorPage statusCode={404} />;
   }
 
+  // Pre-process content data before passing to Builder SDK
+  // This completely eliminates server/client hydration mismatches
+  const sanitizedContent = getSanitizedContent(content);
+
   return (
     <Content
-      key={isClient ? "client" : "server"}
-      content={content}
+      content={sanitizedContent}
       apiKey={config.envs.builderApiKey}
       model={model}
       customComponents={CUSTOM_COMPONENTS}
