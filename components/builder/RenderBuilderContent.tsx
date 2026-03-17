@@ -14,13 +14,19 @@ interface RenderBuilderContentProps {
 export function RenderBuilderContent({ content, model, data }: RenderBuilderContentProps) {
   if (content || isPreviewing()) {
     return (
-      <Content
-        content={content}
-        apiKey={config.envs.builderApiKey}
-        model={model}
-        customComponents={CUSTOM_COMPONENTS}
-        {...(data && { data })}
-      />
+      /* Suppress hydration warnings caused by Builder SDK v5.2.0 bugs:
+         1. SDK renders 'class' instead of 'className'
+         2. SDK nests <div> inside <p> in Text blocks
+         See app/globals.css for CSS workarounds */
+      <div suppressHydrationWarning>
+        <Content
+          content={content}
+          apiKey={config.envs.builderApiKey}
+          model={model}
+          customComponents={CUSTOM_COMPONENTS}
+          {...(data && { data })}
+        />
+      </div>
     );
   }
   return <DefaultErrorPage statusCode={404} />;
