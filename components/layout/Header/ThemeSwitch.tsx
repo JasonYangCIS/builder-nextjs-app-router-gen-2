@@ -93,7 +93,7 @@ export const ThemeSwitch = () => {
 
       {isOpen && (
         <div
-          className="theme-dropdown absolute left-0 right-0 mt-2 rounded-md border border-border bg-card shadow-lg ring-1 ring-black ring-opacity-5 md:left-auto md:right-0 md:w-40"
+          className="theme-dropdown absolute z-50 left-0 right-0 mt-2 rounded-md border border-border bg-card shadow-lg ring-1 ring-black/5 md:left-auto md:right-0 md:w-40"
         >
           <div
             className="py-1"
