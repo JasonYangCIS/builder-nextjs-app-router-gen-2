@@ -58,12 +58,7 @@ export const ThemeSwitch = () => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="theme-switch-button flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm font-medium transition-colors hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2"
-        style={{
-          borderColor: "var(--header-border)",
-          backgroundColor: "var(--card-bg)",
-          color: "var(--foreground)",
-        }}
+        className="theme-switch-button flex items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-sm font-medium text-foreground transition-colors hover:opacity-90 focus:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         aria-label="Select theme"
         aria-expanded={isOpen}
         aria-haspopup="true"
@@ -99,11 +94,7 @@ export const ThemeSwitch = () => {
 
       {isOpen && (
         <div
-          className="theme-dropdown absolute left-0 right-0 mt-2 rounded-md border shadow-lg ring-1 ring-black ring-opacity-5 md:left-auto md:right-0 md:w-40"
-          style={{
-            borderColor: "var(--card-border)",
-            backgroundColor: "var(--card-bg)",
-          }}
+          className="theme-dropdown absolute left-0 right-0 mt-2 rounded-md border border-border bg-card shadow-lg ring-1 ring-black ring-opacity-5 md:left-auto md:right-0 md:w-40"
         >
           <div
             className="py-1"
@@ -115,25 +106,17 @@ export const ThemeSwitch = () => {
               <button
                 key={theme.value}
                 onClick={() => handleThemeChange(theme.value)}
-                className={`flex w-full items-center rounded px-4 py-2 text-left text-sm transition-colors hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-inset ${
+                className={`flex w-full items-center rounded px-4 py-2 text-left text-sm text-foreground transition-colors hover:opacity-90 focus:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset ${
                   currentTheme === theme.value
-                    ? "font-medium"
+                    ? "bg-muted font-medium"
                     : ""
                 }`}
-                style={{
-                  backgroundColor:
-                    currentTheme === theme.value
-                      ? "var(--muted-bg)"
-                      : "transparent",
-                  color: "var(--foreground)",
-                }}
                 role="menuitem"
               >
                 {theme.label}
                 {currentTheme === theme.value && (
                   <svg
-                    className="ml-auto h-4 w-4"
-                    style={{ color: "var(--color-brand-600)" }}
+                    className="ml-auto h-4 w-4 text-primary"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >

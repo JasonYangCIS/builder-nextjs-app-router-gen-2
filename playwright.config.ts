@@ -7,6 +7,7 @@ dotenv.config({ path: path.resolve(__dirname, ".env.test") });
 
 export default defineConfig({
   testDir: "./tests",
+  snapshotDir: "./tests/__snapshots__",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

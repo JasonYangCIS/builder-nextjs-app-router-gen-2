@@ -12,7 +12,9 @@
     "test:install": "playwright install --with-deps chromium",
     "tests": "npm run test:install && playwright test",
     "test:ui": "playwright test --ui",
-    "test:debug": "playwright test --debug"
+    "test:debug": "playwright test --debug",
+    "test:visual": "playwright test tests/visual",
+    "test:visual:update": "playwright test tests/visual --update-snapshots"
   },
   "dependencies": {
     "@builder.io/dev-tools": "^1.28.18",
