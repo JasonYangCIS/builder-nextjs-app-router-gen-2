@@ -25,12 +25,14 @@ Invalid DOM property `class`. Did you mean `className`?
 Builder SDK v5.2.0 bug where the SDK renders both `class` (for server HTML) and `className` (for React) on the same element, causing React warnings during hydration.
 
 ### Workaround
+**No workaround needed** — This is a Builder SDK bug that only produces console warnings. It does not affect functionality, hydration, or user experience. The warning can be safely ignored.
+
+Updates made:
 1. Updated `@builder.io/dev-tools` to v1.34.0 (from v1.28.18)
-2. Added `suppressHydrationWarning` wrapper in `components/builder/RenderBuilderContent.tsx`
-3. Console warnings remain but do not affect functionality
+2. Hydration errors fixed via client-side key in `RenderBuilderContent.tsx` (see Issue #3)
 
 ### Related Files
-- `components/builder/RenderBuilderContent.tsx` — Hydration warning suppression
+- `components/builder/RenderBuilderContent.tsx` — Client-side key prevents hydration issues
 
 ---
 
@@ -91,16 +93,38 @@ When editing content in Builder.io:
 ### Problem
 Server-rendered HTML doesn't match client-rendered output due to:
 1. `class` vs `className` attribute differences
-2. Invalid HTML nesting being corrected by the browser
+2. Different className values between server and client (server: `"welcome-container"`, client: `"builder-xxx... builder-block welcome-container"`)
+3. Invalid HTML nesting being corrected by the browser
 
 ### Status
 **Fixed**
 
-### Workaround
-Wrapped `<Content>` component with `<div suppressHydrationWarning>` in `RenderBuilderContent.tsx` to suppress React hydration warnings.
+### Cause
+Builder SDK v5.2.0 adds extra CSS classes on the client side that don't exist in the server-rendered HTML, causing React to detect a hydration mismatch and throw errors.
+
+### Solution
+Use a dynamic `key` prop that changes between server and client rendering to force React to completely replace the content on client-side instead of attempting hydration. This approach:
+- Eliminates all hydration errors
+- Preserves SEO (server still renders content)
+- Allows client to render with correct Builder classes
+- No suppressHydrationWarning needed
+
+Implementation in `components/builder/RenderBuilderContent.tsx`:
+```tsx
+const [isClient, setIsClient] = useState(false);
+useEffect(() => setIsClient(true), []);
+
+return (
+  <Content
+    key={isClient ? "client" : "server"}
+    content={content}
+    // ... other props
+  />
+);
+```
 
 ### Related Files
-- `components/builder/RenderBuilderContent.tsx`
+- `components/builder/RenderBuilderContent.tsx` — Client-side key fix
 
 ---
 
@@ -150,8 +174,14 @@ npm test
 
 | Issue | Status | Impact | Workaround |
 |-------|--------|--------|------------|
-| `class` vs `className` warning | Console warning only | Low | `suppressHydrationWarning` + SDK update |
+| `class` vs `className` warning | Console warning only | Low | SDK bug - cosmetic only |
 | Invalid HTML nesting | Fixed | Medium | CSS `display: inline` |
-| Hydration mismatches | Fixed | High | `suppressHydrationWarning` wrapper |
+| Hydration mismatches | Fixed | High | Client-side `key` prop forces re-render |
 
-All critical functionality works as expected. The remaining console warnings are cosmetic and do not affect the user experience.
+### Current State
+✅ **All hydration errors resolved** — No React hydration warnings in console
+✅ **TypeScript passes** — No type errors
+✅ **SEO preserved** — Server-side rendering still active
+⚠️ **Minor console warning** — `class` vs `className` is a Builder SDK bug (cosmetic only)
+
+All critical functionality works as expected. The site renders correctly without client-side errors.
