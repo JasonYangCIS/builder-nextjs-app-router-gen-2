@@ -27,7 +27,7 @@ Full conventions and component reference: `docs/skills/design-system.md`
 
 ## Color Tokens
 
-shadcn/ui uses OKLCH CSS variables defined in `app/globals.css`. Three themes exist: `default`, `dark`, `ritual`.
+shadcn/ui uses OKLCH CSS variables defined in `app/globals.css`. Two themes exist: `default`, `dark`.
 
 | Token | Tailwind | Use |
 |-------|----------|-----|

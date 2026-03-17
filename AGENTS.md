@@ -33,7 +33,7 @@ NEXT_PUBLIC_BUILDER_API_KEY=your_key_here
 | `components/builder/RenderBuilderContent.tsx` | Always use this wrapper, never `<Content>` directly |
 | `components/ui/` | shadcn/ui components (new-york style) — Button, Badge, Input, Label, Card, Carousel, Text, FormInput |
 | `components/builder/BuilderCarousel.tsx` | Embla Carousel wrapper exposing Builder-friendly props |
-| `app/globals.css` | shadcn OKLCH color tokens + theme overrides (default / dark / ritual) |
+| `app/globals.css` | shadcn OKLCH color tokens + theme overrides (default / dark) |
 | `styles/tokens.css` | Gradient utilities only — use `var(--primary)` / `var(--accent)` |
 | `utils/cn.ts` | className joiner (clsx + tailwind-merge) |
 

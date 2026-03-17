@@ -8,7 +8,7 @@ Conventions for working with the shadcn/ui design system in this repo.
 
 | Layer | Location | Purpose |
 |-------|----------|---------|
-| CSS variables | `app/globals.css` | shadcn OKLCH color tokens + theme overrides (default/dark/ritual) |
+| CSS variables | `app/globals.css` | shadcn OKLCH color tokens + theme overrides (default/dark) |
 | Gradient utilities | `styles/tokens.css` | `gradient-brand`, `gradient-brand-subtle`, etc. — use `var(--primary)` / `var(--accent)` |
 | shadcn primitives | `components/ui/` | Button, Badge, Input, Label, Card, Carousel, Text, FormInput |
 | Builder wrappers | `components/builder/` | BuilderCarousel — wraps shadcn Carousel for Builder.io editor |
@@ -44,10 +44,9 @@ shadcn/ui uses OKLCH CSS variables. All tokens are defined in `app/globals.css` 
 
 ### Themes
 
-Three themes are defined in `app/globals.css` via `[data-theme]` attribute selectors:
+Two themes are defined in `app/globals.css` via `[data-theme]` attribute selectors:
 - `default` (light, zinc-based)
 - `dark`
-- `ritual` (custom brand — indigo/yellow)
 
 Gradient utilities in `styles/tokens.css` automatically adapt to the active theme via `var(--primary)` and `var(--accent)`.
 

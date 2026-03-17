@@ -17,7 +17,7 @@ import { register } from "@builder.io/sdk-react";
 register("editor.settings", {
   designTokens: {
     // ── Semantic colors (shadcn/ui tokens) ───────────────────────────────────
-    // These adapt to the active theme (default / dark / ritual).
+    // These adapt to the active theme (default / dark).
     // Hex fallbacks are approximations for the default light theme.
     colors: [
       // Surfaces

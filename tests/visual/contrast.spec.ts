@@ -12,7 +12,7 @@
  */
 import { test, expect, Page } from "@playwright/test";
 
-const THEMES = ["default", "dark", "ritual"] as const;
+const THEMES = ["default", "dark"] as const;
 type Theme = (typeof THEMES)[number];
 
 const WCAG_AA_NORMAL = 4.5;

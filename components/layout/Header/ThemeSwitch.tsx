@@ -2,12 +2,11 @@
 
 import { useState, useEffect, useRef } from "react";
 
-type Theme = "default" | "dark" | "ritual";
+type Theme = "default" | "dark";
 
 const themes: { value: Theme; label: string }[] = [
   { value: "default", label: "Default" },
   { value: "dark", label: "Dark" },
-  { value: "ritual", label: "Ritual" },
 ];
 
 export const ThemeSwitch = () => {

@@ -93,9 +93,8 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
         <nav className="flex items-center gap-6 text-sm">
           <Link
             href="/design-system"
-            className="text-sm transition-colors hover:opacity-80"
-            style={{ color: "var(--muted)" }}
-          >
+            className="transition-colors hover:opacity-80"
+            >
             Design System
           </Link>
           {entries.map((entry) => (
@@ -124,10 +123,10 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
       {/* Mobile hamburger - WCAG 2.1 AA compliant: 44x44px touch target */}
       {!onlyDesktopNav && (
         <button
-          className="menu-button relative flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all duration-300 hover:scale-110 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:scale-100"
+          className="menu-button relative flex h-11 w-11 items-center justify-center rounded-full border-2 transition-all duration-300 hover:scale-110 focus:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:hover:scale-100"
           style={{
             borderColor: open ? "var(--foreground)" : "var(--header-border)",
-            backgroundColor: open ? "var(--muted-bg)" : "transparent",
+            backgroundColor: open ? "var(--muted)" : "transparent",
           }}
           onClick={() => setOpen((prev) => !prev)}
           aria-label={open ? "Close menu" : "Open menu"}
@@ -144,7 +143,7 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
             />
             {/* Middle dot/line */}
             <span
-              className={`absolute left-1/2 top-1.5 block rounded-full transition-all duration-300 motion-reduce:transition-none ${
+              className={`absolute left-1/2 top-1.25 block rounded-full transition-all duration-300 motion-reduce:transition-none ${
                 open ? "h-0 w-0 opacity-0" : "h-1 w-1 -translate-x-1/2 opacity-100"
               }`}
               style={{ backgroundColor: "var(--foreground)" }}
@@ -181,11 +180,10 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
           >
             <Link
               href="/design-system"
-              className={`menu-link rounded-md px-2 py-2 transition-all duration-300 hover:opacity-80 hover:translate-x-1 focus:outline-none focus:ring-2 focus:ring-brand-500 motion-reduce:transition-none motion-reduce:hover:translate-x-0 ${
+              className={`menu-link rounded-md px-2 py-2 transition-all duration-300 hover:opacity-80 hover:translate-x-1 focus:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:hover:translate-x-0 ${
                 open ? "translate-x-0 opacity-100" : "motion-reduce:translate-x-0 motion-reduce:opacity-100 -translate-x-4 opacity-0"
               }`}
               style={{
-                color: "var(--muted)",
                 transitionDelay: open ? "50ms" : "0ms",
               }}
               onClick={() => setOpen(false)}
@@ -196,7 +194,7 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
               <Link
                 key={entry.id}
                 href={entry.url}
-                className={`menu-link rounded-md px-2 py-2 transition-all duration-300 hover:opacity-80 hover:translate-x-1 focus:outline-none focus:ring-2 focus:ring-brand-500 motion-reduce:transition-none motion-reduce:hover:translate-x-0 ${
+                className={`menu-link rounded-md px-2 py-2 transition-all duration-300 hover:opacity-80 hover:translate-x-1 focus:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:hover:translate-x-0 ${
                   open ? "translate-x-0 opacity-100" : "motion-reduce:translate-x-0 motion-reduce:opacity-100 -translate-x-4 opacity-0"
                 }`}
                 style={{
@@ -216,7 +214,7 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
                 transitionDelay: open ? `${(entries.length + 1) * 50 + 50}ms` : "0ms",
               }}
             >
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--muted)" }}>
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Theme
               </p>
               <ThemeSwitch />

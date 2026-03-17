@@ -7,7 +7,7 @@ See `docs/skills/design-system.md` for full conventions and component reference.
 
 Key areas covered:
 - shadcn/ui component library (new-york style) in `components/ui/`
-- Color token system: shadcn OKLCH variables in `app/globals.css` (default / dark / ritual themes)
+- Color token system: shadcn OKLCH variables in `app/globals.css` (default / dark themes)
 - Gradient utilities in `styles/tokens.css` — use `var(--primary)` / `var(--accent)`
 - WCAG AA: use semantic tokens (`text-foreground`, `text-muted-foreground`, etc.) — never hardcode hex
 - `cn()` utility from `@/utils/cn` for conditional Tailwind class composition

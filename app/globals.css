@@ -102,52 +102,6 @@
   background-clip: text;
 }
 
-/* Ritual theme */
-[data-theme="ritual"] {
-  --background: oklch(0.97 0.006 240);
-  --foreground: oklch(0.22 0.08 255);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.22 0.08 255);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.22 0.08 255);
-  --primary: oklch(0.22 0.08 255);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.93 0.01 240);
-  --secondary-foreground: oklch(0.22 0.08 255);
-  --muted: oklch(0.93 0.01 240);
-  --muted-foreground: oklch(0.45 0.06 255);
-  --accent: oklch(0.88 0.18 95);
-  --accent-foreground: oklch(0.22 0.08 255);
-  --destructive: oklch(0.52 0.18 25);
-  --border: oklch(0.87 0.01 240);
-  --input: oklch(0.87 0.01 240);
-  --ring: oklch(0.45 0.06 255);
-  --header-bg: oklch(1 0 0);
-  --header-border: oklch(0.84 0.015 240);
-  --card-bg: oklch(1 0 0);
-  --card-border: oklch(0.87 0.01 240);
-}
-[data-theme="ritual"] .gradient-brand {
-  background: linear-gradient(135deg, oklch(0.22 0.08 255), oklch(0.6 0.05 210));
-}
-[data-theme="ritual"] .gradient-brand-subtle {
-  background: linear-gradient(135deg, oklch(0.97 0.006 240), oklch(0.97 0.1 95));
-}
-[data-theme="ritual"] .gradient-brand-dark {
-  background: linear-gradient(135deg, oklch(0.15 0.07 255), oklch(0.12 0.05 255));
-}
-[data-theme="ritual"] .gradient-mesh {
-  background:
-    radial-gradient(ellipse at 20% 50%, color-mix(in oklch, var(--primary) 25%, transparent) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 20%, color-mix(in oklch, var(--accent) 20%, transparent) 0%, transparent 60%),
-    var(--background);
-}
-[data-theme="ritual"] .gradient-brand-text {
-  background: linear-gradient(135deg, oklch(0.22 0.08 255), oklch(0.3 0.1 255));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
 
 @theme inline {
   --color-background: var(--background);
