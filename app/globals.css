@@ -215,20 +215,3 @@ th, td {
   border-bottom: 1px solid var(--border);
 }
 th { font-weight: 600; }
-
-/* ─── Builder.io SDK Workarounds ───────────────────────────────────────── */
-/* Fix for Builder SDK v5.2.0 rendering <div class="builder-text"> inside <p> tags */
-p .builder-text {
-  display: inline;
-}
-
-/* Fix for Builder SDK rendering invalid nested block elements */
-p > div[class*="builder-"] {
-  display: inline;
-}
-
-/* Ensure Builder blocks maintain proper spacing when forced inline */
-p .builder-text p {
-  display: inline;
-  margin: 0;
-}
