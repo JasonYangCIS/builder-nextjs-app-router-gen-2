@@ -1,7 +1,7 @@
 import { fetchEntries } from "@builder.io/sdk-react";
 import { config } from "@/config";
 import { BlogArticleList } from "@/components/blog/BlogArticleList/BlogArticleList";
-import { Typography } from "@/components/design-system";
+import { Text } from "@/components/ui/text";
 import type { BlogArticle } from "@/types/blog.types";
 
 const builderModelName = config.models.blogArticle;
@@ -34,26 +34,26 @@ export default async function BlogArticleTemplatePage() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-14">
       <header className="mb-14">
-        <Typography variant="h1" className="gradient-brand-text sm:text-5xl">
+        <Text variant="h1" className="gradient-brand-text sm:text-5xl">
           Blog (Hybrid Approach)
-        </Typography>
-        <Typography variant="body-lg" color="muted" className="mt-3">
+        </Text>
+        <Text variant="body-lg" color="muted" className="mt-3">
           Data bindings and templates within the Section model.{" "}
           <a
             href="https://www.builder.io/blog/builder-drag-drop-blog#hybrid-approach"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-brand-600 hover:text-brand-700"
+            className="text-primary hover:text-primary/80"
           >
             Learn more ↗
           </a>
-        </Typography>
+        </Text>
       </header>
 
       <BlogArticleList articles={items} route="/blog-article-template" />
 
       {items.length === 0 && (
-        <Typography variant="body" color="muted">No articles yet.</Typography>
+        <Text variant="body" color="muted">No articles yet.</Text>
       )}
     </div>
   );

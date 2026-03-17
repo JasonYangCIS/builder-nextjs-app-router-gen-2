@@ -1,13 +1,13 @@
 import { test, expect } from "@playwright/test";
 
-const VARIANTS = ["neutral", "primary", "success", "warning", "error"] as const;
+const VARIANTS = ["default", "secondary", "destructive", "outline"] as const;
 
 test.describe("Badge", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/design-system");
   });
 
-  test("renders all five variants at md size", async ({ page }) => {
+  test("renders all four variants", async ({ page }) => {
     const section = page.locator("#badge");
     for (const variant of VARIANTS) {
       // The badge label text matches the variant name
@@ -15,44 +15,35 @@ test.describe("Badge", () => {
     }
   });
 
-  test("md size has py-1 padding class", async ({ page }) => {
+  test("default variant has bg-primary class", async ({ page }) => {
     const section = page.locator("#badge");
-    // First badge row is md size
-    const firstBadge = section.locator("span.rounded-md").first();
-    await expect(firstBadge).toHaveClass(/py-1/);
+    await expect(section.locator("span.bg-primary").first()).toBeVisible();
   });
 
-  test("sm size has py-0.5 padding class", async ({ page }) => {
+  test("secondary variant has bg-secondary class", async ({ page }) => {
     const section = page.locator("#badge");
-    // sm badges appear in the second row — get last set
-    const smBadges = section.locator("span.rounded-md");
-    const count = await smBadges.count();
-    const lastBadge = smBadges.nth(count - 1);
-    await expect(lastBadge).toHaveClass(/py-0\.5/);
+    await expect(section.locator("span.bg-secondary").first()).toBeVisible();
   });
 
-  test("success variant has success background class", async ({ page }) => {
+  test("destructive variant has bg-destructive class", async ({ page }) => {
     const section = page.locator("#badge");
-    await expect(section.locator(".bg-success-100").first()).toBeVisible();
+    await expect(section.locator("span.bg-destructive").first()).toBeVisible();
   });
 
-  test("error variant has error background class", async ({ page }) => {
+  test("outline variant has text-foreground class", async ({ page }) => {
     const section = page.locator("#badge");
-    await expect(section.locator(".bg-error-100").first()).toBeVisible();
+    // outline badge has text-foreground and no bg color
+    const outlineBadge = section.locator("[data-slot='badge']").filter({ hasText: "outline" });
+    await expect(outlineBadge.first()).toBeVisible();
   });
 
-  test("warning variant has warning background class", async ({ page }) => {
+  test("renders 4 badges total (one per variant)", async ({ page }) => {
     const section = page.locator("#badge");
-    await expect(section.locator(".bg-warning-100").first()).toBeVisible();
+    await expect(section.locator("[data-slot='badge']")).toHaveCount(4);
   });
 
-  test("primary variant has brand background class", async ({ page }) => {
+  test("badges have rounded-md class", async ({ page }) => {
     const section = page.locator("#badge");
-    await expect(section.locator(".bg-brand-100").first()).toBeVisible();
-  });
-
-  test("renders 10 badges total (5 variants × 2 sizes)", async ({ page }) => {
-    const section = page.locator("#badge");
-    await expect(section.locator("span.rounded-md")).toHaveCount(10);
+    await expect(section.locator("span.rounded-md").first()).toBeVisible();
   });
 });

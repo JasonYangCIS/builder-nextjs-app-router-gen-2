@@ -1,58 +1,72 @@
 ---
 description: Design system components, tokens, and WCAG rules
-globs: components/design-system/**,styles/**,app/design-system/**
+globs: components/ui/**,components/builder/BuilderCarousel.tsx,styles/**,app/design-system/**,app/globals.css
 alwaysApply: false
 ---
 # Design System Rules
 
-Full conventions and token reference: `docs/skills/design-system.md`
-Token scoped rules: `styles/.builderrules`
+Full conventions and component reference: `docs/skills/design-system.md`
 
 ## Critical Rules
 
-- Always import from the barrel: `import { Button, Typography, Badge, Input, Card } from "@/components/design-system"`
-- Never hardcode color values — always use tokens from `styles/tokens.css`
-- Never use `text-zinc-400` or lower for body text — fails WCAG AA (minimum 4.5:1 contrast)
-- Use `gradient-brand-text` only on headings/display text, never on body text
+- Import each shadcn component from its own file — **no barrel**:
+  `import { Button } from "@/components/ui/button"`
+  `import { Text } from "@/components/ui/text"`
+  `import { FormInput } from "@/components/ui/form-input"`
+- Never hardcode hex colors or raw zinc/slate shades for text — always use shadcn semantic tokens (`text-foreground`, `text-muted-foreground`, `text-primary`, `text-destructive`, etc.)
 - Use `cn()` from `@/utils/cn` for conditional Tailwind class composition
+- Focus rings on custom interactive elements must use: `focus-visible:ring-[3px] focus-visible:ring-ring/50`
 
-## Design Tokens
+## Variant Mappings (old → shadcn)
 
-Two layers of Builder design token integration exist in this repo:
+**Button:** `primary→default`, `secondary→outline`, `ghost→ghost`, `destructive→destructive`
+- Use children for button text — there is no `label` prop on shadcn Button
 
-### 1. Publish — Visual Editor token registration
+**Badge:** `neutral→secondary`, `primary→default`, `error→destructive`, `success/warning→secondary`
+- Use children for badge text — there is no `label` prop on shadcn Badge
+
+## Color Tokens
+
+shadcn/ui uses OKLCH CSS variables defined in `app/globals.css`. Three themes exist: `default`, `dark`, `ritual`.
+
+| Token | Tailwind | Use |
+|-------|----------|-----|
+| `--foreground` | `text-foreground` | Primary body text |
+| `--muted-foreground` | `text-muted-foreground` | De-emphasised text |
+| `--primary` | `text-primary` / `bg-primary` | Primary actions, CTAs |
+| `--primary-foreground` | `text-primary-foreground` | Text on primary bg |
+| `--destructive` | `text-destructive` / `bg-destructive` | Error/danger |
+| `--border` | `border-border` | Default borders |
+| `--muted` | `bg-muted` | Subtle backgrounds |
+| `--card` | `bg-card` | Card surfaces |
+
+## Design Tokens (Builder Visual Editor)
+
+### Publish — Visual Editor token registration
 `components/builder/BuilderDesignTokens.ts` calls `register("editor.settings", { designTokens })`
-to surface tokens in the Style tab of the Builder visual editor (color pickers, background image fields).
+to surface shadcn semantic tokens in the Style tab (color pickers, background image fields).
 Imported as a side-effect in `builder-registry.ts`.
 
-To add or change a token: update `BuilderDesignTokens.ts` and `styles/tokens.css` together.
-Set `styleStrictMode: true` in that file to prevent editors from entering off-palette values.
+To update a token: edit `BuilderDesignTokens.ts` — token values reference `var(--*)` from `app/globals.css`.
 
-### 2. Fusion — DSI indexing
+### Fusion — DSI indexing
 `builder.config.json` + `styles/.builderrules` configure `index-repo` to catalog CSS variables
-from `styles/tokens.css` into Builder's Design System Intelligence.
+from `app/globals.css` into Builder's Design System Intelligence.
 Run: `npx "@builder.io/dev-tools@latest" index-repo`
 
-### Token tiers (color scales in `styles/tokens.css`)
+### Gradient utilities (`styles/tokens.css`)
 
-| Tier | Suffixes | Use |
-|------|----------|-----|
-| Backgrounds | 50, 100 | Section fills, card tints, status backgrounds |
-| Interactive / text | 600, 700 | Buttons, links, body text on white — all pass WCAG AA |
-| Deep / dark | 800–950 | Dark hero backgrounds |
-
-### Gradient utilities (also registered as `backgroundImage` tokens)
-
-| Class | Value alias in BuilderDesignTokens.ts |
+| Class | Use |
 |-------|-----|
-| `gradient-brand` | "Gradient Brand · indigo → violet" |
-| `gradient-brand-subtle` | "Gradient Brand Subtle · tinted wash" |
-| `gradient-brand-dark` | "Gradient Brand Dark · deep indigo → violet" |
-| `gradient-mesh` | Not registered — multi-stop radial, use CSS class directly |
-| `gradient-brand-text` | Not registered — CSS clip technique, use CSS class directly |
+| `gradient-brand` | Background: primary → accent blend. CTAs, active states |
+| `gradient-brand-subtle` | Light wash. Section backgrounds, card tints |
+| `gradient-brand-dark` | Dark tone. Hero sections, banners |
+| `gradient-mesh` | Multi-stop radial. Hero backgrounds |
+| `gradient-brand-text` | CSS gradient text. Headings, display type only |
 
-## Extending the Design System
+## Extending
 
-- New component → `components/design-system/MyComponent/` + export from `index.ts` + register in `builder-registry.ts` + add to `app/design-system/page.tsx`
-- New token → add to `@theme` block in `styles/tokens.css` (Tailwind utility is auto-generated)
-- Before adding a color: verify contrast ratio against the approved table in `docs/skills/design-system.md`
+- **New shadcn component** → copy from ui.shadcn.com (new-york style) into `components/ui/my-component.tsx`, import `cn` from `@/utils/cn`, install any needed `@radix-ui/react-*` package
+- **Register in Builder** → add entry to `builder-registry.ts`; add showcase section to `app/design-system/page.tsx`
+- **New CSS variable** → add to the appropriate `[data-theme]` block in `app/globals.css`, then expose via `@theme inline`
+- **Before adding any color**: verify contrast with `text-foreground` background in all three themes

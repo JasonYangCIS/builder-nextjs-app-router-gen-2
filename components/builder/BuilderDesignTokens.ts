@@ -9,68 +9,60 @@
  * instead of entering raw hex values.
  *
  * API: https://www.builder.io/c/docs/design-tokens
- * Token values mirror styles/tokens.css — update both files together.
+ * Token values mirror app/globals.css shadcn CSS variables.
+ * Hex fallbacks are approximate equivalents for the default (light) theme.
  */
 import { register } from "@builder.io/sdk-react";
 
 register("editor.settings", {
   designTokens: {
-    // ── Colors ──────────────────────────────────────────────────────────────
-    // Exposed tiers:
-    //   50 / 100  → backgrounds, section fills, status chips
-    //   500–700   → interactive, CTAs, text on white (all WCAG AA)
-    //   800–950   → dark hero backgrounds
+    // ── Semantic colors (shadcn/ui tokens) ───────────────────────────────────
+    // These adapt to the active theme (default / dark / ritual).
+    // Hex fallbacks are approximations for the default light theme.
     colors: [
-      // Brand — Indigo
-      { name: "Brand / 50  · bg",      value: "var(--color-brand-50,  #eef2ff)" },
-      { name: "Brand / 100 · bg",      value: "var(--color-brand-100, #e0e7ff)" },
-      { name: "Brand / 500",           value: "var(--color-brand-500, #6366f1)" },
-      { name: "Brand / 600 · primary", value: "var(--color-brand-600, #4f46e5)" },
-      { name: "Brand / 700",           value: "var(--color-brand-700, #4338ca)" },
-      { name: "Brand / 800",           value: "var(--color-brand-800, #3730a3)" },
-      { name: "Brand / 950 · dark",    value: "var(--color-brand-950, #1e1b4b)" },
+      // Surfaces
+      { name: "Background",              value: "var(--background, #ffffff)" },
+      { name: "Foreground",              value: "var(--foreground, #09090b)" },
+      { name: "Card",                    value: "var(--card, #ffffff)" },
+      { name: "Card Foreground",         value: "var(--card-foreground, #09090b)" },
 
-      // Accent — Violet
-      { name: "Accent / 50  · bg",     value: "var(--color-accent-50,  #f5f3ff)" },
-      { name: "Accent / 100 · bg",     value: "var(--color-accent-100, #ede9fe)" },
-      { name: "Accent / 500",          value: "var(--color-accent-500, #8b5cf6)" },
-      { name: "Accent / 600 · primary",value: "var(--color-accent-600, #7c3aed)" },
-      { name: "Accent / 700",          value: "var(--color-accent-700, #6d28d9)" },
-      { name: "Accent / 950 · dark",   value: "var(--color-accent-950, #2e1065)" },
+      // Primary
+      { name: "Primary",                 value: "var(--primary, #18181b)" },
+      { name: "Primary Foreground",      value: "var(--primary-foreground, #fafafa)" },
 
-      // Success — Emerald
-      { name: "Success / 50  · bg",    value: "var(--color-success-50,  #ecfdf5)" },
-      { name: "Success / 100 · bg",    value: "var(--color-success-100, #d1fae5)" },
-      { name: "Success / 600",         value: "var(--color-success-600, #059669)" },
-      { name: "Success / 700",         value: "var(--color-success-700, #047857)" },
+      // Secondary / Muted
+      { name: "Secondary",               value: "var(--secondary, #f4f4f5)" },
+      { name: "Secondary Foreground",    value: "var(--secondary-foreground, #18181b)" },
+      { name: "Muted",                   value: "var(--muted, #f4f4f5)" },
+      { name: "Muted Foreground",        value: "var(--muted-foreground, #71717a)" },
 
-      // Warning — Amber
-      { name: "Warning / 50  · bg",    value: "var(--color-warning-50,  #fffbeb)" },
-      { name: "Warning / 100 · bg",    value: "var(--color-warning-100, #fef3c7)" },
-      { name: "Warning / 600",         value: "var(--color-warning-600, #d97706)" },
-      { name: "Warning / 700",         value: "var(--color-warning-700, #b45309)" },
+      // Accent
+      { name: "Accent",                  value: "var(--accent, #f4f4f5)" },
+      { name: "Accent Foreground",       value: "var(--accent-foreground, #18181b)" },
 
-      // Error — Rose
-      { name: "Error / 50  · bg",      value: "var(--color-error-50,  #fff1f2)" },
-      { name: "Error / 100 · bg",      value: "var(--color-error-100, #ffe4e6)" },
-      { name: "Error / 600",           value: "var(--color-error-600, #e11d48)" },
-      { name: "Error / 700",           value: "var(--color-error-700, #be123c)" },
+      // Destructive / Error
+      { name: "Destructive",             value: "var(--destructive, #ef4444)" },
+
+      // Borders & Inputs
+      { name: "Border",                  value: "var(--border, #e4e4e7)" },
+      { name: "Input",                   value: "var(--input, #e4e4e7)" },
+      { name: "Ring",                    value: "var(--ring, #a1a1aa)" },
     ],
 
-    // ── Background images (gradients) ────────────────────────────────────
+    // ── Background images (gradients) ────────────────────────────────────────
     // Maps to the gradient-* utility classes defined in styles/tokens.css.
     backgroundImage: [
       {
-        name: "Gradient Brand · indigo → violet",
-        value: "linear-gradient(135deg, var(--color-brand-500, #6366f1), var(--color-accent-500, #8b5cf6))",
+        name: "Gradient Brand",
+        value: "linear-gradient(135deg, var(--primary, #18181b), color-mix(in oklch, var(--primary, #18181b) 70%, var(--accent, #f4f4f5)))",
       },
       {
-        name: "Gradient Brand Subtle · tinted wash",
-        value: "linear-gradient(135deg, var(--color-brand-50, #eef2ff), var(--color-accent-50, #f5f3ff))",
+        name: "Gradient Brand Subtle",
+        value: "linear-gradient(135deg, color-mix(in oklch, var(--primary, #18181b) 8%, #fff), color-mix(in oklch, var(--accent, #f4f4f5) 8%, #fff))",
       },
       {
-        name: "Gradient Brand Dark · deep indigo → violet",
-        value: "linear-gradient(135deg, var(--color-brand-800, #3730a3), var(--color-accent-800, #5b21b6))",
+        name: "Gradient Brand Dark",
+        value: "linear-gradient(135deg, color-mix(in oklch, var(--primary, #18181b) 80%, #000), color-mix(in oklch, var(--primary, #18181b) 60%, #000))",
       },
     ],
   },

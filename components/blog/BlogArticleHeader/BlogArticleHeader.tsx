@@ -1,5 +1,5 @@
 import { formatBlogDate } from "@/utils/date";
-import { Typography } from "@/components/design-system";
+import { Text } from "@/components/ui/text";
 import type { BlogArticleHeaderProps } from "./BlogArticleHeader.types";
 
 export function BlogArticleHeader({ title, blurb, date }: BlogArticleHeaderProps) {
@@ -8,17 +8,17 @@ export function BlogArticleHeader({ title, blurb, date }: BlogArticleHeaderProps
   return (
     <div className="flex flex-col gap-4">
       {title && (
-        <Typography variant="h1" className="sm:text-5xl">
+        <Text variant="h1" className="sm:text-5xl">
           {title}
-        </Typography>
+        </Text>
       )}
       {blurb && (
-        <Typography variant="body-lg" color="muted">
+        <Text variant="body-lg" color="muted">
           {blurb}
-        </Typography>
+        </Text>
       )}
       {formattedDate && (
-        <time dateTime={date ?? undefined} className="text-sm text-zinc-500">
+        <time dateTime={date ?? undefined} className="text-sm text-muted-foreground">
           {formattedDate}
         </time>
       )}

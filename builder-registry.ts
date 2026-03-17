@@ -2,12 +2,12 @@
 import type { RegisteredComponent } from "@builder.io/sdk-react";
 import "@/components/builder/BuilderDesignTokens";
 import Counter from "./components/Counter/Counter";
-import { Button } from "./components/design-system/Button/Button";
-import { Typography } from "./components/design-system/Typography/Typography";
-import { Badge } from "./components/design-system/Badge/Badge";
-import { Input } from "./components/design-system/Input/Input";
-import { Card } from "./components/design-system/Card/Card";
-import { Carousel } from "./components/design-system/Carousel/Carousel";
+import { Button } from "./components/ui/button";
+import { Badge } from "./components/ui/badge";
+import { FormInput } from "./components/ui/form-input";
+import { Card } from "./components/ui/card";
+import { Text } from "./components/ui/text";
+import { BuilderCarousel } from "./components/builder/BuilderCarousel";
 
 export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
   // ─── Existing ────────────────────────────────────────────────────────────
@@ -17,37 +17,27 @@ export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
     inputs: [{ name: "initialCount", type: "number" }],
   },
 
-  // ─── Design System ────────────────────────────────────────────────────────
+  // ─── shadcn/ui Components ─────────────────────────────────────────────────
   {
     component: Button,
     name: "DS Button",
     canHaveChildren: true,
     inputs: [
       {
-        name: "label",
-        type: "string",
-        defaultValue: "Click me",
-        required: true,
-      },
-      {
         name: "variant",
         type: "string",
-        enum: ["primary", "secondary", "ghost", "destructive"],
-        defaultValue: "primary",
+        enum: ["default", "destructive", "outline", "secondary", "ghost", "link"],
+        defaultValue: "default",
+        helperText: "default=filled primary, outline=bordered, ghost=transparent",
       },
       {
         name: "size",
         type: "string",
-        enum: ["sm", "md", "lg"],
-        defaultValue: "md",
+        enum: ["default", "sm", "lg", "icon"],
+        defaultValue: "default",
       },
       {
         name: "disabled",
-        type: "boolean",
-        defaultValue: false,
-      },
-      {
-        name: "loading",
         type: "boolean",
         defaultValue: false,
       },
@@ -61,8 +51,8 @@ export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
   },
 
   {
-    component: Typography,
-    name: "DS Typography",
+    component: Text,
+    name: "DS Text",
     inputs: [
       {
         name: "text",
@@ -87,48 +77,26 @@ export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
         enum: ["default", "muted", "subtle", "primary", "success", "warning", "error"],
         defaultValue: "default",
       },
-      {
-        name: "weight",
-        type: "string",
-        enum: ["normal", "medium", "semibold", "bold"],
-        helperText: "Overrides the default weight for the chosen variant",
-      },
-      {
-        name: "align",
-        type: "string",
-        enum: ["left", "center", "right"],
-        defaultValue: "left",
-      },
     ],
   },
 
   {
     component: Badge,
     name: "DS Badge",
+    canHaveChildren: true,
     inputs: [
-      {
-        name: "label",
-        type: "string",
-        defaultValue: "Badge",
-        required: true,
-      },
       {
         name: "variant",
         type: "string",
-        enum: ["neutral", "primary", "success", "warning", "error"],
-        defaultValue: "neutral",
-      },
-      {
-        name: "size",
-        type: "string",
-        enum: ["sm", "md"],
-        defaultValue: "md",
+        enum: ["default", "secondary", "destructive", "outline"],
+        defaultValue: "secondary",
+        helperText: "default=primary filled, secondary=muted, destructive=error, outline=bordered",
       },
     ],
   },
 
   {
-    component: Input,
+    component: FormInput,
     name: "DS Input",
     inputs: [
       {
@@ -176,27 +144,15 @@ export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
     canHaveChildren: true,
     inputs: [
       {
-        name: "padding",
+        name: "className",
         type: "string",
-        enum: ["none", "sm", "md", "lg"],
-        defaultValue: "md",
-      },
-      {
-        name: "shadow",
-        type: "string",
-        enum: ["none", "sm", "md", "lg"],
-        defaultValue: "sm",
-      },
-      {
-        name: "borderless",
-        type: "boolean",
-        defaultValue: false,
+        helperText: "Additional Tailwind classes (e.g. 'shadow-md p-4')",
       },
     ],
   },
 
   {
-    component: Carousel,
+    component: BuilderCarousel,
     name: "DS Carousel",
     canHaveChildren: true,
     childRequirements: {
@@ -204,40 +160,36 @@ export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
     },
     inputs: [
       {
-        name: "slidesPerView",
-        type: "number",
-        defaultValue: 1,
-        helperText: "Number of slides visible at once",
+        name: "orientation",
+        type: "string",
+        enum: ["horizontal", "vertical"],
+        defaultValue: "horizontal",
+        helperText: "Scroll direction",
       },
       {
-        name: "spaceBetween",
-        type: "number",
-        defaultValue: 0,
-        helperText: "Space between slides in pixels",
+        name: "loop",
+        type: "boolean",
+        defaultValue: false,
+        helperText: "Loop slides continuously",
       },
       {
         name: "navigation",
         type: "boolean",
         defaultValue: true,
-        helperText: "Show navigation arrows",
+        helperText: "Show previous/next arrow buttons",
       },
       {
-        name: "pagination",
-        type: "boolean",
-        defaultValue: true,
-        helperText: "Show pagination dots",
+        name: "align",
+        type: "string",
+        enum: ["start", "center", "end"],
+        defaultValue: "start",
+        helperText: "Alignment of slides in the viewport",
       },
       {
-        name: "paginationClickable",
-        type: "boolean",
-        defaultValue: true,
-        helperText: "Make pagination dots clickable",
-      },
-      {
-        name: "scrollbar",
-        type: "boolean",
-        defaultValue: false,
-        helperText: "Show scrollbar",
+        name: "slidesPerView",
+        type: "number",
+        defaultValue: 1,
+        helperText: "Number of slides visible at once (1–4)",
       },
       {
         name: "autoplay",
@@ -256,44 +208,6 @@ export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
         type: "boolean",
         defaultValue: true,
         helperText: "Pause autoplay on hover",
-      },
-      {
-        name: "loop",
-        type: "boolean",
-        defaultValue: false,
-        helperText: "Loop slides continuously",
-      },
-      {
-        name: "effect",
-        type: "string",
-        enum: ["slide", "fade", "cube", "coverflow", "flip"],
-        defaultValue: "slide",
-        helperText: "Transition effect",
-      },
-      {
-        name: "direction",
-        type: "string",
-        enum: ["horizontal", "vertical"],
-        defaultValue: "horizontal",
-        helperText: "Slide direction",
-      },
-      {
-        name: "centeredSlides",
-        type: "boolean",
-        defaultValue: false,
-        helperText: "Center active slide",
-      },
-      {
-        name: "keyboard",
-        type: "boolean",
-        defaultValue: true,
-        helperText: "Enable keyboard navigation (arrow keys)",
-      },
-      {
-        name: "mousewheel",
-        type: "boolean",
-        defaultValue: false,
-        helperText: "Enable mousewheel control",
       },
       {
         name: "minHeight",

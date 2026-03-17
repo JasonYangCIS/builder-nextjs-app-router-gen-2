@@ -5,54 +5,41 @@ test.describe("Card", () => {
     await page.goto("/design-system");
   });
 
-  test("renders children content", async ({ page }) => {
+  test("renders card with title and description via composition", async ({ page }) => {
     const section = page.locator("#card");
-    await expect(section.getByText("Card title").first()).toBeVisible();
-    await expect(section.getByText("Supporting text content.").first()).toBeVisible();
+    await expect(section.getByText("Card Title").first()).toBeVisible();
+    await expect(section.getByText("Card description goes here.").first()).toBeVisible();
   });
 
-  test("shadow=none has no shadow class", async ({ page }) => {
+  test("renders card content area", async ({ page }) => {
     const section = page.locator("#card");
-    const noShadowCard = section.locator(".rounded-xl").first();
-    await expect(noShadowCard).not.toHaveClass(/shadow-sm/);
-    await expect(noShadowCard).not.toHaveClass(/shadow-md/);
+    await expect(section.getByText("Main content area.").first()).toBeVisible();
   });
 
-  test("shadow=sm applies shadow-sm class", async ({ page }) => {
+  test("renders card footer with action button", async ({ page }) => {
+    const section = page.locator("#card");
+    await expect(section.getByRole("button", { name: "Action" })).toBeVisible();
+  });
+
+  test("card has shadow-sm class by default", async ({ page }) => {
     const section = page.locator("#card");
     await expect(section.locator(".shadow-sm").first()).toBeVisible();
   });
 
-  test("shadow=md applies shadow-md class", async ({ page }) => {
+  test("card has rounded-xl class", async ({ page }) => {
     const section = page.locator("#card");
-    await expect(section.locator(".shadow-md").first()).toBeVisible();
+    await expect(section.locator(".rounded-xl").first()).toBeVisible();
   });
 
-  test("shadow=lg applies shadow-lg class", async ({ page }) => {
+  test("renders minimal card variant", async ({ page }) => {
     const section = page.locator("#card");
-    await expect(section.locator(".shadow-lg").first()).toBeVisible();
+    await expect(section.getByText("Simple card")).toBeVisible();
+    await expect(section.getByText("Just a box with border and shadow.")).toBeVisible();
   });
 
-  test("padding=none card has no padding class", async ({ page }) => {
+  test("card has border class", async ({ page }) => {
     const section = page.locator("#card");
-    // The padding demo row uses border-dashed cards — first one is padding=none
-    const paddingCards = section.locator(".border-dashed");
-    const noneCard = paddingCards.first();
-    await expect(noneCard).toBeVisible();
-    await expect(noneCard).not.toHaveClass(/p-4/);
-    await expect(noneCard).not.toHaveClass(/p-6/);
-  });
-
-  test("padding=md applies p-6 class", async ({ page }) => {
-    const section = page.locator("#card");
-    await expect(section.locator(".p-6").first()).toBeVisible();
-  });
-
-  test("borderless card renders content without a border ring", async ({ page }) => {
-    const section = page.locator("#card");
-    await expect(section.getByText("Floating card")).toBeVisible();
-    await expect(section.getByText("No border, elevated with shadow.")).toBeVisible();
-    // borderless=true means no ring-1 class — shadow-md is applied instead
-    await expect(section.locator(".shadow-md").filter({ hasText: "Floating card" })).toBeVisible();
+    const card = section.locator("[data-slot='card']").first();
+    await expect(card).toHaveClass(/border/);
   });
 });

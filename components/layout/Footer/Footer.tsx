@@ -1,12 +1,10 @@
-import { Typography } from "@/components/design-system";
-
 export function Footer() {
   return (
-    <footer className="mt-16 border-t border-zinc-200">
+    <footer className="mt-16 border-t border-border">
       <div className="mx-auto max-w-5xl px-6 py-8 text-center">
-        <Typography variant="caption" color="subtle">
+        <span className="text-xs text-muted-foreground">
           © {new Date().getFullYear()} My Builder Sandbox. All rights reserved.
-        </Typography>
+        </span>
       </div>
     </footer>
   );

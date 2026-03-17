@@ -2,6 +2,53 @@
 
 These rules apply to every task. Do not deviate from them.
 
+## Engineering Standards
+
+Every change must meet all of these. Full detail in `AGENTS.md`.
+
+### React & Next.js
+- Server Components by default — `"use client"` only for interactivity (event handlers, state, browser APIs)
+- Always `next/image` (never `<img>`), `next/link` (never `<a>` for internal links), `next/font` (already configured)
+- Every `page.tsx` exports `metadata` or `generateMetadata` with `title` + `description`
+- `generateStaticParams` on all `[slug]` routes; `export const revalidate` on all Builder pages
+
+### TypeScript
+- No `any` without an inline comment; no `as` assertions without justification
+- `import type` for type-only imports; validate external data at boundaries
+
+### Code Quality
+- DRY: shared logic → `utils/`, shared types → `types/`, shared UI → `components/`
+- KISS: simplest solution that meets the requirement; no speculative abstractions
+- Separation of concerns: Server Components fetch, Client Components interact — never mix
+- No dead code: no commented-out blocks, unused imports, or stale variables
+
+### SEO
+- One `<h1>` per page; logical heading hierarchy; semantic landmark elements
+- Descriptive `alt` text on all images; descriptive link text (never "click here")
+
+### Performance
+- Prefer Server Components to reduce client JS bundle
+- `next/dynamic` with `ssr: false` for heavy client-only libraries
+- Respect `prefers-reduced-motion` on all animations
+
+### Security
+- No `dangerouslySetInnerHTML` without DOMPurify sanitization — all Builder HTML fields and user content
+- No secrets in client code — never expose API keys or tokens to the browser bundle
+- Validate and sanitize all external input (URL params, form data, API responses) before use
+- No inline `<script>`, `javascript:` hrefs, or `eval()`-style patterns
+
+### Accessibility (WCAG 2.1 AA)
+- shadcn semantic tokens maintain contrast — never hardcode hex for text
+- All interactive elements: visible focus ring (`focus-visible:ring-[3px] focus-visible:ring-ring/50`)
+- Icon-only buttons: `aria-label`; images: `alt`; forms: labels via `FormInput`
+
+## After Every Change
+Run both before marking a task complete:
+```bash
+npx tsc --noEmit   # must pass
+npm test           # must pass
+```
+
 ## Dev Server
 - Always start the dev server with `npm run dev -- --webpack`
 - Never use `next dev` without `--webpack` — Turbopack is incompatible with Builder Dev Tools
@@ -28,12 +75,16 @@ These rules apply to every task. Do not deviate from them.
 
 ## Imports & Paths
 - Always use the `@/` path alias for internal imports — never use relative paths like `../../`
-- Import design system components from the barrel: `@/components/design-system`
+- Import shadcn UI components from `@/components/ui/` — e.g. `import { Button } from "@/components/ui/button"`
+- Import the Text (typography) component from `@/components/ui/text`
+- Import the labeled input wrapper from `@/components/ui/form-input`
+- Import the Builder carousel wrapper from `@/components/builder/BuilderCarousel` (only for builder-registry.ts)
+- There is NO barrel file — import each component from its own file in `components/ui/`
 
 ## Testing
 - Tests live in `tests/` — mirroring the component structure (`tests/design-system/`, `tests/blog/`, `tests/layout/`)
 - Run with `npm test` (headless) or `npm run test:ui` (interactive)
 - Two fixture pages serve as test harnesses — do not link them from the app:
-  - `app/design-system/page.tsx` — design system components (Button, Badge, Input, Card, Typography, Counter)
+  - `app/design-system/page.tsx` — shadcn components (Button, Badge, FormInput, Card, Carousel, Text, Counter)
   - `app/test/blog-components/page.tsx` — blog components with static mock data
 - For full conventions, gotchas, and fixture page patterns: `docs/skills/testing.md`

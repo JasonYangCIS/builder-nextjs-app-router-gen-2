@@ -4,9 +4,9 @@ Guidance for AI coding agents working in this repository.
 
 ## Project Overview
 
-Next.js App Router sandbox demonstrating [Builder.io Gen 2 SDK](https://www.builder.io/c/docs/developers) integration patterns alongside a custom design system.
+Next.js App Router sandbox demonstrating [Builder.io Gen 2 SDK](https://www.builder.io/c/docs/developers) integration patterns alongside a shadcn/ui design system (new-york style).
 
-**Stack:** Next.js 16 · React 19 · TypeScript · Tailwind CSS v4 · `@builder.io/sdk-react` v5.x
+**Stack:** Next.js 16 · React 19 · TypeScript · Tailwind CSS v4 · `@builder.io/sdk-react` v5.x · shadcn/ui · Embla Carousel · Geist fonts
 
 ---
 
@@ -31,8 +31,11 @@ NEXT_PUBLIC_BUILDER_API_KEY=your_key_here
 | `config.ts` | All Builder model names + API key — never hardcode elsewhere |
 | `builder-registry.ts` | Custom component registration for Builder visual editor |
 | `components/builder/RenderBuilderContent.tsx` | Always use this wrapper, never `<Content>` directly |
-| `styles/tokens.css` | Design token source of truth |
-| `utils/cn.ts` | className joiner utility |
+| `components/ui/` | shadcn/ui components (new-york style) — Button, Badge, Input, Label, Card, Carousel, Text, FormInput |
+| `components/builder/BuilderCarousel.tsx` | Embla Carousel wrapper exposing Builder-friendly props |
+| `app/globals.css` | shadcn OKLCH color tokens + theme overrides (default / dark / ritual) |
+| `styles/tokens.css` | Gradient utilities only — use `var(--primary)` / `var(--accent)` |
+| `utils/cn.ts` | className joiner (clsx + tailwind-merge) |
 
 ---
 
@@ -50,8 +53,8 @@ app/                         # Next.js App Router pages
 
 components/
   blog/                      # Blog-specific components
-  builder/                   # RenderBuilderContent wrapper
-  design-system/             # DS primitives (Button, Typography, Badge, Input, Card)
+  builder/                   # RenderBuilderContent wrapper + BuilderCarousel
+  ui/                        # shadcn/ui primitives (Button, Badge, Input, Label, Card, Carousel, Text, FormInput)
   layout/                    # Header (RSC + NavItems client), Footer
 
 docs/skills/                 # Detailed skill references (see Skills below)
@@ -66,7 +69,10 @@ utils/cn.ts                  # className joiner
 
 - **Path alias:** `@/` maps to repo root — always use it for internal imports
 - **Model names:** Read from `config.ts`, never as string literals
-- **Design system:** Import from barrel `@/components/design-system`
+- **shadcn components:** Import from each component's own file — `import { Button } from "@/components/ui/button"`. No barrel.
+- **Typography:** Use `Text` from `@/components/ui/text` — same variant/color API as the old Typography component
+- **Labeled inputs:** Use `FormInput` from `@/components/ui/form-input`; use bare `Input` only when no label is needed
+- **Color tokens:** Use shadcn semantic tokens (`text-foreground`, `bg-primary`, `text-muted-foreground`, etc.) — never hardcode hex values or raw zinc/slate shades for text
 - **Library types:** Import and re-export types from third-party libraries instead of redefining them (see TypeScript Conventions below)
 
 ---
@@ -87,18 +93,17 @@ utils/cn.ts                  # className joiner
 
 ```ts
 // ❌ BAD: Redefining library types
-export type MyEffect = "slide" | "fade" | "cube";
-export type MyDirection = "horizontal" | "vertical";
+export type MyVariant = "default" | "destructive" | "outline";
 
 // ✅ GOOD: Import and re-export library types
-import type { SwiperOptions } from "swiper/types";
+import type { VariantProps } from "class-variance-authority";
+import { buttonVariants } from "@/components/ui/button";
 
-export type CarouselEffect = NonNullable<SwiperOptions["effect"]>;
-export type CarouselDirection = NonNullable<SwiperOptions["direction"]>;
+export type ButtonVariant = VariantProps<typeof buttonVariants>["variant"];
 ```
 
 **When to use this pattern:**
-- Component wraps a third-party library (Swiper, Leaflet, Chart.js, etc.)
+- Component wraps a third-party library (shadcn, Embla, Radix, etc.)
 - The library exports TypeScript types
 - Your component props mirror library options
 
@@ -107,8 +112,81 @@ export type CarouselDirection = NonNullable<SwiperOptions["direction"]>;
 - Your component significantly transforms the API
 - You're adding custom values beyond what the library supports
 
-**Example from this codebase:**
-- `components/design-system/Carousel/Carousel.types.ts` imports types from `swiper/types` instead of redefining `effect` and `direction` types
+---
+
+## Engineering Standards
+
+Every code change — regardless of scope — must meet all of the following. These are not optional.
+
+---
+
+### React & Next.js
+
+- **Server Components by default.** Use `"use client"` only when a component needs interactivity (event handlers, `useState`, `useEffect`, browser APIs). Push client boundaries as far down the tree as possible.
+- **Fetch data in Server Components.** Never fetch in Client Components when the server can do it.
+- **`next/image` for all images.** Never use bare `<img>` — `<Image>` handles lazy loading, sizing, format, and CLS prevention automatically. Always set `sizes` on fill images.
+- **`next/link` for all internal navigation.** Never use `<a href>` for same-origin links.
+- **Metadata API for SEO.** Export `metadata` (static) or `generateMetadata` (dynamic) on every `page.tsx`. Include at minimum `title` and `description`.
+- **`generateStaticParams`** on all `[slug]` routes to pre-render at build time.
+- **`export const revalidate`** on all Builder-connected pages for ISR.
+- **Suspense boundaries** around async content to enable streaming and avoid waterfalls.
+- **No layout shift.** Reserve space for images and dynamic content to prevent CLS.
+
+---
+
+### TypeScript
+
+- **No `any`** without an inline comment explaining why it is unavoidable.
+- **No type assertions (`as`)** unless absolutely necessary and commented.
+- **Infer types where possible** — do not annotate what TypeScript can derive.
+- **Validate external data at boundaries** — API responses, URL params, Builder data fields.
+- **`import type`** for type-only imports to prevent accidental runtime inclusion.
+- **Strict mode is on** — do not disable strict checks via `tsconfig` or `@ts-ignore` without justification.
+
+---
+
+### Code Quality — DRY · KISS · Separation of Concerns
+
+- **Don't repeat yourself.** Shared logic belongs in `utils/`, shared types in `types/`, shared UI in `components/`.
+- **Keep it simple.** The simplest solution that meets the requirement is the correct one. Avoid speculative abstractions.
+- **One responsibility per module.** Pages compose. Components render. Utilities transform. Types describe.
+- **Server Components fetch; Client Components interact.** Never mix data-fetching with interaction logic in the same component.
+- **No premature abstraction.** Two similar code paths do not justify extraction. Three might — use judgment.
+- **Delete dead code.** No commented-out code, unused imports, or stale variables.
+- **No over-engineering.** Do not add configuration flags, fallbacks, or generics for hypothetical future requirements.
+
+---
+
+### SEO
+
+- Every `page.tsx` exports `metadata` or `generateMetadata` — `title` and `description` are required.
+- One `<h1>` per page. Logical heading hierarchy (`h1 → h2 → h3`). Never skip levels.
+- Semantic landmark elements: `<main>`, `<nav>`, `<header>`, `<footer>`, `<article>`, `<section>`.
+- All images have descriptive `alt` text (`alt=""` only for decorative images).
+- Link text is descriptive — avoid "click here" or "read more" without context.
+- Canonical URLs and Open Graph tags on public-facing pages.
+
+---
+
+### Security
+
+- **No `dangerouslySetInnerHTML`** without sanitizing through DOMPurify first — applies to all Builder HTML fields and any user-generated content.
+- **No secrets in client code.** Environment variables exposed to the browser must use `NEXT_PUBLIC_` prefix intentionally — never leak API keys or tokens to the client bundle.
+- **Validate and sanitize all external input** — URL params, form data, Builder data fields, API responses — before using in logic or rendering.
+- **No SQL/command injection surface.** Treat all external strings as untrusted; never interpolate them into queries, shell commands, or `eval`.
+- **Content Security Policy awareness.** Do not introduce inline `<script>` tags, `javascript:` hrefs, or `eval()`-style patterns.
+- **Dependency hygiene.** Do not install packages with known critical vulnerabilities; prefer well-maintained, minimal-dependency libraries.
+
+---
+
+### Performance
+
+- **Prefer Server Components** — they ship zero JS to the browser by default.
+- **`next/dynamic`** with `ssr: false` for heavy client-only libraries (editors, maps, charts).
+- **Avoid inline object/array/function props** in JSX when the value is recreated on every render — declare outside the component or use `useMemo`/`useCallback` only when profiling confirms it helps.
+- **`export const revalidate`** over `cache: "no-store"` on pages that can tolerate stale-while-revalidate.
+- **No blocking third-party scripts.** Use `strategy="afterInteractive"` or `strategy="lazyOnload"` on `<Script>`.
+- **`prefers-reduced-motion`** — all CSS animations and transitions must respect this media query.
 
 ---
 
@@ -182,14 +260,26 @@ Skills are defined in `.builder/skills/` and reference full docs in `docs/skills
 
 ## Commands
 
-Prefer file-scoped checks:
+### After every change — always run these
+
+```bash
+# 1. Type-check changed files
+npx tsc --noEmit
+
+# 2. Run the test suite
+npm test
+```
+
+Both must pass before a task is considered complete. Fix any errors before finishing — do not leave a failing type-check or test suite.
+
+### File-scoped checks (faster, use during development)
 
 ```bash
 npx tsc --noEmit path/to/file.tsx
 npm run lint -- path/to/file.tsx
 ```
 
-Full build (only when explicitly requested):
+### Full build (run when explicitly requested or before a PR)
 
 ```bash
 npm run build

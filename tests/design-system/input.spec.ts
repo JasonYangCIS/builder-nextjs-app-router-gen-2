@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Input", () => {
+test.describe("Input (FormInput)", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/design-system");
   });

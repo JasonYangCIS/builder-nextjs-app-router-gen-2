@@ -17,11 +17,18 @@
   "dependencies": {
     "@builder.io/dev-tools": "^1.28.18",
     "@builder.io/sdk-react": "^5.2.0",
+    "@radix-ui/react-label": "^2.1.8",
+    "@radix-ui/react-slot": "^1.2.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "embla-carousel-autoplay": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
     "isomorphic-dompurify": "^3.0.0",
+    "lucide-react": "^0.577.0",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "swiper": "^12.1.2"
+    "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",

@@ -1,6 +1,6 @@
 # Design System Skills
 
-Conventions for working with the custom design system in this repo.
+Conventions for working with the shadcn/ui design system in this repo.
 
 ---
 
@@ -8,243 +8,300 @@ Conventions for working with the custom design system in this repo.
 
 | Layer | Location | Purpose |
 |-------|----------|---------|
-| Tokens | `styles/tokens.css` | Single source of truth — colors, gradients |
-| Primitives | `components/design-system/` | Button, Typography, Badge, Input, Card |
-| Other components | `components/Counter/Counter.tsx` | Example client component with state |
-| Barrel | `components/design-system/index.ts` | Public API for all DS imports |
-| Showcase | `app/design-system/page.tsx` | Storybook-style visual reference at `/design-system`; also the Playwright test harness for all DS components and Counter |
+| CSS variables | `app/globals.css` | shadcn OKLCH color tokens + theme overrides (default/dark/ritual) |
+| Gradient utilities | `styles/tokens.css` | `gradient-brand`, `gradient-brand-subtle`, etc. — use `var(--primary)` / `var(--accent)` |
+| shadcn primitives | `components/ui/` | Button, Badge, Input, Label, Card, Carousel, Text, FormInput |
+| Builder wrappers | `components/builder/` | BuilderCarousel — wraps shadcn Carousel for Builder.io editor |
+| Other components | `components/Counter/Counter.tsx` | Stateful counter using shadcn Button |
+| Showcase | `app/design-system/page.tsx` | Visual reference at `/design-system`; also Playwright test harness |
 
 ---
 
-## Tokens (`styles/tokens.css`)
+## Color System
 
-Tailwind v4 uses `@theme` in CSS instead of `tailwind.config.ts`. All tokens defined here auto-generate Tailwind utility classes.
+shadcn/ui uses OKLCH CSS variables. All tokens are defined in `app/globals.css` and exposed to Tailwind via `@theme inline`.
 
-```css
-@theme {
-  --color-brand-600: #4f46e5;   /* → bg-brand-600, text-brand-600, border-brand-600 */
-  --color-accent-600: #7c3aed;  /* → bg-accent-600, etc. */
-}
-```
+### Semantic tokens (always prefer these over raw colors)
 
-### Color Scales
+| CSS variable | Tailwind utility | Use |
+|---|---|---|
+| `--background` | `bg-background` | Page background |
+| `--foreground` | `text-foreground` | Primary text |
+| `--card` | `bg-card` | Card/surface background |
+| `--card-foreground` | `text-card-foreground` | Text on cards |
+| `--primary` | `bg-primary` / `text-primary` | Primary actions, CTAs, links |
+| `--primary-foreground` | `text-primary-foreground` | Text on primary backgrounds |
+| `--secondary` | `bg-secondary` | Secondary surfaces |
+| `--secondary-foreground` | `text-secondary-foreground` | Text on secondary |
+| `--muted` | `bg-muted` | Subtle backgrounds |
+| `--muted-foreground` | `text-muted-foreground` | De-emphasised text |
+| `--accent` | `bg-accent` | Hover/highlight surfaces |
+| `--accent-foreground` | `text-accent-foreground` | Text on accent |
+| `--destructive` | `bg-destructive` / `text-destructive` | Error/danger states |
+| `--border` | `border-border` | Default border color |
+| `--input` | `border-input` | Form input borders |
+| `--ring` | `ring-ring` | Focus rings |
 
-| Scale | Base hue | Use |
-|-------|----------|-----|
-| `brand` | Indigo | Primary interactive, CTAs, focus rings |
-| `accent` | Violet | Gradient pair for brand |
-| `success` | Emerald | Positive states |
-| `warning` | Amber | Cautionary states |
-| `error` | Rose | Error/destructive states |
+### Themes
 
-### Gradient Utilities
+Three themes are defined in `app/globals.css` via `[data-theme]` attribute selectors:
+- `default` (light, zinc-based)
+- `dark`
+- `ritual` (custom brand — indigo/yellow)
 
-Defined in `@layer utilities` in `tokens.css`. Apply as className values:
+Gradient utilities in `styles/tokens.css` automatically adapt to the active theme via `var(--primary)` and `var(--accent)`.
+
+### WCAG 2.1 AA — semantic token guidance
+
+| Token | On `--background` | Notes |
+|-------|-------------------|-------|
+| `text-foreground` | ✅ High contrast | Default body text |
+| `text-muted-foreground` | ✅ Passes AA | De-emphasised text |
+| `text-primary` | ✅ Passes AA | Theme-adaptive primary |
+| `text-destructive` | ✅ Passes AA | Error state |
+
+**Do NOT hardcode hex colors or zinc/slate shades for text.** Always use semantic tokens so contrast is maintained across all three themes.
+
+**Focus rings:** shadcn components use `focus-visible:ring-[3px] focus-visible:ring-ring/50` — use the same pattern on any custom interactive element.
+
+---
+
+## Gradient Utilities
+
+Defined in `styles/tokens.css`. Apply as `className` values:
 
 | Class | Use |
 |-------|-----|
-| `gradient-brand` | Background: indigo → violet. CTAs, active states |
+| `gradient-brand` | Background: primary → accent blend. CTAs, active states |
 | `gradient-brand-subtle` | Light wash. Section backgrounds, card tints |
-| `gradient-brand-dark` | Deep indigo → deep violet. Dark hero sections |
+| `gradient-brand-dark` | Dark tone. Hero sections, banners |
 | `gradient-mesh` | Multi-stop radial. Hero backgrounds |
 | `gradient-brand-text` | CSS gradient text. Headings, display type |
-
-### Adding a Token
-
-Add to the `@theme` block in `styles/tokens.css`. The Tailwind utility is generated automatically — no config file needed.
 
 ---
 
 ## Components
 
-### Import
+### Imports
 
 ```ts
-import { Button, Typography, Badge, Input, Card } from "@/components/design-system";
+// shadcn UI primitives
+import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+
+// Wrappers (composed from shadcn primitives)
+import { Text } from "@/components/ui/text"
+import { FormInput } from "@/components/ui/form-input"
+
+// Builder.io wrapper (only in builder-registry.ts and Builder pages)
+import { BuilderCarousel } from "@/components/builder/BuilderCarousel"
 ```
 
-### Typography
-
-```tsx
-<Typography variant="h1" color="default" text="Hello World" />
-<Typography variant="body" color="muted">Paragraph content</Typography>
-<Typography variant="h2" as="h3" />  {/* semantic override via as prop */}
-```
-
-**Variants:** `display`, `h1`–`h6`, `body-lg`, `body`, `body-sm`, `caption`, `label`, `overline`
-
-**Colors:** `default` · `muted` · `subtle` · `primary` · `success` · `warning` · `error`
+---
 
 ### Button
 
+shadcn Button. Children are the button label — no `label` prop.
+
 ```tsx
-<Button label="Save" variant="primary" size="md" />
-<Button label="Delete" variant="destructive" />
-<Button label="Saving…" loading />
-<Button label="Disabled" disabled />
+<Button>Save</Button>
+<Button variant="destructive">Delete</Button>
+<Button variant="outline" size="sm">Cancel</Button>
+<Button variant="ghost" disabled>Disabled</Button>
+<Button asChild><Link href="/page">Navigate</Link></Button>
 ```
 
-**Variants:** `primary` · `secondary` · `ghost` · `destructive`
-**Sizes:** `sm` · `md` · `lg`
+**Variants:** `default` · `destructive` · `outline` · `secondary` · `ghost` · `link`
+
+**Sizes:** `default` · `sm` · `lg` · `icon`
+
+**Migration from old DS:**
+- `primary` → `default`
+- `secondary` → `outline`
+- `ghost` → `ghost`
+- `destructive` → `destructive`
+- `label="..."` → use children instead
+
+---
 
 ### Badge
 
-```tsx
-<Badge label="Published" variant="success" size="md" />
-```
-
-**Variants:** `neutral` · `primary` · `success` · `warning` · `error`
-**Sizes:** `sm` · `md`
-
-### Input
+shadcn Badge. Children are the badge content.
 
 ```tsx
-<Input label="Email" placeholder="you@example.com" />
-<Input label="Password" type="password" helperText="Min 8 characters" />
-<Input label="Email" errorText="Invalid email address" />
-<Input label="Name" required />
-<Input label="Username" disabled />
+<Badge>Published</Badge>
+<Badge variant="secondary">Draft</Badge>
+<Badge variant="destructive">Error</Badge>
+<Badge variant="outline">Archived</Badge>
 ```
 
-Uses `useId()` for accessible label/input association. Error state sets `aria-invalid` and `role="alert"` on helper text.
+**Variants:** `default` · `secondary` · `destructive` · `outline`
+
+**Migration from old DS:**
+- `neutral` → `secondary`
+- `primary` → `default`
+- `success/warning` → `secondary` (or use `className` for custom color)
+- `error` → `destructive`
+- `label="..."` → use children instead
+
+---
+
+### Text (Typography replacement)
+
+Thin wrapper using shadcn design tokens. Identical variant/color API to the old `Typography` component.
+
+```tsx
+<Text variant="h1">Page Title</Text>
+<Text variant="body-lg" color="muted">Supporting copy</Text>
+<Text variant="body-sm" color="error">Validation message</Text>
+<Text variant="h2" as="h3">Semantic override</Text>
+<Text variant="overline" text="Section label" />
+```
+
+**Variants:** `display` · `h1`–`h6` · `body-lg` · `body` · `body-sm` · `caption` · `label` · `overline`
+
+**Colors:** `default` · `muted` · `subtle` · `primary` · `success` · `warning` · `error`
+
+Each variant defaults to its semantic HTML element (`h1` renders `<h1>`, `body` renders `<p>`, etc.). Override with `as`.
+
+---
+
+### FormInput (labeled Input)
+
+Composes shadcn Input + Label + helper/error text. Use this wherever you need a labeled form field.
+
+```tsx
+<FormInput label="Email" placeholder="you@example.com" />
+<FormInput label="Password" type="password" helperText="Min 8 characters" />
+<FormInput label="Email" errorText="Invalid email address" />
+<FormInput label="Name" required />
+<FormInput label="Username" defaultValue="jsmith" disabled />
+```
+
+For bare input without a label, use `<Input>` directly from `@/components/ui/input`.
+
+---
 
 ### Card
 
+shadcn Card uses composition. Mix and match sub-components as needed.
+
 ```tsx
-<Card shadow="sm" padding="md">
-  <p>Content here</p>
+// Full composition
+<Card>
+  <CardHeader>
+    <CardTitle>Title</CardTitle>
+    <CardDescription>Supporting description</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <p>Body content here.</p>
+  </CardContent>
+  <CardFooter>
+    <Button size="sm">Action</Button>
+  </CardFooter>
 </Card>
-<Card borderless shadow="md" className="w-56" />
+
+// Minimal — just override padding via className
+<Card className="p-4 gap-2">
+  <p className="text-sm font-medium">Simple card</p>
+</Card>
 ```
 
-**Shadow:** `none` · `sm` · `md` · `lg`
-**Padding:** `none` · `sm` · `md` · `lg`
-`borderless` removes the default border ring.
+**Migration from old DS:** The old `padding` and `shadow` props are replaced by `className`. Use Tailwind utilities like `shadow-md`, `p-6`, `gap-0` directly.
 
 ---
 
-## WCAG 2.1 AA Compliance Rules
+### Carousel
 
-Minimum contrast ratios: **4.5:1** for normal text, **3:1** for large text (≥18pt or ≥14pt bold).
+shadcn Carousel powered by Embla. Use the composition API for custom layouts, or `BuilderCarousel` for Builder.io pages.
 
-### Approved text colors (on white `#ffffff`)
+```tsx
+// Standard usage
+<Carousel opts={{ align: "start", loop: true }}>
+  <CarouselContent>
+    <CarouselItem>Slide 1</CarouselItem>
+    <CarouselItem>Slide 2</CarouselItem>
+    <CarouselItem>Slide 3</CarouselItem>
+  </CarouselContent>
+  <CarouselPrevious />
+  <CarouselNext />
+</Carousel>
 
-| Tailwind class | Hex | Contrast | Status |
-|---------------|-----|----------|--------|
-| `text-zinc-900` | `#18181b` | ~16.0:1 | ✅ |
-| `text-zinc-700` | `#3f3f46` | ~9.5:1 | ✅ |
-| `text-zinc-600` | `#52525b` | ~7.0:1 | ✅ |
-| `text-zinc-500` | `#71717a` | ~4.95:1 | ✅ |
-| `text-brand-600` | `#4f46e5` | ~5.9:1 | ✅ |
-| `text-brand-700` | `#4338ca` | ~7.2:1 | ✅ |
-| `text-accent-600` | `#7c3aed` | ~5.1:1 | ✅ |
-| `text-success-700` | `#047857` | ~5.8:1 | ✅ |
-| `text-warning-700` | `#b45309` | ~4.9:1 | ✅ |
-| `text-error-700` | `#be123c` | ~5.4:1 | ✅ |
+// Multiple slides per view — use basis classes on CarouselItem
+<CarouselItem className="md:basis-1/2 lg:basis-1/3">
+```
 
-### Do NOT use for body text on white
+**Key Embla options** (passed to `opts`):
+- `loop: boolean` — continuous looping
+- `align: "start" | "center" | "end"` — slide alignment
+- `axis: "x" | "y"` — use `orientation` prop on Carousel instead
 
-| Tailwind class | Contrast | Reason |
-|---------------|----------|--------|
-| `text-zinc-400` | ~2.47:1 | Fails AA |
-| `text-zinc-300` | ~1.9:1 | Fails AA |
-| `text-brand-400` | ~2.79:1 | Fails AA |
-| `text-accent-400` | ~2.56:1 | Fails AA |
+**Autoplay** — use `embla-carousel-autoplay` plugin:
+```tsx
+import Autoplay from "embla-carousel-autoplay"
+<Carousel plugins={[Autoplay({ delay: 3000 })]}>
+```
 
-### gradient-brand-text
-
-Uses `brand-600` → `accent-600` (both ≥ 4.5:1 on white). Do not change to 400-level colors.
-
-### Typography `subtle` color
-
-Maps to `text-zinc-500` (~4.95:1). Do not use `text-zinc-400` directly for readable text — it fails WCAG.
+**Migration from old DS (Swiper):** Swiper-specific effects (`cube`, `flip`, `coverflow`, `fade`) are not available in Embla. Use orientation, loop, and alignment instead.
 
 ---
 
-## Extending the Design System
+## Adding a New shadcn Component
 
-### Using Library Types (Single Source of Truth)
+If you need a shadcn component that isn't in `components/ui/` yet:
 
-**CRITICAL:** When building components that wrap third-party libraries, always import and re-export the library's native types instead of redefining them.
+1. Copy the component source from [ui.shadcn.com](https://ui.shadcn.com/docs/components) (new-york style)
+2. Place it in `components/ui/my-component.tsx`
+3. Import `cn` from `@/utils/cn` (already uses clsx + tailwind-merge)
+4. If it needs Radix UI, install the package first: `npm install @radix-ui/react-<name>`
+5. Register in `builder-registry.ts` if it will be used in the Builder visual editor
+6. Add a section to `app/design-system/page.tsx` using `Section` + `DemoRow` + `DemoItem`
 
-**Why:**
-- Maintains single source of truth
-- Ensures type compatibility with the underlying library
-- Prevents type drift when the library updates
-- Reduces maintenance burden
-
-**Pattern:**
+**Do NOT** redefine types that the library already exports — import and re-export them:
 
 ```ts
-// ❌ BAD: Redefining library types
-export type MyEffect = "slide" | "fade" | "cube";
+// ❌ BAD
+export type MyVariant = "default" | "destructive"
 
-// ✅ GOOD: Import and re-export library types
-import type { SwiperOptions } from "swiper/types";
-
-export type CarouselEffect = NonNullable<SwiperOptions["effect"]>;
-export type CarouselDirection = NonNullable<SwiperOptions["direction"]>;
+// ✅ GOOD — re-export from the library
+import type { VariantProps } from "class-variance-authority"
+import { buttonVariants } from "@/components/ui/button"
+export type ButtonVariant = VariantProps<typeof buttonVariants>["variant"]
 ```
 
-**When to use this pattern:**
-- Component wraps a third-party library (Swiper, Leaflet, etc.)
-- The library exports TypeScript types
-- Your component props mirror library options
+---
 
-**When NOT to use:**
-- Library doesn't export types
-- Your component significantly transforms the API
-- You're adding custom values beyond what the library supports
+## Showcase Page (`app/design-system/page.tsx`)
 
-### Adding a new component
+This page is both the visual reference and the Playwright test harness. Section `id` attributes are used by tests.
 
-1. Create `components/design-system/MyComponent/MyComponent.tsx` and `MyComponent.types.ts`
-2. **If wrapping a library:** Import and re-export its types (see "Using Library Types" above)
-3. Export from `components/design-system/index.ts`
-4. Register in `builder-registry.ts` with `RegisteredComponent` schema
-5. Add a section to `app/design-system/page.tsx` using `Section` + `DemoRow`/`DemoItem` helpers (see below)
+**Layout helpers (local to the file):**
 
-### Showcase page helpers (`app/design-system/page.tsx`)
-
-These layout helpers are defined locally in the file — they are not exported or importable elsewhere.
-
-**`Section`** — wraps a named block with a heading and optional description:
 ```tsx
+// Named section with border/card container
 <Section id="my-component" title="My Component" description="Optional subtitle.">
-  {/* DemoRows go here */}
+  {/* DemoRows */}
 </Section>
-```
-- `id` is used for sidebar anchor links — add a matching entry to the `NAV` array at the top of the file
-- Renders a card-style container with a border
 
-**`DemoRow`** — a horizontal row inside a Section, with an optional monospace label:
-```tsx
+// Horizontal row with optional monospace label
 <DemoRow label="variant">
-  <DemoItem label="primary"><MyComponent variant="primary" /></DemoItem>
-  <DemoItem label="secondary"><MyComponent variant="secondary" /></DemoItem>
+  <DemoItem label="default"><Button>Default</Button></DemoItem>
+  <DemoItem label="outline"><Button variant="outline">Outline</Button></DemoItem>
+</DemoRow>
+
+// Grid layout override
+<DemoRow label="default" className="grid grid-cols-2 gap-5 px-5 py-5">
+  <FormInput label="Email" />
+  <FormInput label="Name" />
 </DemoRow>
 ```
-- `label` renders as a grey monospace header above the row
-- Default layout: `flex flex-wrap items-end gap-4 px-5 py-5`
-- Override with `className` for grid layouts: `className="grid grid-cols-2 gap-5 px-5 py-5"`
 
-**`DemoItem`** — wraps a single component instance with a label beneath it:
-```tsx
-<DemoItem label="primary" align="center">
-  <MyComponent />
-</DemoItem>
-```
-- `align`: `"center"` (default) or `"start"` — use `"start"` for block-level components like Card
-
-**Adding a new section — checklist:**
+**Adding a new section:**
 1. Add `{ id: "my-component", label: "My Component" }` to the `NAV` array
-2. Add `<Section id="my-component" title="..." description="...">` in the `<main>` block
+2. Add `<Section id="my-component" ...>` in `<main>`
 3. Use `DemoRow` + `DemoItem` to show each prop variation
-
-### Adding a new color to a component
-
-Check contrast with the background it will appear on before adding. Refer to the approved colors table above.
-
-### Focus rings
-
-Use `focus-visible:ring-2 focus-visible:ring-brand-600 focus-visible:ring-offset-2` for consistent keyboard focus styles across interactive components.
+4. Add a corresponding test in `tests/design-system/my-component.spec.ts`

@@ -1,17 +1,31 @@
 import type { Metadata } from "next";
-import { Button } from "@/components/design-system/Button/Button";
-import { Typography } from "@/components/design-system/Typography/Typography";
-import { Badge } from "@/components/design-system/Badge/Badge";
-import { Input } from "@/components/design-system/Input/Input";
-import { Card } from "@/components/design-system/Card/Card";
+import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/text";
+import { Badge } from "@/components/ui/badge";
+import { FormInput } from "@/components/ui/form-input";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 import Counter from "@/components/Counter/Counter";
 
 export const metadata: Metadata = {
   title: "Design System",
-  description: "Component library and design token reference",
+  description: "shadcn/ui component reference — new-york style",
 };
 
-// ─── Layout helpers ──────────────────────────────────────────────────────────
+// ─── Layout helpers ───────────────────────────────────────────────────────────
 
 function Section({
   id,
@@ -27,12 +41,12 @@ function Section({
   return (
     <section id={id} className="scroll-mt-8">
       <div className="mb-5">
-        <h2 className="text-base font-semibold" style={{ color: "var(--foreground)" }}>{title}</h2>
+        <h2 className="text-base font-semibold text-foreground">{title}</h2>
         {description && (
-          <p className="mt-0.5 text-sm" style={{ color: "var(--muted)" }}>{description}</p>
+          <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
         )}
       </div>
-      <div className="overflow-hidden rounded-xl border transition-colors" style={{ borderColor: "var(--card-border)", backgroundColor: "var(--card-bg)" }}>
+      <div className="overflow-hidden rounded-xl border border-border bg-card">
         {children}
       </div>
     </section>
@@ -49,10 +63,10 @@ function DemoRow({
   className?: string;
 }) {
   return (
-    <div className="border-b last:border-b-0" style={{ borderColor: "var(--card-border)" }}>
+    <div className="border-b border-border last:border-b-0">
       {label && (
-        <div className="border-b px-5 py-2" style={{ borderColor: "var(--card-border)", backgroundColor: "var(--muted-bg)" }}>
-          <span className="font-mono text-[11px]" style={{ color: "var(--muted)" }}>{label}</span>
+        <div className="border-b border-border bg-muted px-5 py-2">
+          <span className="font-mono text-[11px] text-muted-foreground">{label}</span>
         </div>
       )}
       <div className={className ?? "flex flex-wrap items-end gap-4 px-5 py-5"}>
@@ -74,89 +88,41 @@ function DemoItem({
   return (
     <div className={`flex flex-col gap-2 ${align === "center" ? "items-center" : "items-start"}`}>
       {children}
-      <span className="font-mono text-[11px]" style={{ color: "var(--muted)" }}>{label}</span>
+      <span className="font-mono text-[11px] text-muted-foreground">{label}</span>
     </div>
   );
 }
 
-// ─── Token helpers ────────────────────────────────────────────────────────────
-
-function ColorSwatch({ token, label }: { token: string; label?: string }) {
-  return (
-    <div className="flex flex-col items-center gap-1.5">
-      <div
-        className="h-9 w-9 rounded-lg ring-1 ring-inset ring-black/10"
-        style={{ backgroundColor: `var(${token})` }}
-        title={token}
-      />
-      <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>{label}</span>
-    </div>
-  );
-}
-
-function ColorScale({ name, shades }: { name: string; shades: number[] }) {
-  return (
-    <div>
-      <p className="mb-2.5 font-mono text-xs font-medium" style={{ color: "var(--muted)" }}>{name}</p>
-      <div className="flex flex-wrap gap-2">
-        {shades.map((shade) => (
-          <ColorSwatch
-            key={shade}
-            token={`--color-${name}-${shade}`}
-            label={String(shade)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function StatusRow({ name }: { name: string }) {
-  return (
-    <div className="flex items-center gap-4">
-      <span className="w-16 font-mono text-xs text-zinc-500">{name}</span>
-      <div className="flex gap-2">
-        {[50, 100, 600, 700].map((shade) => (
-          <ColorSwatch
-            key={shade}
-            token={`--color-${name}-${shade}`}
-            label={String(shade)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── Nav ──────────────────────────────────────────────────────────────────────
 
 const NAV = [
-  { id: "theme-tokens", label: "Theme Tokens" },
-  { id: "tokens",     label: "Color Tokens" },
-  { id: "gradients",  label: "Gradients" },
-  { id: "typography", label: "Typography" },
+  { id: "typography", label: "Text" },
   { id: "button",     label: "Button" },
   { id: "badge",      label: "Badge" },
   { id: "input",      label: "Input" },
   { id: "card",       label: "Card" },
+  { id: "carousel",   label: "Carousel" },
   { id: "counter",    label: "Counter" },
 ];
 
+// ─── Page ─────────────────────────────────────────────────────────────────────
+
 export default function DesignSystemPage() {
   return (
-    <div className="min-h-screen transition-colors" style={{ backgroundColor: "var(--background)" }}>
+    <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-5xl px-6 py-12">
 
-        {/* Page header */}
+        {/* Header */}
         <div className="mb-10">
-          <span className="font-mono text-xs font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
-            v1.0
+          <span className="font-mono text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            shadcn/ui · new-york
           </span>
-          <h1 className="mt-1.5 text-3xl font-bold tracking-tight" style={{ color: "var(--foreground)" }}>
+          <h1 className="mt-1.5 text-3xl font-bold tracking-tight text-foreground">
             Design System
           </h1>
-          <p className="mt-2 max-w-lg text-sm" style={{ color: "var(--muted)" }}>
-            Component library and design token reference. Built with Tailwind CSS. WCAG 2.1 AA compliant.
+          <p className="mt-2 max-w-lg text-sm text-muted-foreground">
+            Component reference powered by shadcn/ui (new-york style) with Geist fonts.
+            WCAG 2.1 AA compliant.
           </p>
         </div>
 
@@ -165,15 +131,14 @@ export default function DesignSystemPage() {
           {/* Sidebar */}
           <aside className="hidden lg:block w-40 shrink-0">
             <nav className="sticky top-8 flex flex-col">
-              <p className="mb-2 px-3 font-mono text-[10px] font-semibold uppercase tracking-widest" style={{ color: "var(--muted)" }}>
+              <p className="mb-2 px-3 font-mono text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
                 Components
               </p>
               {NAV.map((item) => (
                 <a
                   key={item.id}
                   href={`#${item.id}`}
-                  className="rounded-md px-3 py-1.5 text-sm transition-colors hover:opacity-80"
-                  style={{ color: "var(--foreground)" }}
+                  className="rounded-md px-3 py-1.5 text-sm text-foreground transition-colors hover:bg-muted"
                 >
                   {item.label}
                 </a>
@@ -181,165 +146,16 @@ export default function DesignSystemPage() {
             </nav>
           </aside>
 
-          {/* Main content */}
+          {/* Main */}
           <main className="min-w-0 flex-1 space-y-12">
 
-            {/* ── Theme Tokens ───────────────────────────────────────────── */}
-            <Section
-              id="theme-tokens"
-              title="Theme Tokens"
-              description="Dynamic tokens that change based on the selected theme (Default, Dark, or Ritual). Switch themes using the dropdown in the header."
-            >
-              <div className="flex flex-col gap-6 p-5">
-                <div className="grid grid-cols-2 gap-6 sm:grid-cols-3">
-                  <div className="flex flex-col gap-2">
-                    <div
-                      className="h-20 w-full rounded-lg ring-1 ring-inset ring-black/10"
-                      style={{ backgroundColor: "var(--background)" }}
-                    />
-                    <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>--background</span>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <div
-                      className="h-20 w-full rounded-lg ring-1 ring-inset ring-black/10"
-                      style={{ backgroundColor: "var(--foreground)" }}
-                    />
-                    <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>--foreground</span>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <div
-                      className="h-20 w-full rounded-lg ring-1 ring-inset ring-black/10"
-                      style={{ backgroundColor: "var(--header-bg)" }}
-                    />
-                    <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>--header-bg</span>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <div
-                      className="h-20 w-full rounded-lg ring-1 ring-inset ring-black/10"
-                      style={{ backgroundColor: "var(--card-bg)" }}
-                    />
-                    <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>--card-bg</span>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <div
-                      className="h-20 w-full rounded-lg ring-1 ring-inset"
-                      style={{
-                        backgroundColor: "var(--muted-bg)",
-                        borderColor: "var(--card-border)",
-                        borderWidth: "1px"
-                      }}
-                    />
-                    <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>--muted-bg</span>
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <div
-                      className="h-20 w-full rounded-lg flex items-center justify-center"
-                      style={{ backgroundColor: "var(--muted-bg)" }}
-                    >
-                      <span className="font-mono text-xs" style={{ color: "var(--muted)" }}>Muted text</span>
-                    </div>
-                    <span className="font-mono text-[10px]" style={{ color: "var(--muted)" }}>--muted</span>
-                  </div>
-                </div>
-                <div className="rounded-lg p-4" style={{ backgroundColor: "var(--muted-bg)" }}>
-                  <p className="text-sm font-medium" style={{ color: "var(--foreground)" }}>Theme Preview</p>
-                  <p className="mt-1 text-sm" style={{ color: "var(--muted)" }}>
-                    This section demonstrates how the theme tokens adapt to your selected theme.
-                    Try switching between Default, Dark, and Ritual themes to see the changes.
-                  </p>
-                </div>
-              </div>
-            </Section>
-
-            {/* ── Tokens ─────────────────────────────────────────────────── */}
-            <Section
-              id="tokens"
-              title="Color Tokens"
-              description="Static brand tokens. Reference via CSS custom properties (var(--color-brand-600)) or Tailwind utilities (bg-brand-600)."
-            >
-              <div className="flex flex-col gap-6 p-5">
-                <ColorScale
-                  name="brand"
-                  shades={[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]}
-                />
-                <ColorScale
-                  name="accent"
-                  shades={[50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950]}
-                />
-                <div className="flex flex-col gap-3">
-                  <StatusRow name="success" />
-                  <StatusRow name="warning" />
-                  <StatusRow name="error" />
-                </div>
-              </div>
-            </Section>
-
-            {/* ── Gradients ──────────────────────────────────────────────── */}
-            <Section
-              id="gradients"
-              title="Gradients"
-              description="Pre-built gradient utilities from styles/tokens.css. Apply as className values."
-            >
-              {[
-                {
-                  cls: "gradient-brand",
-                  label: "gradient-brand",
-                  desc: "Primary — indigo → violet. CTAs, active states.",
-                  dark: true,
-                },
-                {
-                  cls: "gradient-brand-subtle",
-                  label: "gradient-brand-subtle",
-                  desc: "Subtle wash — section backgrounds, card tints.",
-                  dark: false,
-                },
-                {
-                  cls: "gradient-brand-dark",
-                  label: "gradient-brand-dark",
-                  desc: "Dark — hero sections, banners.",
-                  dark: true,
-                },
-                {
-                  cls: "gradient-mesh",
-                  label: "gradient-mesh",
-                  desc: "Mesh — multi-stop radial. Hero backgrounds.",
-                  dark: true,
-                },
-              ].map(({ cls, label, desc, dark }) => (
-                <div key={cls} className="border-b last:border-b-0" style={{ borderColor: "var(--card-border)" }}>
-                  <div className="border-b px-5 py-2" style={{ borderColor: "var(--card-border)", backgroundColor: "var(--muted-bg)" }}>
-                    <span className="font-mono text-[11px]" style={{ color: "var(--muted)" }}>{label}</span>
-                  </div>
-                  <div className="flex items-center gap-6 px-5 py-5">
-                    <div className={`${cls} h-20 w-52 shrink-0 rounded-xl`} />
-                    <p className="text-sm" style={{ color: "var(--muted)" }}>{desc}</p>
-                  </div>
-                </div>
-              ))}
-
-              {/* Text gradient */}
-              <div className="border-b last:border-b-0" style={{ borderColor: "var(--card-border)" }}>
-                <div className="border-b px-5 py-2" style={{ borderColor: "var(--card-border)", backgroundColor: "var(--muted-bg)" }}>
-                  <span className="font-mono text-[11px]" style={{ color: "var(--muted)" }}>gradient-brand-text</span>
-                </div>
-                <div className="flex items-center gap-6 px-5 py-5">
-                  <p className="gradient-brand-text shrink-0 text-3xl font-bold">
-                    Hello World
-                  </p>
-                  <p className="text-sm" style={{ color: "var(--muted)" }}>
-                    Text gradient — headings, display type.
-                  </p>
-                </div>
-              </div>
-            </Section>
-
-            {/* ── Typography ─────────────────────────────────────────────── */}
+            {/* ── Text (Typography) ──────────────────────────────────────── */}
             <Section
               id="typography"
-              title="Typography"
-              description="All variants default to a semantic HTML element. Override with the as prop."
+              title="Text"
+              description="Thin wrapper over Tailwind typography classes. Uses the same variant API as the previous Typography component."
             >
-              <div className="divide-y divide-zinc-100">
+              <div className="divide-y divide-border">
                 {(
                   [
                     ["display",  "h1",   "The quick brown fox"],
@@ -359,110 +175,99 @@ export default function DesignSystemPage() {
                 ).map(([variant, element, text]) => (
                   <div key={variant} className="flex items-baseline gap-4 px-5 py-3.5">
                     <div className="flex w-28 shrink-0 items-baseline gap-1.5">
-                      <span className="font-mono text-[11px] text-zinc-500">{variant}</span>
+                      <span className="font-mono text-[11px] text-muted-foreground">{variant}</span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <Typography variant={variant} text={text} />
+                      <Text variant={variant} text={text} />
                     </div>
-                    <span className="shrink-0 font-mono text-[10px] text-zinc-500">
+                    <span className="shrink-0 font-mono text-[10px] text-muted-foreground">
                       &lt;{element}&gt;
                     </span>
                   </div>
                 ))}
               </div>
 
-              {/* Color row */}
-              <div className="border-t border-zinc-100 bg-zinc-50 px-5 py-2">
-                <span className="font-mono text-[11px] text-zinc-500">color</span>
+              <div className="border-t border-border bg-muted px-5 py-2">
+                <span className="font-mono text-[11px] text-muted-foreground">color</span>
               </div>
               <div className="flex flex-wrap gap-x-6 gap-y-3 px-5 py-5">
-                {(
-                  ["default", "muted", "subtle", "primary", "success", "warning", "error"] as const
-                ).map((color) => (
-                  <DemoItem key={color} label={color}>
-                    <Typography variant="body-sm" color={color} text="Sample text" />
-                  </DemoItem>
-                ))}
+                {(["default", "muted", "subtle", "primary", "success", "warning", "error"] as const).map(
+                  (color) => (
+                    <DemoItem key={color} label={color}>
+                      <Text variant="body-sm" color={color} text="Sample text" />
+                    </DemoItem>
+                  )
+                )}
               </div>
             </Section>
 
-            {/* ── Button ─────────────────────────────────────────────────── */}
+            {/* ── Button ────────────────────────────────────────────────── */}
             <Section
               id="button"
               title="Button"
-              description="Four semantic variants across three sizes. Includes loading and disabled states."
+              description="shadcn/ui Button — new-york style. Six variants, four sizes."
             >
               <DemoRow label="variant">
-                {(["primary", "secondary", "ghost", "destructive"] as const).map((variant) => (
-                  <DemoItem key={variant} label={variant}>
-                    <Button
-                      variant={variant}
-                      label={variant === "destructive" ? "Delete" : "Button"}
-                    />
-                  </DemoItem>
-                ))}
+                {(["default", "destructive", "outline", "secondary", "ghost", "link"] as const).map(
+                  (variant) => (
+                    <DemoItem key={variant} label={variant}>
+                      <Button variant={variant}>
+                        {variant === "destructive" ? "Delete" : "Button"}
+                      </Button>
+                    </DemoItem>
+                  )
+                )}
               </DemoRow>
 
               <DemoRow label="size">
-                {(["sm", "md", "lg"] as const).map((size) => (
+                {(["sm", "default", "lg"] as const).map((size) => (
                   <DemoItem key={size} label={size}>
-                    <Button size={size} label="Button" />
+                    <Button size={size}>Button</Button>
                   </DemoItem>
                 ))}
               </DemoRow>
 
               <DemoRow label="state">
-                <DemoItem label="loading">
-                  <Button loading label="Saving…" />
+                <DemoItem label="disabled · default">
+                  <Button disabled>Disabled</Button>
                 </DemoItem>
-                <DemoItem label="disabled · primary">
-                  <Button disabled label="Disabled" />
-                </DemoItem>
-                <DemoItem label="disabled · secondary">
-                  <Button variant="secondary" disabled label="Disabled" />
+                <DemoItem label="disabled · outline">
+                  <Button variant="outline" disabled>Disabled</Button>
                 </DemoItem>
                 <DemoItem label="disabled · ghost">
-                  <Button variant="ghost" disabled label="Disabled" />
+                  <Button variant="ghost" disabled>Disabled</Button>
                 </DemoItem>
               </DemoRow>
             </Section>
 
-            {/* ── Badge ──────────────────────────────────────────────────── */}
+            {/* ── Badge ─────────────────────────────────────────────────── */}
             <Section
               id="badge"
               title="Badge"
-              description="Non-interactive label for status and categorisation."
+              description="shadcn/ui Badge. Four variants."
             >
-              <DemoRow label="variant · size=md">
-                {(["neutral", "primary", "success", "warning", "error"] as const).map((variant) => (
+              <DemoRow label="variant">
+                {(["default", "secondary", "destructive", "outline"] as const).map((variant) => (
                   <DemoItem key={variant} label={variant}>
-                    <Badge variant={variant} label={variant} />
-                  </DemoItem>
-                ))}
-              </DemoRow>
-
-              <DemoRow label="variant · size=sm">
-                {(["neutral", "primary", "success", "warning", "error"] as const).map((variant) => (
-                  <DemoItem key={variant} label={variant}>
-                    <Badge variant={variant} size="sm" label={variant} />
+                    <Badge variant={variant}>{variant}</Badge>
                   </DemoItem>
                 ))}
               </DemoRow>
             </Section>
 
-            {/* ── Input ──────────────────────────────────────────────────── */}
+            {/* ── Input ─────────────────────────────────────────────────── */}
             <Section
               id="input"
               title="Input"
-              description="Text input with label, helper text, and accessible validation states."
+              description="shadcn/ui Input wrapped with Label and helper text via FormInput."
             >
               <DemoRow label="default" className="grid grid-cols-1 gap-5 px-5 py-5 sm:grid-cols-2">
-                <Input label="Email address" placeholder="you@example.com" />
-                <Input label="Search" type="search" placeholder="Search…" />
+                <FormInput label="Email address" placeholder="you@example.com" />
+                <FormInput label="Search" type="search" placeholder="Search…" />
               </DemoRow>
 
               <DemoRow label="helperText" className="grid grid-cols-1 gap-5 px-5 py-5 sm:grid-cols-2">
-                <Input
+                <FormInput
                   label="Password"
                   type="password"
                   placeholder="••••••••"
@@ -471,7 +276,7 @@ export default function DesignSystemPage() {
               </DemoRow>
 
               <DemoRow label="errorText" className="grid grid-cols-1 gap-5 px-5 py-5 sm:grid-cols-2">
-                <Input
+                <FormInput
                   label="Email address"
                   defaultValue="notanemail"
                   errorText="Please enter a valid email address."
@@ -479,62 +284,77 @@ export default function DesignSystemPage() {
               </DemoRow>
 
               <DemoRow label="required" className="grid grid-cols-1 gap-5 px-5 py-5 sm:grid-cols-2">
-                <Input label="Full name" placeholder="Jane Smith" required />
+                <FormInput label="Full name" placeholder="Jane Smith" required />
               </DemoRow>
 
               <DemoRow label="disabled" className="grid grid-cols-1 gap-5 px-5 py-5 sm:grid-cols-2">
-                <Input label="Username" defaultValue="jsmith" disabled />
+                <FormInput label="Username" defaultValue="jsmith" disabled />
               </DemoRow>
             </Section>
 
-            {/* ── Card ───────────────────────────────────────────────────── */}
+            {/* ── Card ──────────────────────────────────────────────────── */}
             <Section
               id="card"
               title="Card"
-              description="Container for grouping related content. Accepts child components in Builder."
+              description="shadcn/ui Card with composition: CardHeader, CardContent, CardFooter, CardTitle, CardDescription."
             >
-              <DemoRow label="shadow">
-                {(["none", "sm", "md", "lg"] as const).map((shadow) => (
-                  <DemoItem key={shadow} label={`shadow="${shadow}"`} align="start">
-                    <Card shadow={shadow} className="w-44">
-                      <p className="text-sm font-medium text-zinc-800">Card title</p>
-                      <p className="mt-1 text-sm text-zinc-500">Supporting text content.</p>
-                    </Card>
-                  </DemoItem>
-                ))}
-              </DemoRow>
+              <DemoRow label="default">
+                <DemoItem label="Card" align="start">
+                  <Card className="w-72">
+                    <CardHeader>
+                      <CardTitle>Card Title</CardTitle>
+                      <CardDescription>Card description goes here.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">Main content area.</p>
+                    </CardContent>
+                    <CardFooter>
+                      <Button size="sm">Action</Button>
+                    </CardFooter>
+                  </Card>
+                </DemoItem>
 
-              <DemoRow label="padding">
-                {(["none", "sm", "md", "lg"] as const).map((padding) => (
-                  <DemoItem key={padding} label={`padding="${padding}"`} align="start">
-                    <Card
-                      padding={padding}
-                      shadow="none"
-                      className="w-36 border-2 border-dashed border-zinc-300"
-                    >
-                      <div className="rounded bg-zinc-100 py-2 text-center font-mono text-xs text-zinc-500">
-                        content
-                      </div>
-                    </Card>
-                  </DemoItem>
-                ))}
-              </DemoRow>
-
-              <DemoRow label="borderless">
-                <DemoItem label='borderless shadow="md"' align="start">
-                  <Card borderless shadow="md" className="w-56">
-                    <p className="text-sm font-medium text-zinc-800">Floating card</p>
-                    <p className="mt-1 text-sm text-zinc-500">No border, elevated with shadow.</p>
+                <DemoItem label="minimal" align="start">
+                  <Card className="w-48 p-4 gap-2">
+                    <p className="text-sm font-medium">Simple card</p>
+                    <p className="text-xs text-muted-foreground">Just a box with border and shadow.</p>
                   </Card>
                 </DemoItem>
               </DemoRow>
             </Section>
 
-            {/* ── Counter ────────────────────────────────────────────────── */}
+            {/* ── Carousel ──────────────────────────────────────────────── */}
+            <Section
+              id="carousel"
+              title="Carousel"
+              description="shadcn/ui Carousel powered by Embla Carousel. Keyboard accessible."
+            >
+              <DemoRow label="default">
+                <div className="w-full px-12 py-6">
+                  <Carousel opts={{ align: "start" }} className="w-full">
+                    <CarouselContent>
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <CarouselItem key={i} className="md:basis-1/2 lg:basis-1/3">
+                          <Card className="p-0 gap-0">
+                            <CardContent className="flex aspect-square items-center justify-center p-6">
+                              <span className="text-4xl font-bold text-muted-foreground">{i + 1}</span>
+                            </CardContent>
+                          </Card>
+                        </CarouselItem>
+                      ))}
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                  </Carousel>
+                </div>
+              </DemoRow>
+            </Section>
+
+            {/* ── Counter ───────────────────────────────────────────────── */}
             <Section
               id="counter"
               title="Counter"
-              description="Stateful counter widget. Uses Button (secondary, sm) internally."
+              description="Stateful counter widget using shadcn Button (outline, sm) internally."
             >
               <DemoRow label="default">
                 <DemoItem label="initialCount=99">

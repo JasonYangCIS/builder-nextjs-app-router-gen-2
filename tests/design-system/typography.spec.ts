@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Typography", () => {
+test.describe("Text (Typography)", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/design-system");
   });
@@ -51,13 +51,18 @@ test.describe("Typography", () => {
     await expect(section.locator("*").filter({ hasText: "Sample text" })).toBeTruthy();
   });
 
-  test("primary color variant has brand-600 text class", async ({ page }) => {
+  test("primary color variant has text-primary class", async ({ page }) => {
     const section = page.locator("#typography");
-    await expect(section.locator(".text-brand-600")).toBeVisible();
+    await expect(section.locator(".text-primary").first()).toBeVisible();
   });
 
-  test("error color variant has error-700 text class", async ({ page }) => {
+  test("error color variant has text-destructive class", async ({ page }) => {
     const section = page.locator("#typography");
-    await expect(section.locator(".text-error-700")).toBeVisible();
+    await expect(section.locator(".text-destructive").first()).toBeVisible();
+  });
+
+  test("muted color variant has text-muted-foreground class", async ({ page }) => {
+    const section = page.locator("#typography");
+    await expect(section.locator(".text-muted-foreground").first()).toBeVisible();
   });
 });

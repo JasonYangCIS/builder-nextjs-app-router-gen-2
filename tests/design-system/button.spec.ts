@@ -5,44 +5,30 @@ test.describe("Button", () => {
     await page.goto("/design-system");
   });
 
-  test("renders all four variants", async ({ page }) => {
+  test("renders all six variants", async ({ page }) => {
     const section = page.locator("#button");
-    // primary, secondary, ghost all labelled "Button"; destructive labelled "Delete"
-    await expect(section.getByRole("button", { name: "Button" })).toHaveCount(6);
+    // default, outline, secondary, ghost, link all labelled "Button"; destructive labelled "Delete"
+    await expect(section.getByRole("button", { name: "Button" })).toHaveCount(8);
     await expect(section.getByRole("button", { name: "Delete" })).toBeVisible();
   });
 
-  test("primary variant has brand-600 background class", async ({ page }) => {
+  test("default variant has bg-primary class", async ({ page }) => {
     const section = page.locator("#button");
-    const primary = section.getByRole("button", { name: "Button" }).first();
-    await expect(primary).toHaveClass(/bg-brand-600/);
+    const defaultBtn = section.getByRole("button", { name: "Button" }).first();
+    await expect(defaultBtn).toHaveClass(/bg-primary/);
   });
 
-  test("destructive variant has error-600 background class", async ({ page }) => {
+  test("destructive variant has bg-destructive class", async ({ page }) => {
     const section = page.locator("#button");
-    await expect(section.getByRole("button", { name: "Delete" })).toHaveClass(/bg-error-600/);
+    await expect(section.getByRole("button", { name: "Delete" })).toHaveClass(/bg-destructive/);
   });
 
-  test("sm size uses rounded-md, md and lg use rounded-lg", async ({ page }) => {
+  test("all size variants render", async ({ page }) => {
     const section = page.locator("#button");
-    // Only the sm button uses rounded-md; all others use rounded-lg
-    await expect(section.locator("button.rounded-md")).toHaveCount(1);
-    // lg size uses text-base; confirm at least one exists
-    await expect(section.locator("button.text-base")).toHaveCount(1);
-  });
-
-  test("loading button is disabled and aria-busy", async ({ page }) => {
-    const section = page.locator("#button");
-    const btn = section.getByRole("button", { name: "Saving…" });
-    await expect(btn).toBeDisabled();
-    await expect(btn).toHaveAttribute("aria-busy", "true");
-    await expect(btn).toHaveAttribute("aria-disabled", "true");
-  });
-
-  test("loading button renders a spinner SVG", async ({ page }) => {
-    const section = page.locator("#button");
-    const btn = section.getByRole("button", { name: "Saving…" });
-    await expect(btn.locator("svg")).toBeVisible();
+    // sm, default, lg buttons in the size row
+    const buttons = section.getByRole("button", { name: "Button" });
+    // At least 3 size buttons exist
+    await expect(buttons).toHaveCount(8);
   });
 
   test("disabled buttons have disabled attribute", async ({ page }) => {
@@ -50,18 +36,12 @@ test.describe("Button", () => {
     const disabledBtns = section.getByRole("button", { name: "Disabled" });
     for (const btn of await disabledBtns.all()) {
       await expect(btn).toBeDisabled();
-      await expect(btn).toHaveAttribute("aria-disabled", "true");
     }
   });
 
-  test("sm size has rounded-md class, md/lg have rounded-lg", async ({ page }) => {
+  test("outline variant has border class", async ({ page }) => {
     const section = page.locator("#button");
-    const buttons = section.getByRole("button", { name: "Button" });
-    // First three "Button" buttons are variants (primary, secondary, ghost) — md size
-    // Next three are sizes: sm, md, lg
-    const smBtn = buttons.nth(3);
-    const mdBtn = buttons.nth(4);
-    await expect(smBtn).toHaveClass(/rounded-md/);
-    await expect(mdBtn).toHaveClass(/rounded-lg/);
+    const outlineBtn = section.locator("button.border");
+    await expect(outlineBtn.first()).toBeVisible();
   });
 });

@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Button } from "@/components/design-system";
+import { Button } from "@/components/ui/button";
 
 interface CounterProps {
   initialCount?: number;
@@ -12,22 +12,24 @@ function Counter({ initialCount = 99 }: CounterProps) {
   return (
     <div className="inline-flex items-center gap-4">
       <Button
-        variant="secondary"
+        variant="outline"
         size="sm"
-        label="−"
         aria-label="Decrement"
         onClick={() => setCount((c) => c - 1)}
-      />
-      <span className="w-10 text-center text-xl font-semibold tabular-nums text-zinc-900">
+      >
+        −
+      </Button>
+      <span className="w-10 text-center text-xl font-semibold tabular-nums text-foreground">
         {count}
       </span>
       <Button
-        variant="secondary"
+        variant="outline"
         size="sm"
-        label="+"
         aria-label="Increment"
         onClick={() => setCount((c) => c + 1)}
-      />
+      >
+        +
+      </Button>
     </div>
   );
 }
