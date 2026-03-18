@@ -1,3 +1,8 @@
+---
+description: Builder.io SDK usage, model fetching, editor/preview guards, and custom component registration
+globs: app/**/*.tsx,app/**/*.ts,components/builder/**,builder-registry.ts,config.ts
+alwaysApply: false
+---
 # Builder SDK Rules
 
 Full patterns and gotchas: `docs/skills/builder-io.md`
@@ -15,4 +20,4 @@ Full patterns and gotchas: `docs/skills/builder-io.md`
 1. Add name to `config.ts` → `models: { myModel: "my-model" }`
 2. Create `types/mymodel.types.ts`
 3. Create route following patterns in `docs/skills/builder-io.md`
-4. Register custom components in `builder-registry.ts` if needed
+4. Register custom components in `builder-registry.ts` if needed — follow the four-file pattern in `.builder/rules/component-structure.mdc`

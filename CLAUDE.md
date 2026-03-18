@@ -1,10 +1,26 @@
 # Claude Code — Project Instructions
 
-For full project guidance, conventions, directory structure, and safety rules see `AGENTS.md`.
+**Stack:** Next.js 16 · React 19 · TypeScript · Tailwind CSS v4 · `@builder.io/sdk-react` v5.x · shadcn/ui (new-york) · Geist fonts
 
-**CRITICAL:** All code changes MUST meet the Engineering Standards in `AGENTS.md` — covering WCAG 2.1 AA, React/Next.js/TypeScript best practices, DRY/KISS, SEO, performance, and security. Run `npx tsc --noEmit` and `npm test` after every change.
+## After Every Change
+```bash
+npx tsc --noEmit   # must pass
+npm test           # must pass
+```
 
-## Project Rules
+## Key Files
+| File | Purpose |
+|------|---------|
+| `config.ts` | All Builder model names + API key — never hardcode elsewhere |
+| `builder-registry.ts` | Custom component registration for Builder visual editor |
+| `components/builder/RenderBuilderContent.tsx` | Always use this wrapper — never `<Content>` directly |
+| `components/ui/` | shadcn/ui primitives — no barrel, import per file |
+| `components/HeroSplit/` | Canonical four-file component pattern (`.tsx` / `.types.ts` / `.module.scss` / `.builder.ts`) |
+| `app/globals.css` | OKLCH color tokens + default/dark themes |
+| `utils/cn.ts` | className joiner (clsx + tailwind-merge) |
+| `AGENTS.md` | Full engineering standards, WCAG checklist, safety rules |
+
+## Rules
 @.builderrules
 
 ## Skill References
@@ -15,19 +31,4 @@ For full project guidance, conventions, directory structure, and safety rules se
 ## Context7 Documentation
 - **Next.js:** `/vercel/next.js` — use with `mcp__context7__query-docs`
 - **Builder.io SDK:** `/builderio/builder` — use with `mcp__context7__query-docs`
-
-## Builder.io Local Docs
-@../builder-research-academy/docs/intro.md
-@../builder-research-academy/docs/getting-started.md
-@../builder-research-academy/docs/key-concepts-fusion.md
-@../builder-research-academy/docs/developers.md
-@../builder-research-academy/docs/configuration-builder-rules.md
-@../builder-research-academy/docs/projects-configuration-files.md
-@../builder-research-academy/docs/best-practices.md
-@../builder-research-academy/docs/projects-best-practices.md
-@../builder-research-academy/docs/guides-page-building.md
-@../builder-research-academy/docs/fusion-block-types.md
-@../builder-research-academy/docs/component-indexing.md
-@../builder-research-academy/docs/fusion-design-system-intelligence.md
-@../builder-research-academy/docs/fusion-design-system-intelligence-for-developers.md
-@../builder-research-academy/docs/fusion-design-system-intelligence-best-practices.md
+- **Builder.io product docs** (Fusion features, visual editor, publishing workflow): query `/builderio/builder` via `mcp__context7__query-docs` on demand — do not assume from memory

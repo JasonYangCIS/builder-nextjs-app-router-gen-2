@@ -134,8 +134,26 @@ Set `export const revalidate = 5` on all Builder-connected pages for near-real-t
 
 All custom components are registered in `builder-registry.ts` as `RegisteredComponent[]` and consumed by `RenderBuilderContent`.
 
+### File structure
+
+Each Builder-registered component lives in its own folder and splits concerns across four files (see `components/HeroSplit/` as the canonical example):
+
+```
+components/MyComponent/
+  MyComponent.tsx          # Component implementation + re-exports types
+  MyComponent.types.ts     # TypeScript interfaces only
+  MyComponent.module.scss  # CSS Modules — use CSS custom properties for theming
+  MyComponent.builder.ts   # RegisteredComponent config — named export
+```
+
+### `.builder.ts` pattern
+
 ```ts
-{
+// MyComponent.builder.ts
+import type { RegisteredComponent } from "@builder.io/sdk-react";
+import MyComponent from "./MyComponent";
+
+export const myComponentConfig: RegisteredComponent = {
   component: MyComponent,
   name: "My Component",           // Display name in Builder UI
   canHaveChildren: true,          // set true for container components
@@ -144,10 +162,17 @@ All custom components are registered in `builder-registry.ts` as `RegisteredComp
     { name: "variant", type: "string", enum: ["a", "b"], defaultValue: "a" },
     { name: "disabled", type: "boolean", defaultValue: false },
   ],
-}
+};
 ```
 
-Input types: `"string"`, `"longText"`, `"number"`, `"boolean"`, `"color"`, `"file"`, `"reference"`.
+Then import and spread into `builder-registry.ts`:
+
+```ts
+import { myComponentConfig } from "@/components/MyComponent/MyComponent.builder";
+// add myComponentConfig to the CUSTOM_COMPONENTS array
+```
+
+Input types: `"string"`, `"longText"`, `"number"`, `"boolean"`, `"color"`, `"file"`, `"reference"`, `"url"`.
 
 ---
 

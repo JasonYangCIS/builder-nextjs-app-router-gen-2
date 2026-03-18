@@ -1,90 +1,45 @@
 # Builder.io Fusion — Project Rules
 
-These rules apply to every task. Do not deviate from them.
+Non-negotiable rules for every task. Full detail in `AGENTS.md` and `docs/skills/`.
 
-## Engineering Standards
+## Dev Server
+- Always start with `npm run dev -- --webpack`
+- Never use `next dev` without `--webpack` — Turbopack is incompatible with Builder Dev Tools
 
-Every change must meet all of these. Full detail in `AGENTS.md`.
+## Config & Model Names
+- Never hardcode Builder model names as string literals — always use `config.models.*` from `config.ts`
+- API key is `config.envs.builderApiKey` — never inline it
+- When adding a new model, add its name to `config.ts` before using it anywhere
 
-### React & Next.js
-- Server Components by default — `"use client"` only for interactivity (event handlers, state, browser APIs)
-- Always `next/image` (never `<img>`), `next/link` (never `<a>` for internal links), `next/font` (already configured)
-- Every `page.tsx` exports `metadata` or `generateMetadata` with `title` + `description`
-- `generateStaticParams` on all `[slug]` routes; `export const revalidate` on all Builder pages
+## Builder SDK
+- Never use `<Content>` directly — always `import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent"`
+- Always guard notFound: `if (!content && !isEditing() && !isPreviewing()) return notFound()`
+- Always guard `subscribeToEditor` with a `builder.preview` URL param check — see `docs/skills/builder-io.md`
+- Never use `dangerouslySetInnerHTML` on Builder HTML fields without DOMPurify sanitization
 
-### TypeScript
-- No `any` without an inline comment; no `as` assertions without justification
-- `import type` for type-only imports; validate external data at boundaries
+## Imports & Paths
+- Always use the `@/` path alias — never relative paths like `../../`
+- Import shadcn components from their own file: `import { Button } from "@/components/ui/button"` — no barrel
+- Import Text from `@/components/ui/text`; FormInput from `@/components/ui/form-input`
 
-### Code Quality
-- DRY: shared logic → `utils/`, shared types → `types/`, shared UI → `components/`
-- KISS: simplest solution that meets the requirement; no speculative abstractions
-- Separation of concerns: Server Components fetch, Client Components interact — never mix
-- No dead code: no commented-out blocks, unused imports, or stale variables
+## Component File Structure
+Four-file folder pattern — see `components/HeroSplit/` as the canonical reference:
 
-### SEO
-- One `<h1>` per page; logical heading hierarchy; semantic landmark elements
-- Descriptive `alt` text on all images; descriptive link text (never "click here")
+```
+components/MyComponent/
+  MyComponent.tsx          # Component implementation + re-exports types
+  MyComponent.types.ts     # TypeScript interfaces only
+  MyComponent.module.scss  # CSS Modules — use CSS custom properties, not hardcoded values
+  MyComponent.builder.ts   # RegisteredComponent config — omit if not Builder-registered
+```
 
-### Performance
-- Prefer Server Components to reduce client JS bundle
-- `next/dynamic` with `ssr: false` for heavy client-only libraries
-- Respect `prefers-reduced-motion` on all animations
-
-### Security
-- No `dangerouslySetInnerHTML` without DOMPurify sanitization — all Builder HTML fields and user content
-- No secrets in client code — never expose API keys or tokens to the browser bundle
-- Validate and sanitize all external input (URL params, form data, API responses) before use
-- No inline `<script>`, `javascript:` hrefs, or `eval()`-style patterns
-
-### Accessibility (WCAG 2.1 AA)
-- shadcn semantic tokens maintain contrast — never hardcode hex for text
-- All interactive elements: visible focus ring (`focus-visible:ring-[3px] focus-visible:ring-ring/50`)
-- Icon-only buttons: `aria-label`; images: `alt`; forms: labels via `FormInput`
+- Types defined in `.types.ts`, re-exported from `.tsx`
+- Styles use `var(--foreground)`, `var(--primary)` etc. — never hardcode hex
+- `.builder.ts` exports a named `camelCaseConfig: RegisteredComponent` constant
+- No `index.ts` barrel — import directly from `@/components/MyComponent/MyComponent`
 
 ## After Every Change
-Run both before marking a task complete:
 ```bash
 npx tsc --noEmit   # must pass
 npm test           # must pass
 ```
-
-## Dev Server
-- Always start the dev server with `npm run dev -- --webpack`
-- Never use `next dev` without `--webpack` — Turbopack is incompatible with Builder Dev Tools
-
-## Config & Model Names
-- Never hardcode Builder model names as string literals in pages or components
-- All model names and the API key live in `config.ts` — always read from there:
-  - `config.envs.builderApiKey`
-  - `config.models.page`, `config.models.blogArticle`, etc.
-- When adding a new model, add its name to `config.ts` first before using it anywhere
-
-## Builder SDK Usage
-- Never use `<Content>` directly — always use the wrapper:
-  `import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent"`
-- Always guard `notFound()` with both editing and preview checks:
-  `if (!content && !isEditing() && !isPreviewing()) return notFound()`
-- Always guard `subscribeToEditor` with a `builder.preview` URL param check to prevent
-  "Model Name Mismatch" errors — see `docs/skills/builder-io.md` for the exact pattern
-- For full SDK patterns, route types, and blog model patterns: `docs/skills/builder-io.md`
-- For design system components, tokens, and WCAG rules: `docs/skills/design-system.md`
-
-## Security
-- Never use `dangerouslySetInnerHTML` on Builder HTML fields without DOMPurify sanitization
-
-## Imports & Paths
-- Always use the `@/` path alias for internal imports — never use relative paths like `../../`
-- Import shadcn UI components from `@/components/ui/` — e.g. `import { Button } from "@/components/ui/button"`
-- Import the Text (typography) component from `@/components/ui/text`
-- Import the labeled input wrapper from `@/components/ui/form-input`
-- Import the Builder carousel wrapper from `@/components/builder/BuilderCarousel` (only for builder-registry.ts)
-- There is NO barrel file — import each component from its own file in `components/ui/`
-
-## Testing
-- Tests live in `tests/` — mirroring the component structure (`tests/design-system/`, `tests/blog/`, `tests/layout/`)
-- Run with `npm test` (headless) or `npm run test:ui` (interactive)
-- Two fixture pages serve as test harnesses — do not link them from the app:
-  - `app/design-system/page.tsx` — shadcn components (Button, Badge, FormInput, Card, Carousel, Text, Counter)
-  - `app/test/blog-components/page.tsx` — blog components with static mock data
-- For full conventions, gotchas, and fixture page patterns: `docs/skills/testing.md`

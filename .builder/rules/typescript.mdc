@@ -1,3 +1,8 @@
+---
+description: TypeScript conventions for Builder data fields, model types, and library type re-exports
+globs: types/**,components/**/*.types.ts,components/**/*.tsx,app/**/*.tsx
+alwaysApply: false
+---
 # TypeScript Conventions
 
 ## Builder Data Fields
@@ -24,7 +29,23 @@ export interface MyModelWithContent extends MyModel {
 
 Always use optional chaining from a Builder entry: `entry.data?.slug`, `entry.data?.title`
 
+## Library Type Re-exports
+
+Never redefine types that a library already exports — import and re-export them:
+
+```ts
+// ❌ BAD
+export type MyVariant = "default" | "destructive" | "outline";
+
+// ✅ GOOD
+import type { VariantProps } from "class-variance-authority";
+import { buttonVariants } from "@/components/ui/button";
+export type ButtonVariant = VariantProps<typeof buttonVariants>["variant"];
+```
+
 ## File Conventions
 
-- Type files live in `types/` — one file per model: `types/mymodel.types.ts`
+- Type files for Builder models live in `types/` — one file per model: `types/mymodel.types.ts`
+- Component-specific types live in `ComponentName.types.ts` alongside the component
 - Always use `@/` path alias — never relative paths like `../../`
+- Use `import type` for type-only imports

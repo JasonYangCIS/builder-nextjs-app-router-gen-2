@@ -1,0 +1,70 @@
+---
+description: Component folder and file structure pattern for all new components
+globs: components/**
+alwaysApply: false
+---
+# Component File Structure
+
+Every new component uses the four-file folder pattern. See `components/HeroSplit/` as the canonical reference.
+
+```
+components/MyComponent/
+  MyComponent.tsx          # Component implementation + re-exports types
+  MyComponent.types.ts     # TypeScript interfaces only
+  MyComponent.module.scss  # CSS Modules — CSS custom properties for theming
+  MyComponent.builder.ts   # RegisteredComponent config — omit if not Builder-registered
+```
+
+## Rules
+
+**`MyComponent.tsx`** — default export for the component; re-exports its own types:
+```ts
+import type { MyComponentProps } from "./MyComponent.types";
+import styles from "./MyComponent.module.scss";
+export type { MyComponentProps } from "./MyComponent.types";
+export default function MyComponent(props: MyComponentProps) { ... }
+```
+
+**`MyComponent.types.ts`** — interfaces only, no component logic:
+```ts
+export interface MyComponentProps {
+  headline?: string | null;   // Builder optional fields are always string | null
+  required: string;           // required fields have no null
+}
+```
+
+**`MyComponent.module.scss`** — CSS Modules with design token custom properties:
+```scss
+.section {
+  background-color: var(--background);
+  color: var(--foreground);
+  // Never hardcode hex values — use CSS custom properties from app/globals.css
+}
+```
+
+**`MyComponent.builder.ts`** — named export only, default import of the component:
+```ts
+import type { RegisteredComponent } from "@builder.io/sdk-react";
+import MyComponent from "./MyComponent";
+
+export const myComponentConfig: RegisteredComponent = {
+  component: MyComponent,
+  name: "My Component",
+  inputs: [
+    { name: "headline", type: "string", defaultValue: "Hello" },
+  ],
+};
+```
+
+Then in `builder-registry.ts`:
+```ts
+import { myComponentConfig } from "@/components/MyComponent/MyComponent.builder";
+// add myComponentConfig to the CUSTOM_COMPONENTS array
+```
+
+## What NOT to do
+
+- No `index.ts` barrel — import directly: `import MyComponent from "@/components/MyComponent/MyComponent"`
+- No Tailwind utility classes in `.module.scss` — use CSS custom properties instead
+- No hardcoded hex/rgba values — always `var(--token-name)`
+- Do not create a `.builder.ts` file for components that are not registered in `builder-registry.ts`

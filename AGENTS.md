@@ -56,12 +56,54 @@ components/
   builder/                   # RenderBuilderContent wrapper + BuilderCarousel
   ui/                        # shadcn/ui primitives (Button, Badge, Input, Label, Card, Carousel, Text, FormInput)
   layout/                    # Header (RSC + NavItems client), Footer
+  HeroSplit/                 # Canonical example of the four-file component pattern
 
 docs/skills/                 # Detailed skill references (see Skills below)
 styles/tokens.css            # Design tokens
 types/                       # Shared TypeScript interfaces
 utils/cn.ts                  # className joiner
 ```
+
+---
+
+## Component File Structure
+
+Every new component in `components/` follows the same four-file pattern used by `components/HeroSplit/`:
+
+```
+components/MyComponent/
+  MyComponent.tsx          # Component implementation + re-exports types
+  MyComponent.types.ts     # TypeScript interfaces only
+  MyComponent.module.scss  # CSS Modules styles (uses CSS custom properties, not Tailwind)
+  MyComponent.builder.ts   # Builder.io RegisteredComponent config (omit if not Builder-registered)
+```
+
+### Rules
+
+- **One folder per component** — `components/ComponentName/ComponentName.tsx`, never a flat file for non-trivial components
+- **Types file** — all `interface` and `type` declarations live in `ComponentName.types.ts`; the component file imports and re-exports them:
+  ```ts
+  import type { MyComponentProps } from "./MyComponent.types";
+  export type { MyComponentProps } from "./MyComponent.types";
+  ```
+- **SCSS Modules** — use `ComponentName.module.scss` for component-scoped styles; use CSS custom properties (`var(--foreground)`, `var(--primary)`, etc.) so styles respect the active theme. Apply classes via `cn(styles.foo, condition && styles.bar)`.
+- **Builder config file** — only create `ComponentName.builder.ts` when the component is registered in `builder-registry.ts`. Export a named constant: `export const myComponentConfig: RegisteredComponent = { ... }`. Import the component with a default import from `"./MyComponent"`.
+- **No barrel `index.ts`** — import directly from the component file, e.g. `import MyComponent from "@/components/MyComponent/MyComponent"`.
+
+### Example `.builder.ts` export
+
+```ts
+import type { RegisteredComponent } from "@builder.io/sdk-react";
+import MyComponent from "./MyComponent";
+
+export const myComponentConfig: RegisteredComponent = {
+  component: MyComponent,
+  name: "My Component",
+  inputs: [ /* ... */ ],
+};
+```
+
+Then in `builder-registry.ts`, import and spread: `import { myComponentConfig } from "@/components/MyComponent/MyComponent.builder"`.
 
 ---
 
