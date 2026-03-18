@@ -9,6 +9,10 @@ const baseConfig: NextConfig = {
         protocol: 'https',
         hostname: 'cdn.builder.io',
       },
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
     ],
   },
 };

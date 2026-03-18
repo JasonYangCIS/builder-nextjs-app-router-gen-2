@@ -3,6 +3,10 @@ import { test, expect } from "@playwright/test";
 test.describe("Input (FormInput)", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/design-system");
+    // Builder DevTools injects <builder-dev-tools-overview> which intercepts pointer events.
+    await page.addStyleTag({
+      content: "builder-dev-tools-overview { pointer-events: none !important; }",
+    });
   });
 
   test("renders label associated with input via htmlFor", async ({ page }) => {

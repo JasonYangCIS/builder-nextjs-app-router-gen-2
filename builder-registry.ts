@@ -8,6 +8,9 @@ import { FormInput } from "./components/ui/form-input";
 import { Card } from "./components/ui/card";
 import { Text } from "./components/ui/text";
 import { BuilderCarousel } from "./components/builder/BuilderCarousel";
+import { heroFullBleedConfig } from "./components/HeroFullBleed/HeroFullBleed.builder";
+import { heroSplitConfig } from "./components/HeroSplit/HeroSplit.builder";
+import { heroCenteredConfig } from "./components/HeroCentered/HeroCentered.builder";
 
 export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
   // ─── Existing ────────────────────────────────────────────────────────────
@@ -217,4 +220,9 @@ export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
       },
     ],
   },
+
+  // ─── Hero Components ──────────────────────────────────────────────────────
+  heroFullBleedConfig,
+  heroSplitConfig,
+  heroCenteredConfig,
 ];

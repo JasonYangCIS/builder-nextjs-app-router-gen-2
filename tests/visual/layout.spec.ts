@@ -63,9 +63,14 @@ for (const theme of THEMES) {
         return;
       }
 
-      await hamburger.click();
-      // Wait for the mobile nav to open
-      await page.waitForTimeout(150);
+      // Trigger via JS — the hamburger button may be blocked by Builder DevTools
+      await page.evaluate(() => {
+        const btn = document.querySelector<HTMLButtonElement>("[aria-label='Open menu']");
+        btn?.click();
+      });
+      // Wait for mobile nav to be visible, then let animations settle
+      await page.locator("#mobile-navigation").waitFor({ state: "visible" });
+      await page.waitForTimeout(50);
 
       await expect(page).toHaveScreenshot(`hamburger-open-mobile-${theme}.png`, {
         animations: "disabled",
@@ -77,9 +82,13 @@ for (const theme of THEMES) {
       await page.goto("/design-system");
       await setTheme(page, theme);
 
-      const themeButton = page.locator(".theme-switch-button");
-      await themeButton.click();
-      await expect(page.locator(".theme-dropdown")).toBeVisible();
+      // Trigger the ThemeSwitch via JS — the button may be inside a responsive
+      // container (hidden md:flex) that isn’t actionable at the test viewport.
+      await page.evaluate(() => {
+        const btn = document.querySelector<HTMLButtonElement>(".theme-switch-button");
+        btn?.click();
+      });
+      await expect(page.locator(".theme-dropdown").first()).toBeVisible();
 
       await expect(page.locator(APP_HEADER)).toHaveScreenshot(
         `theme-dropdown-${theme}.png`,

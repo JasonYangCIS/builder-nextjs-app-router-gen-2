@@ -31,7 +31,8 @@ test.describe("Footer", () => {
 
   test("footer is present on every main page", async ({ page }) => {
     for (const path of ["/blog", "/design-system", "/blog-article", "/blog-article-section"]) {
-      await page.goto(path);
+      // Use domcontentloaded — faster than "load" since SSR pages render footer in HTML before scripts run
+      await page.goto(path, { waitUntil: "domcontentloaded" });
       await expect(page.locator(APP_FOOTER)).toBeVisible();
     }
   });

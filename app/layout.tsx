@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Header } from "@/components/layout/Header/Header";
 import { Footer } from "@/components/layout/Footer/Footer";
@@ -30,11 +29,6 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Script
-          src="https://unpkg.com/react-scan/dist/auto.global.js"
-          strategy="afterInteractive"
-          crossOrigin="anonymous"
-        />
         <Header />
         {children}
         <Footer />
