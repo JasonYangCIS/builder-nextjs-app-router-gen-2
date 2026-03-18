@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { sanitizeHref } from "@/utils/url";
 import type { HeroCenteredProps } from "./HeroCentered.types";
 import styles from "./HeroCentered.module.scss";
 
@@ -26,9 +27,9 @@ export default function HeroCentered({
   const safeCopy = copy ?? "";
   const safeBadge = badgeLabel ?? "";
   const safeCtaLabel = ctaLabel ?? "";
-  const safeCtaUrl = ctaUrl ?? "";
+  const safeCtaUrl = sanitizeHref(ctaUrl ?? "");
   const safeSecondaryCtaLabel = secondaryCtaLabel ?? "";
-  const safeSecondaryCtaUrl = secondaryCtaUrl ?? "";
+  const safeSecondaryCtaUrl = sanitizeHref(secondaryCtaUrl ?? "");
   const safeImagePosition = imagePosition ?? "below";
 
   // Image frame always renders — shows placeholder when no image URL is provided.

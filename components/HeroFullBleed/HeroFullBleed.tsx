@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
+import { sanitizeHref } from "@/utils/url";
 import type { HeroFullBleedProps } from "./HeroFullBleed.types";
 import styles from "./HeroFullBleed.module.scss";
 
@@ -33,7 +34,7 @@ export default function HeroFullBleed({
   const safeHeadline = headline ?? "";
   const safeCopy = copy ?? "";
   const safeCtaLabel = ctaLabel ?? "";
-  const safeCtaUrl = ctaUrl ?? "";
+  const safeCtaUrl = sanitizeHref(ctaUrl ?? "");
 
   return (
     <section data-testid="hero-fullbleed" className={styles.section}>
@@ -75,7 +76,7 @@ export default function HeroFullBleed({
         )}
         {safeCtaLabel && safeCtaUrl && (
           <Link
-            href={safeCtaUrl}
+            href={safeCtaUrl || "/"}
             data-testid="hero-fullbleed-cta"
             className={styles.cta}
           >

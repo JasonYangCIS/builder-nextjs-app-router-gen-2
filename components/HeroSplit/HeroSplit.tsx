@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/utils/cn";
+import { sanitizeHref } from "@/utils/url";
 import type { HeroSplitProps } from "./HeroSplit.types";
 import styles from "./HeroSplit.module.scss";
 
@@ -26,9 +27,9 @@ export default function HeroSplit({
   const safeHeadline = headline ?? "";
   const safeCopy = copy ?? "";
   const safeCtaLabel = ctaLabel ?? "";
-  const safeCtaUrl = ctaUrl ?? "";
+  const safeCtaUrl = sanitizeHref(ctaUrl ?? "");
   const safeSecondaryCtaLabel = secondaryCtaLabel ?? "";
-  const safeSecondaryCtaUrl = secondaryCtaUrl ?? "";
+  const safeSecondaryCtaUrl = sanitizeHref(secondaryCtaUrl ?? "");
 
   const contentBlock = (
     <div
