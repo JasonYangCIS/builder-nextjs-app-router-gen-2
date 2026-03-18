@@ -8,48 +8,61 @@ import { cn } from "@/utils/cn";
 type ButtonVariant = VariantProps<typeof buttonVariants>["variant"];
 
 export interface HeroSplitProps {
-  headline?: string;
-  copy?: string;
-  ctaLabel?: string;
-  ctaUrl?: string;
+  headline?: string | null;
+  copy?: string | null;
+  ctaLabel?: string | null;
+  ctaUrl?: string | null;
   ctaVariant?: ButtonVariant;
-  secondaryCtaLabel?: string;
-  secondaryCtaUrl?: string;
-  image?: string;
-  imageAlt?: string;
-  imagePosition?: "left" | "right";
+  secondaryCtaLabel?: string | null;
+  secondaryCtaUrl?: string | null;
+  image?: string | null;
+  imageAlt?: string | null;
+  imagePosition?: "left" | "right" | null;
 }
 
 export default function HeroSplit({
-  headline = "Split Layout Hero Headline",
-  copy = "Supporting copy that sits alongside the image. Great for feature announcements or product showcases.",
-  ctaLabel = "Get Started",
-  ctaUrl = "#",
+  headline,
+  copy,
+  ctaLabel,
+  ctaUrl,
   ctaVariant = "default",
-  secondaryCtaLabel = "",
-  secondaryCtaUrl = "",
-  image = "",
-  imageAlt = "",
-  imagePosition = "right",
+  secondaryCtaLabel,
+  secondaryCtaUrl,
+  image,
+  imageAlt,
+  imagePosition,
 }: HeroSplitProps) {
-  const imageOnRight = imagePosition !== "left";
+  const imageOnRight = (imagePosition ?? "right") !== "left";
+
+  const safeImage = image ?? "";
+  const safeImageAlt = imageAlt ?? "";
+  const safeHeadline = headline ?? "";
+  const safeCopy = copy ?? "";
+  const safeCtaLabel = ctaLabel ?? "";
+  const safeCtaUrl = ctaUrl ?? "";
+  const safeSecondaryCtaLabel = secondaryCtaLabel ?? "";
+  const safeSecondaryCtaUrl = secondaryCtaUrl ?? "";
 
   const contentBlock = (
     <div className="hero-split__content">
-      <h1 className="hero-split__headline">{headline}</h1>
-      <p className="hero-split__copy">{copy}</p>
+      {safeHeadline && (
+        <h1 className="hero-split__headline">{safeHeadline}</h1>
+      )}
+      {safeCopy && (
+        <p className="hero-split__copy">{safeCopy}</p>
+      )}
       <div className="hero-split__actions">
-        {ctaLabel && ctaUrl && (
-          <Link href={ctaUrl}>
+        {safeCtaLabel && safeCtaUrl && (
+          <Link href={safeCtaUrl}>
             <Button variant={ctaVariant} size="lg">
-              {ctaLabel}
+              {safeCtaLabel}
             </Button>
           </Link>
         )}
-        {secondaryCtaLabel && secondaryCtaUrl && (
-          <Link href={secondaryCtaUrl}>
+        {safeSecondaryCtaLabel && safeSecondaryCtaUrl && (
+          <Link href={safeSecondaryCtaUrl}>
             <Button variant="outline" size="lg">
-              {secondaryCtaLabel}
+              {safeSecondaryCtaLabel}
             </Button>
           </Link>
         )}
@@ -57,12 +70,17 @@ export default function HeroSplit({
     </div>
   );
 
+  // aria-hidden: true hides decorative images from AT;
+  // undefined lets the nested alt text be announced normally.
   const imageBlock = (
-    <div className="hero-split__image-wrapper" aria-hidden={!imageAlt}>
-      {image ? (
+    <div
+      className="hero-split__image-wrapper"
+      aria-hidden={safeImageAlt ? undefined : true}
+    >
+      {safeImage ? (
         <Image
-          src={image}
-          alt={imageAlt ?? ""}
+          src={safeImage}
+          alt={safeImageAlt}
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
           className="hero-split__image"
@@ -75,7 +93,12 @@ export default function HeroSplit({
   );
 
   return (
-    <section className={cn("hero-split", imageOnRight ? "hero-split--image-right" : "hero-split--image-left")}>
+    <section
+      className={cn(
+        "hero-split",
+        imageOnRight ? "hero-split--image-right" : "hero-split--image-left",
+      )}
+    >
       {imageOnRight ? (
         <>
           {contentBlock}

@@ -8,38 +8,50 @@ import { buttonVariants } from "@/components/ui/button";
 type ButtonVariant = VariantProps<typeof buttonVariants>["variant"];
 
 export interface HeroCenteredProps {
-  badgeLabel?: string;
-  headline?: string;
-  copy?: string;
-  ctaLabel?: string;
-  ctaUrl?: string;
+  badgeLabel?: string | null;
+  headline?: string | null;
+  copy?: string | null;
+  ctaLabel?: string | null;
+  ctaUrl?: string | null;
   ctaVariant?: ButtonVariant;
-  secondaryCtaLabel?: string;
-  secondaryCtaUrl?: string;
-  image?: string;
-  imageAlt?: string;
-  imagePosition?: "above" | "below";
+  secondaryCtaLabel?: string | null;
+  secondaryCtaUrl?: string | null;
+  image?: string | null;
+  imageAlt?: string | null;
+  imagePosition?: "above" | "below" | null;
 }
 
 export default function HeroCentered({
-  badgeLabel = "",
-  headline = "Simple. Focused. Effective.",
-  copy = "Clean, centered layout that puts the message first. Ideal when clarity and focus matter most.",
-  ctaLabel = "Get Started",
-  ctaUrl = "#",
+  badgeLabel,
+  headline,
+  copy,
+  ctaLabel,
+  ctaUrl,
   ctaVariant = "default",
-  secondaryCtaLabel = "",
-  secondaryCtaUrl = "",
-  image = "",
-  imageAlt = "",
-  imagePosition = "below",
+  secondaryCtaLabel,
+  secondaryCtaUrl,
+  image,
+  imageAlt,
+  imagePosition,
 }: HeroCenteredProps) {
-  const imageBlock = (image || true) && (
+  const safeImage = image ?? "";
+  const safeImageAlt = imageAlt ?? "";
+  const safeHeadline = headline ?? "";
+  const safeCopy = copy ?? "";
+  const safeBadge = badgeLabel ?? "";
+  const safeCtaLabel = ctaLabel ?? "";
+  const safeCtaUrl = ctaUrl ?? "";
+  const safeSecondaryCtaLabel = secondaryCtaLabel ?? "";
+  const safeSecondaryCtaUrl = secondaryCtaUrl ?? "";
+  const safeImagePosition = imagePosition ?? "below";
+
+  // Image frame always renders — shows placeholder when no image URL is provided.
+  const imageFrame = (
     <div className="hero-centered__image-frame">
-      {image ? (
+      {safeImage ? (
         <Image
-          src={image}
-          alt={imageAlt ?? ""}
+          src={safeImage}
+          alt={safeImageAlt}
           fill
           sizes="(max-width: 768px) 100vw, 80vw"
           className="hero-centered__image"
@@ -54,37 +66,41 @@ export default function HeroCentered({
   return (
     <section className="hero-centered">
       <div className="hero-centered__inner">
-        {imagePosition === "above" && imageBlock}
+        {safeImagePosition === "above" && imageFrame}
 
         <div className="hero-centered__text-block">
-          {badgeLabel && (
+          {safeBadge && (
             <div className="hero-centered__badge-wrapper">
-              <Badge variant="secondary">{badgeLabel}</Badge>
+              <Badge variant="secondary">{safeBadge}</Badge>
             </div>
           )}
 
-          <h1 className="hero-centered__headline">{headline}</h1>
-          <p className="hero-centered__copy">{copy}</p>
+          {safeHeadline && (
+            <h1 className="hero-centered__headline">{safeHeadline}</h1>
+          )}
+          {safeCopy && (
+            <p className="hero-centered__copy">{safeCopy}</p>
+          )}
 
           <div className="hero-centered__actions">
-            {ctaLabel && ctaUrl && (
-              <Link href={ctaUrl}>
+            {safeCtaLabel && safeCtaUrl && (
+              <Link href={safeCtaUrl}>
                 <Button variant={ctaVariant} size="lg">
-                  {ctaLabel}
+                  {safeCtaLabel}
                 </Button>
               </Link>
             )}
-            {secondaryCtaLabel && secondaryCtaUrl && (
-              <Link href={secondaryCtaUrl}>
+            {safeSecondaryCtaLabel && safeSecondaryCtaUrl && (
+              <Link href={safeSecondaryCtaUrl}>
                 <Button variant="ghost" size="lg">
-                  {secondaryCtaLabel} →
+                  {safeSecondaryCtaLabel} →
                 </Button>
               </Link>
             )}
           </div>
         </div>
 
-        {imagePosition === "below" && imageBlock}
+        {safeImagePosition === "below" && imageFrame}
       </div>
 
       <style>{`

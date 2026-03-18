@@ -8,50 +8,59 @@ import { cn } from "@/utils/cn";
 type ButtonVariant = VariantProps<typeof buttonVariants>["variant"];
 
 export interface HeroFullBleedProps {
-  headline?: string;
-  copy?: string;
-  ctaLabel?: string;
-  ctaUrl?: string;
+  headline?: string | null;
+  copy?: string | null;
+  ctaLabel?: string | null;
+  ctaUrl?: string | null;
   ctaVariant?: ButtonVariant;
-  image?: string;
-  imageAlt?: string;
-  textAlign?: "left" | "center" | "right";
-  overlayOpacity?: number;
+  image?: string | null;
+  imageAlt?: string | null;
+  textAlign?: "left" | "center" | "right" | null;
+  overlayOpacity?: number | null;
 }
 
 export default function HeroFullBleed({
-  headline = "A Bold Headline Here",
-  copy = "Short supporting copy that reinforces the headline and drives action.",
-  ctaLabel = "Get Started",
-  ctaUrl = "#",
+  headline,
+  copy,
+  ctaLabel,
+  ctaUrl,
   ctaVariant = "default",
-  image = "",
-  imageAlt = "",
-  textAlign = "center",
-  overlayOpacity = 55,
+  image,
+  imageAlt,
+  textAlign,
+  overlayOpacity,
 }: HeroFullBleedProps) {
+  const safeAlign = textAlign ?? "center";
   const alignClass = {
     left: "items-start text-left",
     center: "items-center text-center",
     right: "items-end text-right",
-  }[textAlign];
+  }[safeAlign] ?? "items-center text-center";
 
   // Enforce a 50% minimum so admins can't accidentally set an overlay too low to be readable.
   const clampedOpacity = Math.min(100, Math.max(50, overlayOpacity ?? 55));
 
+  const safeImage = image ?? "";
+  const safeImageAlt = imageAlt ?? "";
+  const safeHeadline = headline ?? "";
+  const safeCopy = copy ?? "";
+  const safeCtaLabel = ctaLabel ?? "";
+  const safeCtaUrl = ctaUrl ?? "";
+
   return (
     <section className="hero-fullbleed">
-      {image && (
+      {safeImage ? (
         <Image
-          src={image}
-          alt={imageAlt ?? ""}
+          src={safeImage}
+          alt={safeImageAlt}
           fill
           sizes="100vw"
           className="hero-fullbleed__image"
           priority
         />
+      ) : (
+        <div className="hero-fullbleed__placeholder" aria-hidden="true" />
       )}
-      {!image && <div className="hero-fullbleed__placeholder" aria-hidden="true" />}
 
       <div
         className="hero-fullbleed__overlay"
@@ -60,16 +69,16 @@ export default function HeroFullBleed({
       />
 
       <div className={cn("hero-fullbleed__content", alignClass)}>
-        {headline && (
-          <h1 className="hero-fullbleed__headline">{headline}</h1>
+        {safeHeadline && (
+          <h1 className="hero-fullbleed__headline">{safeHeadline}</h1>
         )}
-        {copy && (
-          <p className="hero-fullbleed__copy">{copy}</p>
+        {safeCopy && (
+          <p className="hero-fullbleed__copy">{safeCopy}</p>
         )}
-        {ctaLabel && ctaUrl && (
-          <Link href={ctaUrl} className="hero-fullbleed__cta">
+        {safeCtaLabel && safeCtaUrl && (
+          <Link href={safeCtaUrl} className="hero-fullbleed__cta">
             <Button variant={ctaVariant} size="lg">
-              {ctaLabel}
+              {safeCtaLabel}
             </Button>
           </Link>
         )}
