@@ -105,6 +105,21 @@ export const myComponentConfig: RegisteredComponent = {
 
 Then in `builder-registry.ts`, import and spread: `import { myComponentConfig } from "@/components/MyComponent/MyComponent.builder"`.
 
+### Doc update checklist — run after creating any new component
+
+After scaffolding a net-new component, check each item below and update if applicable:
+
+| Condition | File to update |
+|-----------|---------------|
+| Component is in `components/` and notable enough to reference | `AGENTS.md` — add to the Directory Structure listing |
+| Component is a new shadcn primitive or introduces a new UI pattern | `docs/skills/design-system.md` — document component API, variants, and import path |
+| Component is registered in `builder-registry.ts` | `docs/skills/builder-io.md` — update Custom Component Registration section if a new pattern is used |
+| Component introduces a variation on the four-file folder pattern | `.builder/rules/component-structure.mdc` — update with the new pattern and rationale |
+| Component is a new UI primitive intended for reuse | `app/design-system/page.tsx` — add a showcase section so it is visible and Playwright-testable |
+| Component file structure or naming convention changes | `.builderrules` — update the Component File Structure section |
+
+**When in doubt, update the docs.** Outdated agent docs cause future agents to generate inconsistent code.
+
 ---
 
 ## Conventions

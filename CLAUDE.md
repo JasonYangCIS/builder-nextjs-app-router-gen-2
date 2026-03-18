@@ -8,6 +8,13 @@ npx tsc --noEmit   # must pass
 npm test           # must pass
 ```
 
+## After Creating a New Component
+Run the doc update checklist in `AGENTS.md` — Component File Structure section. Key questions:
+- Does `AGENTS.md` directory listing need updating?
+- Does `docs/skills/design-system.md` or `docs/skills/builder-io.md` need a new entry?
+- Should `app/design-system/page.tsx` get a new showcase section?
+- Did the four-file pattern change? → update `.builder/rules/component-structure.mdc` and `.builderrules`
+
 ## Key Files
 | File | Purpose |
 |------|---------|
