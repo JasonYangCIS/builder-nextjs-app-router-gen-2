@@ -37,29 +37,29 @@ test.describe("HeroSplit", () => {
 
   test("renders image when image prop is provided", async ({ page }) => {
     const section = page.locator("#split-right");
-    const img = section.locator(".hero-split__image");
+    const img = section.locator("img");
     await expect(img).toBeVisible();
     await expect(img).toHaveAttribute("alt", "Split test image");
   });
 
   // ── Image position ─────────────────────────────────────────────────────────
 
-  test("applies image-right class when imagePosition is right", async ({ page }) => {
-    const section = page.locator("#split-right section");
-    await expect(section).toHaveClass(/hero-split--image-right/);
+  test("applies image-right attribute when imagePosition is right", async ({ page }) => {
+    const section = page.locator("#split-right [data-testid='hero-split']");
+    await expect(section).toHaveAttribute("data-image-position", "right");
   });
 
-  test("applies image-left class when imagePosition is left", async ({ page }) => {
-    const section = page.locator("#split-left section");
-    await expect(section).toHaveClass(/hero-split--image-left/);
+  test("applies image-left attribute when imagePosition is left", async ({ page }) => {
+    const section = page.locator("#split-left [data-testid='hero-split']");
+    await expect(section).toHaveAttribute("data-image-position", "left");
   });
 
   // ── Placeholder ────────────────────────────────────────────────────────────
 
   test("renders placeholder when no image is provided", async ({ page }) => {
     const section = page.locator("#split-minimal");
-    await expect(section.locator(".hero-split__image-placeholder")).toBeVisible();
-    await expect(section.locator(".hero-split__image")).toHaveCount(0);
+    await expect(section.locator("[data-testid='hero-split-image-placeholder']")).toBeVisible();
+    await expect(section.locator("img")).toHaveCount(0);
   });
 
   // ── Conditional rendering ──────────────────────────────────────────────────
@@ -67,40 +67,40 @@ test.describe("HeroSplit", () => {
   test("hides secondary CTA when secondaryCtaUrl is absent", async ({ page }) => {
     const section = page.locator("#split-minimal");
     // Only one CTA link should exist
-    await expect(section.locator(".hero-split__actions a")).toHaveCount(1);
+    await expect(section.locator("[data-testid='hero-split-actions'] a")).toHaveCount(1);
   });
 
   test("hides primary CTA when ctaUrl is absent", async ({ page }) => {
     const section = page.locator("#split-null");
-    await expect(section.locator(".hero-split__actions a")).toHaveCount(0);
+    await expect(section.locator("[data-testid='hero-split-actions'] a")).toHaveCount(0);
   });
 
   // ── Null safety ────────────────────────────────────────────────────────────
 
   test("renders without errors when all props are null", async ({ page }) => {
     const section = page.locator("#split-null");
-    await expect(section.locator(".hero-split")).toBeVisible();
+    await expect(section.locator("[data-testid='hero-split']")).toBeVisible();
     await expect(section.locator("h1")).toHaveCount(0);
-    await expect(section.locator(".hero-split__copy")).toHaveCount(0);
-    await expect(section.locator(".hero-split__actions a")).toHaveCount(0);
+    await expect(section.locator("[data-testid='hero-split-copy']")).toHaveCount(0);
+    await expect(section.locator("[data-testid='hero-split-actions'] a")).toHaveCount(0);
     // Placeholder visible (no image URL)
-    await expect(section.locator(".hero-split__image-placeholder")).toBeVisible();
+    await expect(section.locator("[data-testid='hero-split-image-placeholder']")).toBeVisible();
   });
 
   test("defaults to image-right layout when imagePosition is null", async ({ page }) => {
-    const section = page.locator("#split-null section");
-    await expect(section).toHaveClass(/hero-split--image-right/);
+    const section = page.locator("#split-null [data-testid='hero-split']");
+    await expect(section).toHaveAttribute("data-image-position", "right");
   });
 
   // ── Accessibility ──────────────────────────────────────────────────────────
 
   test("image wrapper is aria-hidden when no imageAlt provided", async ({ page }) => {
-    const wrapper = page.locator("#split-minimal .hero-split__image-wrapper");
+    const wrapper = page.locator("#split-minimal [data-testid='hero-split-image-wrapper']");
     await expect(wrapper).toHaveAttribute("aria-hidden", "true");
   });
 
   test("image wrapper does not have aria-hidden when imageAlt is provided", async ({ page }) => {
-    const wrapper = page.locator("#split-right .hero-split__image-wrapper");
+    const wrapper = page.locator("#split-right [data-testid='hero-split-image-wrapper']");
     // aria-hidden should be absent (undefined → not rendered as attribute)
     await expect(wrapper).not.toHaveAttribute("aria-hidden", "true");
   });

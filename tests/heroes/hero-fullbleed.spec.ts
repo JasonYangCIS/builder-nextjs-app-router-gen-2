@@ -31,34 +31,34 @@ test.describe("HeroFullBleed", () => {
 
   test("renders a dark overlay element with aria-hidden", async ({ page }) => {
     const section = page.locator("#fullbleed-full");
-    const overlay = section.locator(".hero-fullbleed__overlay");
+    const overlay = section.locator("[data-testid='hero-fullbleed-overlay']");
     await expect(overlay).toBeVisible();
     await expect(overlay).toHaveAttribute("aria-hidden", "true");
   });
 
   test("renders background image when image prop is provided", async ({ page }) => {
     const section = page.locator("#fullbleed-full");
-    const img = section.locator(".hero-fullbleed__image");
+    const img = section.locator("img");
     await expect(img).toBeVisible();
     await expect(img).toHaveAttribute("alt", "Test background image");
   });
 
   test("renders placeholder gradient when no image is provided", async ({ page }) => {
     const section = page.locator("#fullbleed-minimal");
-    await expect(section.locator(".hero-fullbleed__placeholder")).toBeVisible();
-    await expect(section.locator(".hero-fullbleed__image")).toHaveCount(0);
+    await expect(section.locator("[data-testid='hero-fullbleed-placeholder']")).toBeVisible();
+    await expect(section.locator("img")).toHaveCount(0);
   });
 
   // ── Text alignment ─────────────────────────────────────────────────────────
 
   test("applies center alignment class by default", async ({ page }) => {
-    const content = page.locator("#fullbleed-full .hero-fullbleed__content");
+    const content = page.locator("#fullbleed-full [data-testid='hero-fullbleed-content']");
     await expect(content).toHaveClass(/items-center/);
     await expect(content).toHaveClass(/text-center/);
   });
 
   test("applies left alignment class when textAlign is left", async ({ page }) => {
-    const content = page.locator("#fullbleed-left .hero-fullbleed__content");
+    const content = page.locator("#fullbleed-left [data-testid='hero-fullbleed-content']");
     await expect(content).toHaveClass(/items-start/);
     await expect(content).toHaveClass(/text-left/);
   });
@@ -67,7 +67,7 @@ test.describe("HeroFullBleed", () => {
 
   test("hides CTA when ctaLabel is absent", async ({ page }) => {
     const section = page.locator("#fullbleed-minimal");
-    await expect(section.locator(".hero-fullbleed__cta")).toHaveCount(0);
+    await expect(section.locator("[data-testid='hero-fullbleed-cta']")).toHaveCount(0);
   });
 
   // ── Null safety ────────────────────────────────────────────────────────────
@@ -75,17 +75,17 @@ test.describe("HeroFullBleed", () => {
   test("renders without errors when all props are null", async ({ page }) => {
     const section = page.locator("#fullbleed-null");
     // Section itself should be visible (component renders even with all nulls)
-    await expect(section.locator(".hero-fullbleed")).toBeVisible();
+    await expect(section.locator("[data-testid='hero-fullbleed']")).toBeVisible();
     // No h1, no copy, no CTA
     await expect(section.locator("h1")).toHaveCount(0);
-    await expect(section.locator(".hero-fullbleed__copy")).toHaveCount(0);
-    await expect(section.locator(".hero-fullbleed__cta")).toHaveCount(0);
+    await expect(section.locator("[data-testid='hero-fullbleed-copy']")).toHaveCount(0);
+    await expect(section.locator("[data-testid='hero-fullbleed-cta']")).toHaveCount(0);
     // Placeholder shown instead of image
-    await expect(section.locator(".hero-fullbleed__placeholder")).toBeVisible();
+    await expect(section.locator("[data-testid='hero-fullbleed-placeholder']")).toBeVisible();
   });
 
   test("defaults to center alignment when textAlign is null", async ({ page }) => {
-    const content = page.locator("#fullbleed-null .hero-fullbleed__content");
+    const content = page.locator("#fullbleed-null [data-testid='hero-fullbleed-content']");
     await expect(content).toHaveClass(/items-center/);
   });
 
@@ -96,7 +96,7 @@ test.describe("HeroFullBleed", () => {
   });
 
   test("headline has WCAG text-shadow for image contrast", async ({ page }) => {
-    const headline = page.locator("#fullbleed-full .hero-fullbleed__headline");
+    const headline = page.locator("#fullbleed-full h1");
     const shadow = await headline.evaluate(
       (el) => getComputedStyle(el).textShadow,
     );

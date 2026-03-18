@@ -2,9 +2,9 @@
  * Playwright test fixture — hero components rendered with static, deterministic data.
  * Not linked from the app; only used by tests/heroes/*.spec.ts.
  */
-import HeroFullBleed from "@/components/heroes/HeroFullBleed";
-import HeroSplit from "@/components/heroes/HeroSplit";
-import HeroCentered from "@/components/heroes/HeroCentered";
+import HeroFullBleed from "@/components/HeroFullBleed/HeroFullBleed";
+import HeroSplit from "@/components/HeroSplit/HeroSplit";
+import HeroCentered from "@/components/HeroCentered/HeroCentered";
 
 // Stable placeholder — no external network call required
 const IMG = "https://cdn.builder.io/api/v1/image/assets/placeholder";

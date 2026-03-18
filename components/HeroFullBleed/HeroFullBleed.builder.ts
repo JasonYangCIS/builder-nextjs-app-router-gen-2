@@ -1,0 +1,68 @@
+import type { RegisteredComponent } from "@builder.io/sdk-react";
+import HeroFullBleed from "./HeroFullBleed";
+
+export const heroFullBleedConfig: RegisteredComponent = {
+  component: HeroFullBleed,
+  name: "Hero: Full Bleed",
+  inputs: [
+    {
+      name: "headline",
+      type: "string",
+      defaultValue: "A Bold Headline Here",
+      helperText: "Main heading displayed over the image",
+    },
+    {
+      name: "copy",
+      type: "longText",
+      defaultValue:
+        "Short supporting copy that reinforces the headline and drives action.",
+      helperText: "Supporting paragraph text",
+    },
+    {
+      name: "ctaLabel",
+      type: "string",
+      defaultValue: "Get Started",
+      helperText: "Primary call-to-action button label",
+    },
+    {
+      name: "ctaUrl",
+      type: "url",
+      defaultValue: "/",
+      helperText: "URL the CTA button links to",
+    },
+    {
+      name: "ctaVariant",
+      type: "string",
+      enum: ["default", "destructive", "outline", "secondary", "ghost"],
+      defaultValue: "default",
+      helperText: "Button visual style",
+    },
+    {
+      name: "image",
+      type: "file",
+      allowedFileTypes: ["jpeg", "jpg", "png", "svg", "gif", "webp"],
+      defaultValue: "",
+      helperText: "Full-bleed background image",
+    },
+    {
+      name: "imageAlt",
+      type: "string",
+      defaultValue: "",
+      helperText: "Descriptive alt text for the background image",
+    },
+    {
+      name: "textAlign",
+      type: "string",
+      enum: ["left", "center", "right"],
+      defaultValue: "center",
+      helperText: "Alignment of headline, copy and CTA",
+    },
+    {
+      name: "overlayOpacity",
+      type: "number",
+      defaultValue: 55,
+      helperText:
+        "Dark overlay opacity over the image (50–100). Minimum 50 is enforced for WCAG 2.1 AA compliance.",
+    },
+  ],
+};
