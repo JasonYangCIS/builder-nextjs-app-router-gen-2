@@ -8,6 +8,10 @@ test.describe("Header", () => {
   test.beforeEach(async ({ page }) => {
     // /blog is a fully static page — no Builder fetch needed beyond nav menu
     await page.goto("/blog");
+    // Builder DevTools injects <builder-dev-tools-overview> which intercepts pointer events.
+    await page.addStyleTag({
+      content: "builder-dev-tools-overview { pointer-events: none !important; }",
+    });
   });
 
   test("renders the site logo text", async ({ page }) => {

@@ -3,6 +3,11 @@ import { test, expect } from "@playwright/test";
 test.describe("Counter", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/design-system");
+    // Builder DevTools injects <builder-dev-tools-overview> which intercepts pointer events.
+    // Disable it so Playwright clicks reach the actual page elements.
+    await page.addStyleTag({
+      content: "builder-dev-tools-overview { pointer-events: none !important; }",
+    });
   });
 
   test("renders with default count of 99", async ({ page }) => {
