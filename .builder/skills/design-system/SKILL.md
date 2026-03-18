@@ -15,4 +15,6 @@ Key areas covered:
 - Text component (Typography replacement): `import { Text } from "@/components/ui/text"`
 - Labeled input wrapper: `import { FormInput } from "@/components/ui/form-input"`
 - Builder carousel wrapper: `import { BuilderCarousel } from "@/components/builder/BuilderCarousel"`
+- Two component locations: shadcn primitives → flat file in `components/ui/`; feature components → four-file folder in `components/[Name]/`
 - When to add a new shadcn component vs. compose from existing primitives
+- After creating a new component: run the doc update checklist in AGENTS.md

@@ -68,7 +68,18 @@ utils/cn.ts                  # className joiner
 
 ## Component File Structure
 
-Every new component in `components/` follows the same four-file pattern used by `components/HeroSplit/`:
+### Two component locations — do not mix them up
+
+| Type | Location | Structure |
+|------|----------|-----------|
+| shadcn/ui primitive | `components/ui/my-component.tsx` | Single flat file — this is the shadcn convention |
+| Feature / Builder component | `components/MyComponent/` | Four-file folder pattern (see below) |
+
+Use `components/ui/` only for shadcn primitives copied from ui.shadcn.com. Everything else — feature components, Builder-registered components, any component with its own styles or types — uses the four-file folder pattern.
+
+### Four-file folder pattern
+
+Every feature component in `components/` follows the same four-file pattern used by `components/HeroSplit/`:
 
 ```
 components/MyComponent/
@@ -116,6 +127,7 @@ After scaffolding a net-new component, check each item below and update if appli
 | Component is registered in `builder-registry.ts` | `docs/skills/builder-io.md` — update Custom Component Registration section if a new pattern is used |
 | Component introduces a variation on the four-file folder pattern | `.builder/rules/component-structure.mdc` — update with the new pattern and rationale |
 | Component is a new UI primitive intended for reuse | `app/design-system/page.tsx` — add a showcase section so it is visible and Playwright-testable |
+| Component is a new UI primitive **or** a new feature component | `tests/design-system/` or `tests/heroes/` — add a `my-component.spec.ts` Playwright test |
 | Component file structure or naming convention changes | `.builderrules` — update the Component File Structure section |
 
 **When in doubt, update the docs.** Outdated agent docs cause future agents to generate inconsistent code.

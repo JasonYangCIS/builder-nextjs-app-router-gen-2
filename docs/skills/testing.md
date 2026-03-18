@@ -35,11 +35,20 @@ tests/
 │   ├── blog-components.spec.ts  # All blog components via fixture page
 │   ├── blog-index.spec.ts       # /blog static page
 │   └── blog-list.spec.ts        # /blog-article, /blog-article-section, /blog-article-template
+├── heroes/
+│   ├── hero-split.spec.ts        # HeroSplit — layout, image position, CTAs, a11y
+│   ├── hero-centered.spec.ts     # HeroCentered component
+│   └── hero-fullbleed.spec.ts    # HeroFullbleed component
 ├── layout/
 │   ├── header.spec.ts       # Logo, desktop nav, mobile hamburger toggle
 │   └── footer.spec.ts       # Copyright, year, site name, border
+├── visual/
+│   ├── layout.spec.ts-snapshots/   # Visual regression snapshots for layout
+│   └── themes.spec.ts-snapshots/   # Visual regression snapshots across themes
 └── counter.spec.ts          # Increment, decrement, initialCount prop
 ```
+
+New tests should mirror the component directory structure — `tests/heroes/` for components in `components/HeroSplit/`, `tests/design-system/` for components in `components/ui/`, etc.
 
 ---
 

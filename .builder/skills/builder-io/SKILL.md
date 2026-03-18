@@ -11,7 +11,8 @@ Key areas covered:
 - Three blog model patterns: Data, Section, Hybrid
 - Adding a new model (4-step checklist)
 - subscribeToEditor model guard (required — prevents mismatch errors)
-- Custom component registration in builder-registry.ts
+- Custom component registration in builder-registry.ts — uses the four-file folder pattern (`.tsx` / `.types.ts` / `.module.scss` / `.builder.ts`)
 - RenderBuilderContent render logic
 - TypeScript type conventions for Builder data fields
 - Dynamic preview URL setup in Builder admin
+- After creating a new component: run the doc update checklist in AGENTS.md

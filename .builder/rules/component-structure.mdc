@@ -5,7 +5,18 @@ alwaysApply: false
 ---
 # Component File Structure
 
-Every new component uses the four-file folder pattern. See `components/HeroSplit/` as the canonical reference.
+## Two locations — do not mix them up
+
+| Type | Location | Structure |
+|------|----------|-----------|
+| shadcn/ui primitive | `components/ui/my-component.tsx` | Single flat file — shadcn convention |
+| Feature / Builder component | `components/MyComponent/` | Four-file folder pattern (see below) |
+
+Use `components/ui/` only for shadcn primitives copied from ui.shadcn.com. All other components — feature components, Builder-registered components, anything with its own styles or types — use the four-file folder pattern.
+
+## Four-file folder pattern
+
+See `components/HeroSplit/` as the canonical reference.
 
 ```
 components/MyComponent/

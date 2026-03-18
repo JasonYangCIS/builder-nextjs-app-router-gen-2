@@ -238,30 +238,9 @@ Always sanitize HTML strings from Builder data fields with DOMPurify before `dan
 
 ## Builder DevTools — Playwright gotcha
 
-Builder DevTools (active in dev mode via `npm run dev`) injects additional DOM elements into every page. This breaks Playwright's strict-mode locators when you use bare tag selectors.
+Builder DevTools injects extra `<header>`, `<footer>`, and `<button>` elements that break Playwright's strict-mode locators. DevTools is automatically disabled during `npm test` via the `PLAYWRIGHT_TEST=true` env flag.
 
-**Injected elements to be aware of:**
-
-| Element | Effect |
-|---------|--------|
-| Extra `<header>` elements | `page.locator("header")` resolves to multiple elements → strict mode failure |
-| Extra `<footer>` elements | `page.locator("footer")` resolves to multiple elements → strict mode failure |
-| `<button aria-label="Close Menu">` etc. | `page.locator("button[aria-label]")` matches DevTools buttons too |
-
-**Fix: scope by the app element's unique class:**
-
-```ts
-// App header has class="relative border-b border-zinc-200"
-page.locator("header.relative.border-b")
-
-// App footer has class="mt-16 border-t border-zinc-200"
-page.locator("footer.mt-16")
-
-// Hamburger — scoped inside app header, by role+name
-page.locator("header.relative.border-b").getByRole("button", { name: "Open menu" })
-```
-
-See `docs/skills/testing.md` for the full Playwright conventions and gotchas.
+See `docs/skills/testing.md` for selector scoping patterns, gotchas, and the full test conventions.
 
 ---
 
@@ -277,7 +256,7 @@ Granular rules in `.mdc` files under `.builder/rules/`. Support metadata header:
 ```markdown
 ---
 description: Component structure
-globs: src/components/**
+globs: components/**
 alwaysApply: false
 ---
 ```

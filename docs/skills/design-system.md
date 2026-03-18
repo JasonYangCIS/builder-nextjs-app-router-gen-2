@@ -10,9 +10,9 @@ Conventions for working with the shadcn/ui design system in this repo.
 |-------|----------|---------|
 | CSS variables | `app/globals.css` | shadcn OKLCH color tokens + theme overrides (default/dark) |
 | Gradient utilities | `styles/tokens.css` | `gradient-brand`, `gradient-brand-subtle`, etc. — use `var(--primary)` / `var(--accent)` |
-| shadcn primitives | `components/ui/` | Button, Badge, Input, Label, Card, Carousel, Text, FormInput |
+| shadcn primitives | `components/ui/` | Button, Badge, Input, Label, Card, Carousel, Text, FormInput — flat files, one per component |
+| Feature components | `components/[Name]/` | Four-file folder pattern (`.tsx` / `.types.ts` / `.module.scss` / `.builder.ts`) — see `HeroSplit/` |
 | Builder wrappers | `components/builder/` | BuilderCarousel — wraps shadcn Carousel for Builder.io editor |
-| Other components | `components/Counter/Counter.tsx` | Stateful counter using shadcn Button |
 | Showcase | `app/design-system/page.tsx` | Visual reference at `/design-system`; also Playwright test harness |
 
 ---
@@ -59,7 +59,7 @@ Gradient utilities in `styles/tokens.css` automatically adapt to the active them
 | `text-primary` | ✅ Passes AA | Theme-adaptive primary |
 | `text-destructive` | ✅ Passes AA | Error state |
 
-**Do NOT hardcode hex colors or zinc/slate shades for text.** Always use semantic tokens so contrast is maintained across all three themes.
+**Do NOT hardcode hex colors or zinc/slate shades for text.** Always use semantic tokens so contrast is maintained across all themes.
 
 **Focus rings:** shadcn components use `focus-visible:ring-[3px] focus-visible:ring-ring/50` — use the same pattern on any custom interactive element.
 
