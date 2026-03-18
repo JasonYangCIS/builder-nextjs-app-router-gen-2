@@ -282,7 +282,7 @@ export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
         name: "overlayOpacity",
         type: "number",
         defaultValue: 55,
-        helperText: "Dark overlay opacity over the image (0–100)",
+        helperText: "Dark overlay opacity over the image (50–100). Minimum 50 is enforced for WCAG 2.1 AA compliance.",
       },
     ],
   },
