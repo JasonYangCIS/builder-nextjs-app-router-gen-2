@@ -44,3 +44,6 @@ next-env.d.ts
 
 playwright-report/
 test-results/
+
+# generated token discovery artifacts
+.token_discovery_staging/
