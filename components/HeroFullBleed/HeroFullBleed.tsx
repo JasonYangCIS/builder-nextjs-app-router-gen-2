@@ -21,7 +21,8 @@ export default function HeroFullBleed({
   priority = false,
   headingLevel,
 }: HeroFullBleedProps) {
-  const Heading = (headingLevel ?? "h2") as "h1" | "h2";
+  // Runtime guard — Builder API can pass arbitrary strings; cast-only checks are compile-time only.
+  const Heading: "h1" | "h2" = headingLevel === "h1" ? "h1" : "h2";
   const safeAlign = textAlign ?? "center";
   const alignClass = {
     left: "items-start text-left",

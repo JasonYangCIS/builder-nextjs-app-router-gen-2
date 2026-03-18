@@ -23,7 +23,8 @@ export default function HeroCentered({
   priority = false,
   headingLevel,
 }: HeroCenteredProps) {
-  const Heading = (headingLevel ?? "h2") as "h1" | "h2";
+  // Runtime guard — Builder API can pass arbitrary strings; cast-only checks are compile-time only.
+  const Heading: "h1" | "h2" = headingLevel === "h1" ? "h1" : "h2";
   const safeImage = image ?? "";
   const safeImageAlt = imageAlt ?? "";
   const safeHeadline = headline ?? "";

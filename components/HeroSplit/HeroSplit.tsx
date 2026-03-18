@@ -22,7 +22,8 @@ export default function HeroSplit({
   priority = false,
   headingLevel,
 }: HeroSplitProps) {
-  const Heading = (headingLevel ?? "h2") as "h1" | "h2";
+  // Runtime guard — Builder API can pass arbitrary strings; cast-only checks are compile-time only.
+  const Heading: "h1" | "h2" = headingLevel === "h1" ? "h1" : "h2";
   const imageOnRight = (imagePosition ?? "right") !== "left";
 
   const safeImage = image ?? "";
