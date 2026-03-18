@@ -3,7 +3,7 @@
 Non-negotiable rules for every task. Full detail in `AGENTS.md` and `docs/skills/`.
 
 ## Dev Server
-- Always start with `npm run dev -- --webpack`
+- Always start with `npm run dev`
 - Never use `next dev` without `--webpack` — Turbopack is incompatible with Builder Dev Tools
 
 ## Config & Model Names
