@@ -54,7 +54,7 @@ test.describe("Header", () => {
     if (!hamburgerVisible) return;
 
     await hamburger.click();
-    const mobileDropdown = page.locator(`${APP_HEADER} nav.absolute`);
+    const mobileDropdown = page.locator(`${APP_HEADER} #mobile-navigation`);
     await expect(mobileDropdown).toBeVisible();
     await expect(mobileDropdown.getByRole("link", { name: "Design System" })).toBeVisible();
   });

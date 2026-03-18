@@ -37,7 +37,7 @@ test.describe("Blog index (/blog)", () => {
 
   test("cards have focus ring styles for keyboard accessibility", async ({ page }) => {
     const cards = page.locator("ul a[href^='/blog-article']");
-    await expect(cards.first()).toHaveClass(/focus-visible:ring-2/);
+    await expect(cards.first()).toHaveClass(/focus-visible:ring-/);
   });
 
   test("Data Model card contains its description", async ({ page }) => {

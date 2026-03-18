@@ -67,8 +67,8 @@ test.describe("Counter", () => {
     // Decrement and Increment buttons in first counter use secondary variant (border-zinc-300)
     const decrementBtn = section.getByRole("button", { name: "Decrement" }).first();
     const incrementBtn = section.getByRole("button", { name: "Increment" }).first();
-    await expect(decrementBtn).toHaveClass(/border-zinc-300/);
-    await expect(incrementBtn).toHaveClass(/border-zinc-300/);
+    await expect(decrementBtn).toHaveClass(/border-input/);
+    await expect(incrementBtn).toHaveClass(/border-input/);
     // sm size has rounded-md class
     await expect(decrementBtn).toHaveClass(/rounded-md/);
   });

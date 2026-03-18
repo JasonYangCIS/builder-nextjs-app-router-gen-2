@@ -26,7 +26,7 @@ export default defineConfig({
   webServer: {
     command: "npm run dev:test",
     url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI, // Don't reuse in CI to ensure clean start
+    reuseExistingServer: true, // Always reuse running dev server
     timeout: 120_000,
   },
 });

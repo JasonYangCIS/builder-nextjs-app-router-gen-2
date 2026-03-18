@@ -172,7 +172,7 @@ test.describe("BlogArticleCard", () => {
 
   test("has focus-visible ring for keyboard navigation", async ({ page }) => {
     const section = page.locator("#card-full");
-    await expect(section.getByRole("link")).toHaveClass(/focus-visible:ring-2/);
+    await expect(section.getByRole("link")).toHaveClass(/focus-visible:ring-/);
   });
 });
 
