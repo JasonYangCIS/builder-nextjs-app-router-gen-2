@@ -16,4 +16,5 @@ export interface HeroCenteredProps {
   imageAlt?: string | null;
   imagePosition?: "above" | "below" | null;
   priority?: boolean | null;
+  headingLevel?: "h1" | "h2" | null;
 }

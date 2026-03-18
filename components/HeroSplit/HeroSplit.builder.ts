@@ -75,5 +75,13 @@ export const heroSplitConfig: RegisteredComponent = {
       helperText:
         "Enable for the first (LCP) hero on the page to preload the image. Leave off for all other instances.",
     },
+    {
+      name: "headingLevel",
+      type: "string",
+      enum: ["h1", "h2"],
+      defaultValue: "h2",
+      helperText:
+        "Use h1 for the primary page headline. Use h2 when other heroes are stacked on the same page.",
+    },
   ],
 };

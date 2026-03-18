@@ -15,4 +15,5 @@ export interface HeroSplitProps {
   imageAlt?: string | null;
   imagePosition?: "left" | "right" | null;
   priority?: boolean | null;
+  headingLevel?: "h1" | "h2" | null;
 }

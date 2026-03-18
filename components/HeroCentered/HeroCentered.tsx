@@ -21,7 +21,9 @@ export default function HeroCentered({
   imageAlt,
   imagePosition,
   priority = false,
+  headingLevel,
 }: HeroCenteredProps) {
+  const Heading = (headingLevel ?? "h2") as "h1" | "h2";
   const safeImage = image ?? "";
   const safeImageAlt = imageAlt ?? "";
   const safeHeadline = headline ?? "";
@@ -71,7 +73,7 @@ export default function HeroCentered({
           )}
 
           {safeHeadline && (
-            <h1 className={styles.headline}>{safeHeadline}</h1>
+            <Heading className={styles.headline}>{safeHeadline}</Heading>
           )}
           {safeCopy && (
             <p data-testid="hero-centered-copy" className={styles.copy}>

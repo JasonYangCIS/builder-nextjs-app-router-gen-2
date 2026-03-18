@@ -2,9 +2,16 @@
  * Playwright test fixture — hero components rendered with static, deterministic data.
  * Not linked from the app; only used by tests/heroes/*.spec.ts.
  */
+import type { Metadata } from "next";
 import HeroFullBleed from "@/components/HeroFullBleed/HeroFullBleed";
 import HeroSplit from "@/components/HeroSplit/HeroSplit";
 import HeroCentered from "@/components/HeroCentered/HeroCentered";
+
+export const metadata: Metadata = {
+  title: "Hero Components Test Fixture",
+  description: "Playwright test harness for hero components. Not linked from the app.",
+  robots: { index: false, follow: false },
+};
 
 // Stable placeholder — no external network call required
 const IMG = "https://cdn.builder.io/api/v1/image/assets/placeholder";
@@ -14,7 +21,7 @@ export default function HeroesFixturePage() {
     <div>
       {/* ── HeroFullBleed ────────────────────────────────────────────── */}
 
-      {/* Full props — center aligned */}
+      {/* Full props — center aligned, explicit h1 */}
       <section id="fullbleed-full">
         <HeroFullBleed
           headline="Full Bleed Headline"
@@ -25,6 +32,7 @@ export default function HeroesFixturePage() {
           imageAlt="Test background image"
           textAlign="center"
           overlayOpacity={60}
+          headingLevel="h1"
         />
       </section>
 
@@ -36,6 +44,7 @@ export default function HeroesFixturePage() {
           ctaLabel="Left CTA"
           ctaUrl="/left"
           textAlign="left"
+          headingLevel="h2"
         />
       </section>
 
@@ -44,10 +53,11 @@ export default function HeroesFixturePage() {
         <HeroFullBleed
           headline="Minimal Headline"
           copy="Minimal copy."
+          headingLevel="h2"
         />
       </section>
 
-      {/* Null fields — Builder can send null for unset inputs */}
+      {/* Null fields — Builder can send null for unset inputs; defaults to h2 */}
       <section id="fullbleed-null">
         <HeroFullBleed
           headline={null}
@@ -58,12 +68,13 @@ export default function HeroesFixturePage() {
           imageAlt={null}
           textAlign={null}
           overlayOpacity={null}
+          headingLevel={null}
         />
       </section>
 
       {/* ── HeroSplit ─────────────────────────────────────────────────── */}
 
-      {/* Image on right (default) */}
+      {/* Image on right (default), explicit h1 */}
       <section id="split-right">
         <HeroSplit
           headline="Split Right Headline"
@@ -75,6 +86,7 @@ export default function HeroesFixturePage() {
           image={IMG}
           imageAlt="Split test image"
           imagePosition="right"
+          headingLevel="h1"
         />
       </section>
 
@@ -88,6 +100,7 @@ export default function HeroesFixturePage() {
           imagePosition="left"
           image={IMG}
           imageAlt="Left split image"
+          headingLevel="h2"
         />
       </section>
 
@@ -98,10 +111,11 @@ export default function HeroesFixturePage() {
           copy="Split minimal copy."
           ctaLabel="Only CTA"
           ctaUrl="/only"
+          headingLevel="h2"
         />
       </section>
 
-      {/* Null fields */}
+      {/* Null fields — defaults to h2 */}
       <section id="split-null">
         <HeroSplit
           headline={null}
@@ -113,12 +127,13 @@ export default function HeroesFixturePage() {
           image={null}
           imageAlt={null}
           imagePosition={null}
+          headingLevel={null}
         />
       </section>
 
       {/* ── HeroCentered ─────────────────────────────────────────────── */}
 
-      {/* Full props — image below (default) */}
+      {/* Full props — image below (default), explicit h1 */}
       <section id="centered-full">
         <HeroCentered
           badgeLabel="New"
@@ -131,6 +146,7 @@ export default function HeroesFixturePage() {
           image={IMG}
           imageAlt="Centered test image"
           imagePosition="below"
+          headingLevel="h1"
         />
       </section>
 
@@ -144,6 +160,7 @@ export default function HeroesFixturePage() {
           image={IMG}
           imageAlt="Above image"
           imagePosition="above"
+          headingLevel="h2"
         />
       </section>
 
@@ -154,10 +171,11 @@ export default function HeroesFixturePage() {
           copy="Centered minimal copy."
           ctaLabel="Minimal CTA"
           ctaUrl="/minimal"
+          headingLevel="h2"
         />
       </section>
 
-      {/* Null fields */}
+      {/* Null fields — defaults to h2 */}
       <section id="centered-null">
         <HeroCentered
           badgeLabel={null}
@@ -170,6 +188,7 @@ export default function HeroesFixturePage() {
           image={null}
           imageAlt={null}
           imagePosition={null}
+          headingLevel={null}
         />
       </section>
     </div>

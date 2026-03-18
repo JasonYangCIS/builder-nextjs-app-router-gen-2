@@ -19,7 +19,9 @@ export default function HeroFullBleed({
   textAlign,
   overlayOpacity,
   priority = false,
+  headingLevel,
 }: HeroFullBleedProps) {
+  const Heading = (headingLevel ?? "h2") as "h1" | "h2";
   const safeAlign = textAlign ?? "center";
   const alignClass = {
     left: "items-start text-left",
@@ -68,7 +70,7 @@ export default function HeroFullBleed({
         className={cn(styles.content, alignClass)}
       >
         {safeHeadline && (
-          <h1 className={styles.headline}>{safeHeadline}</h1>
+          <Heading className={styles.headline}>{safeHeadline}</Heading>
         )}
         {safeCopy && (
           <p data-testid="hero-fullbleed-copy" className={styles.copy}>

@@ -20,7 +20,9 @@ export default function HeroSplit({
   imageAlt,
   imagePosition,
   priority = false,
+  headingLevel,
 }: HeroSplitProps) {
+  const Heading = (headingLevel ?? "h2") as "h1" | "h2";
   const imageOnRight = (imagePosition ?? "right") !== "left";
 
   const safeImage = image ?? "";
@@ -40,7 +42,7 @@ export default function HeroSplit({
       )}
     >
       {safeHeadline && (
-        <h1 className={styles.headline}>{safeHeadline}</h1>
+        <Heading className={styles.headline}>{safeHeadline}</Heading>
       )}
       {safeCopy && (
         <p data-testid="hero-split-copy" className={styles.copy}>

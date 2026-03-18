@@ -26,6 +26,9 @@ export default defineConfig({
   webServer: {
     command: "npm run dev:test",
     url: "http://localhost:3000",
+    // Reuse the running dev server locally and in cloud dev environments.
+    // In GitHub Actions (the only CI provider this project uses), GITHUB_ACTIONS=true
+    // and each run gets a fresh VM, so we always start a clean server there.
     reuseExistingServer: !process.env.GITHUB_ACTIONS,
     timeout: 120_000,
   },

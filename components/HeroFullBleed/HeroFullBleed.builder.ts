@@ -62,7 +62,7 @@ export const heroFullBleedConfig: RegisteredComponent = {
       type: "number",
       defaultValue: 55,
       helperText:
-        "Dark overlay opacity over the image (50–100). Minimum 50 is enforced for WCAG 2.1 AA compliance.",
+        "Dark overlay opacity over the image (50–100). Minimum 50 is enforced. Higher values improve contrast — aim for 60+ on bright images.",
     },
     {
       name: "priority",
@@ -70,6 +70,14 @@ export const heroFullBleedConfig: RegisteredComponent = {
       defaultValue: false,
       helperText:
         "Enable for the first (LCP) hero on the page to preload the image. Leave off for all other instances.",
+    },
+    {
+      name: "headingLevel",
+      type: "string",
+      enum: ["h1", "h2"],
+      defaultValue: "h2",
+      helperText:
+        "Use h1 for the primary page headline. Use h2 when other heroes are stacked on the same page.",
     },
   ],
 };

@@ -14,4 +14,5 @@ export interface HeroFullBleedProps {
   textAlign?: "left" | "center" | "right" | null;
   overlayOpacity?: number | null;
   priority?: boolean | null;
+  headingLevel?: "h1" | "h2" | null;
 }
