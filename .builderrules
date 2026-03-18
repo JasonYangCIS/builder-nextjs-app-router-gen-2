@@ -7,7 +7,7 @@ Non-negotiable rules for every task. Full detail in `AGENTS.md` and `docs/skills
 - Never use `next dev` without `--webpack` — Turbopack is incompatible with Builder Dev Tools
 
 ## Config & Model Names
-- Never hardcode Builder model names as string literals — always use `config.models.*` from `config.ts`
+- Never hardcode Builder model names — always use `config.models.*` from `config.ts`
 - API key is `config.envs.builderApiKey` — never inline it
 - When adding a new model, add its name to `config.ts` before using it anywhere
 
@@ -23,23 +23,5 @@ Non-negotiable rules for every task. Full detail in `AGENTS.md` and `docs/skills
 - Import Text from `@/components/ui/text`; FormInput from `@/components/ui/form-input`
 
 ## Component File Structure
-Four-file folder pattern — see `components/HeroSplit/` as the canonical reference:
-
-```
-components/MyComponent/
-  MyComponent.tsx          # Component implementation + re-exports types
-  MyComponent.types.ts     # TypeScript interfaces only
-  MyComponent.module.scss  # CSS Modules — use CSS custom properties, not hardcoded values
-  MyComponent.builder.ts   # RegisteredComponent config — omit if not Builder-registered
-```
-
-- Types defined in `.types.ts`, re-exported from `.tsx`
-- Styles use `var(--foreground)`, `var(--primary)` etc. — never hardcode hex
-- `.builder.ts` exports a named `camelCaseConfig: RegisteredComponent` constant
-- No `index.ts` barrel — import directly from `@/components/MyComponent/MyComponent`
-
-## After Every Change
-```bash
-npx tsc --noEmit   # must pass
-npm test           # must pass
-```
+- shadcn primitives → flat file in `components/ui/my-component.tsx`
+- All other components → four-file folder in `components/MyComponent/` (see `component-structure.mdc` and `components/HeroSplit/`)

@@ -1,6 +1,6 @@
 ---
 description: Design system components, tokens, and WCAG rules
-globs: components/ui/**,components/builder/BuilderCarousel.tsx,styles/**,app/design-system/**,app/globals.css
+globs: components/**,styles/**,app/design-system/**,app/globals.css
 alwaysApply: false
 ---
 # Design System Rules
@@ -67,6 +67,6 @@ Run: `npx "@builder.io/dev-tools@latest" index-repo`
 ## Extending
 
 - **New shadcn component** → copy from ui.shadcn.com (new-york style) into `components/ui/my-component.tsx`, import `cn` from `@/utils/cn`, install any needed `@radix-ui/react-*` package
-- **Register in Builder** → add entry to `builder-registry.ts`; add showcase section to `app/design-system/page.tsx`
+- **Register in Builder** → create the four-file folder structure first (see `component-structure.mdc`), then add the `camelCaseConfig` export to `builder-registry.ts`; add showcase section to `app/design-system/page.tsx`
 - **New CSS variable** → add to the appropriate `[data-theme]` block in `app/globals.css`, then expose via `@theme inline`
-- **Before adding any color**: verify contrast with `text-foreground` background in all three themes
+- **Before adding any color**: verify contrast with `text-foreground` background in both themes (default, dark)

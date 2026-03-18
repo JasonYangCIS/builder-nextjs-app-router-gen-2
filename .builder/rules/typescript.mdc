@@ -1,6 +1,6 @@
 ---
 description: TypeScript conventions for Builder data fields, model types, and library type re-exports
-globs: types/**,components/**/*.types.ts,components/**/*.tsx,app/**/*.tsx
+globs: types/**,components/**/*.types.ts,app/**/*.tsx
 alwaysApply: false
 ---
 # TypeScript Conventions
