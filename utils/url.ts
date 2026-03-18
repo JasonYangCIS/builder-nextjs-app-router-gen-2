@@ -1,30 +1,14 @@
+import DOMPurify from "isomorphic-dompurify";
+
 /**
  * Sanitizes a URL string for use in an href attribute.
  *
- * Allows:
- *   - Relative paths  (/about, ./page, ../parent)
- *   - http:// and https:// URLs
- *
- * Blocks everything else (javascript:, data:, vbscript:, etc.)
- * by returning an empty string, which produces a harmless inert link.
+ * Delegates to DOMPurify.isValidAttribute, which blocks dangerous schemes
+ * (javascript:, data:, vbscript:, etc.) while allowing http/https and
+ * relative paths. Returns an empty string for any unsafe value.
  */
 export function sanitizeHref(url: string): string {
   if (!url) return "";
-
   const trimmed = url.trim();
-
-  // Allow relative paths (starts with /, ./, ../, or #)
-  if (/^(\/|\.\/|\.\.\/|#)/.test(trimmed)) return trimmed;
-
-  // Allow only http and https absolute URLs
-  try {
-    const parsed = new URL(trimmed);
-    if (parsed.protocol === "http:" || parsed.protocol === "https:") {
-      return trimmed;
-    }
-  } catch {
-    // Not a valid absolute URL — treat as unsafe
-  }
-
-  return "";
+  return DOMPurify.isValidAttribute("a", "href", trimmed) ? trimmed : "";
 }
