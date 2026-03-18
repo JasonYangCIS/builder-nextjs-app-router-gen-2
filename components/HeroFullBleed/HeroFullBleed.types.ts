@@ -13,4 +13,5 @@ export interface HeroFullBleedProps {
   imageAlt?: string | null;
   textAlign?: "left" | "center" | "right" | null;
   overlayOpacity?: number | null;
+  priority?: boolean | null;
 }

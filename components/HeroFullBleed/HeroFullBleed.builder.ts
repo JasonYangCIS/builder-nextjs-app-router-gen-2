@@ -64,5 +64,12 @@ export const heroFullBleedConfig: RegisteredComponent = {
       helperText:
         "Dark overlay opacity over the image (50–100). Minimum 50 is enforced for WCAG 2.1 AA compliance.",
     },
+    {
+      name: "priority",
+      type: "boolean",
+      defaultValue: false,
+      helperText:
+        "Enable for the first (LCP) hero on the page to preload the image. Leave off for all other instances.",
+    },
   ],
 };

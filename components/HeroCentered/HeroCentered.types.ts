@@ -15,4 +15,5 @@ export interface HeroCenteredProps {
   image?: string | null;
   imageAlt?: string | null;
   imagePosition?: "above" | "below" | null;
+  priority?: boolean | null;
 }

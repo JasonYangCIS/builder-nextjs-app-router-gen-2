@@ -68,5 +68,12 @@ export const heroSplitConfig: RegisteredComponent = {
       defaultValue: "right",
       helperText: "Which side the image appears on",
     },
+    {
+      name: "priority",
+      type: "boolean",
+      defaultValue: false,
+      helperText:
+        "Enable for the first (LCP) hero on the page to preload the image. Leave off for all other instances.",
+    },
   ],
 };

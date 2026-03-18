@@ -26,7 +26,7 @@ export default defineConfig({
   webServer: {
     command: "npm run dev:test",
     url: "http://localhost:3000",
-    reuseExistingServer: true, // Always reuse running dev server
+    reuseExistingServer: !process.env.GITHUB_ACTIONS,
     timeout: 120_000,
   },
 });

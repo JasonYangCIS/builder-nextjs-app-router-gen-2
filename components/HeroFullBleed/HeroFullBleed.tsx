@@ -18,6 +18,7 @@ export default function HeroFullBleed({
   imageAlt,
   textAlign,
   overlayOpacity,
+  priority = false,
 }: HeroFullBleedProps) {
   const safeAlign = textAlign ?? "center";
   const alignClass = {
@@ -45,7 +46,7 @@ export default function HeroFullBleed({
           fill
           sizes="100vw"
           className={styles.image}
-          priority
+          priority={priority ?? false}
         />
       ) : (
         <div
@@ -75,15 +76,15 @@ export default function HeroFullBleed({
           </p>
         )}
         {safeCtaLabel && safeCtaUrl && (
-          <Link
-            href={safeCtaUrl || "/"}
+          <Button
+            asChild
+            variant={ctaVariant}
+            size="lg"
             data-testid="hero-fullbleed-cta"
             className={styles.cta}
           >
-            <Button variant={ctaVariant} size="lg">
-              {safeCtaLabel}
-            </Button>
-          </Link>
+            <Link href={safeCtaUrl}>{safeCtaLabel}</Link>
+          </Button>
         )}
       </div>
     </section>

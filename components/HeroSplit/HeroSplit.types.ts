@@ -14,4 +14,5 @@ export interface HeroSplitProps {
   image?: string | null;
   imageAlt?: string | null;
   imagePosition?: "left" | "right" | null;
+  priority?: boolean | null;
 }

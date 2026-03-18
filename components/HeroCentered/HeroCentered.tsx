@@ -20,6 +20,7 @@ export default function HeroCentered({
   image,
   imageAlt,
   imagePosition,
+  priority = false,
 }: HeroCenteredProps) {
   const safeImage = image ?? "";
   const safeImageAlt = imageAlt ?? "";
@@ -42,7 +43,7 @@ export default function HeroCentered({
           fill
           sizes="(max-width: 768px) 100vw, 80vw"
           className={styles.image}
-          priority
+          priority={priority ?? false}
         />
       ) : (
         <div
@@ -80,18 +81,14 @@ export default function HeroCentered({
 
           <div data-testid="hero-centered-actions" className={styles.actions}>
             {safeCtaLabel && safeCtaUrl && (
-              <Link href={safeCtaUrl}>
-                <Button variant={ctaVariant} size="lg">
-                  {safeCtaLabel}
-                </Button>
-              </Link>
+              <Button asChild variant={ctaVariant} size="lg">
+                <Link href={safeCtaUrl}>{safeCtaLabel}</Link>
+              </Button>
             )}
             {safeSecondaryCtaLabel && safeSecondaryCtaUrl && (
-              <Link href={safeSecondaryCtaUrl}>
-                <Button variant="ghost" size="lg">
-                  {safeSecondaryCtaLabel} →
-                </Button>
-              </Link>
+              <Button asChild variant="ghost" size="lg">
+                <Link href={safeSecondaryCtaUrl}>{safeSecondaryCtaLabel} →</Link>
+              </Button>
             )}
           </div>
         </div>

@@ -19,6 +19,7 @@ export default function HeroSplit({
   image,
   imageAlt,
   imagePosition,
+  priority = false,
 }: HeroSplitProps) {
   const imageOnRight = (imagePosition ?? "right") !== "left";
 
@@ -48,18 +49,14 @@ export default function HeroSplit({
       )}
       <div data-testid="hero-split-actions" className={styles.actions}>
         {safeCtaLabel && safeCtaUrl && (
-          <Link href={safeCtaUrl}>
-            <Button variant={ctaVariant} size="lg">
-              {safeCtaLabel}
-            </Button>
-          </Link>
+          <Button asChild variant={ctaVariant} size="lg">
+            <Link href={safeCtaUrl}>{safeCtaLabel}</Link>
+          </Button>
         )}
         {safeSecondaryCtaLabel && safeSecondaryCtaUrl && (
-          <Link href={safeSecondaryCtaUrl}>
-            <Button variant="outline" size="lg">
-              {safeSecondaryCtaLabel}
-            </Button>
-          </Link>
+          <Button asChild variant="outline" size="lg">
+            <Link href={safeSecondaryCtaUrl}>{safeSecondaryCtaLabel}</Link>
+          </Button>
         )}
       </div>
     </div>
@@ -85,7 +82,7 @@ export default function HeroSplit({
           fill
           sizes="(max-width: 768px) 100vw, 50vw"
           className={styles.image}
-          priority
+          priority={priority ?? false}
         />
       ) : (
         <div

@@ -75,5 +75,12 @@ export const heroCenteredConfig: RegisteredComponent = {
       helperText:
         "Whether the image appears above or below the headline block",
     },
+    {
+      name: "priority",
+      type: "boolean",
+      defaultValue: false,
+      helperText:
+        "Enable for the first (LCP) hero on the page to preload the image. Leave off for all other instances.",
+    },
   ],
 };
