@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { buildLocalePath, stripLocalePrefix, DEFAULT_LOCALE } from "@/utils/locale";
 import { config } from "@/config";
 import styles from "./LocaleSwitch.module.scss";
@@ -15,6 +15,7 @@ export function LocaleSwitch({ locales, currentLocale }: LocaleSwitchProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
 
   // Close when clicking outside
@@ -44,8 +45,10 @@ export function LocaleSwitch({ locales, currentLocale }: LocaleSwitchProps) {
     // Strip any existing locale prefix, then re-add the new one
     const bare = stripLocalePrefix(pathname);
     const newPath = buildLocalePath(code, bare);
+    // Preserve query params (e.g. Builder preview tokens)
+    const qs = searchParams.toString();
     setIsOpen(false);
-    router.push(newPath);
+    router.push(qs ? `${newPath}?${qs}` : newPath);
   };
 
   const currentLabel = locales.find((l) => l.code === currentLocale)?.label ?? currentLocale;
