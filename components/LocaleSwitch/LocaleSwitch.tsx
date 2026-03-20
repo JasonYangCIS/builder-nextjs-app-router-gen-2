@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { buildLocalePath, stripLocalePrefix, getLocaleFromPath } from "@/utils/locale";
-import { config } from "@/config";
 import styles from "./LocaleSwitch.module.scss";
 
 export type { LocaleEntry, LocaleSwitchProps } from "./LocaleSwitch.types";
@@ -45,8 +44,13 @@ export function LocaleSwitch({ locales }: LocaleSwitchProps) {
   const handleLocaleChange = (code: string) => {
     const bare = stripLocalePrefix(pathname);
     const newPath = buildLocalePath(code, bare);
-    // Preserve query params (e.g. Builder preview tokens)
-    const qs = searchParams.toString();
+    // Preserve query params (e.g. Builder preview tokens) but update
+    // builder.options.locale so the preview route resolves the new locale.
+    const params = new URLSearchParams(searchParams.toString());
+    if (params.has("builder.options.locale")) {
+      params.set("builder.options.locale", code);
+    }
+    const qs = params.toString();
     setIsOpen(false);
     router.push(qs ? `${newPath}?${qs}` : newPath);
   };
