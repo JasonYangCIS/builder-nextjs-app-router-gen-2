@@ -63,8 +63,13 @@ export default async function PreviewPage(props: {
     ? candidateLocale
     : await getLocaleFromHeaders();
 
-  // Forward all Builder editor params (builder.preview, builder.overrides.*, builder.cachebust)
-  const builderOptions = getBuilderSearchParams(searchParams as unknown as URLSearchParams);
+  // Forward all Builder editor params (builder.preview, builder.overrides.*, builder.cachebust).
+  // Override builder.options.locale (which Builder sets to "Default" when locale is in the URL path)
+  // with our server-resolved locale so fetchOneEntry always uses the correct locale.
+  const builderOptions = {
+    ...getBuilderSearchParams(searchParams as unknown as URLSearchParams),
+    locale,
+  };
 
   // A model name is required — reject empty requests outright
   if (!model) return notFound();
