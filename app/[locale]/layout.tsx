@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
 import { Header } from "@/components/layout/Header/Header";
 import { Footer } from "@/components/layout/Footer/Footer";
+import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { SUPPORTED_LOCALE_CODES } from "@/utils/locale";
+import { config } from "@/config";
 import { notFound } from "next/navigation";
 import "../globals.css";
 
@@ -38,12 +41,35 @@ export default async function LocaleLayout({
     notFound();
   }
 
+  const announcementBar = await fetchOneEntry({
+    model: config.models.announcementBar,
+    apiKey: config.envs.builderApiKey,
+    locale,
+  });
+
+  const showBar = !!(announcementBar || isEditing() || isPreviewing());
+  const barPosition = (announcementBar?.data?.position as string | undefined) ?? "above-header";
+
   return (
     <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        {showBar && barPosition === "above-header" && (
+          <RenderBuilderContent
+            content={announcementBar}
+            model={config.models.announcementBar}
+            locale={locale}
+          />
+        )}
         <Header locale={locale} />
+        {showBar && barPosition === "below-header" && (
+          <RenderBuilderContent
+            content={announcementBar}
+            model={config.models.announcementBar}
+            locale={locale}
+          />
+        )}
         {children}
         <Footer />
       </body>

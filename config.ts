@@ -8,7 +8,8 @@ export const config = {
     blogArticle: "blog-article",
     blogArticleSection: "blog-article-section",
     blogArticleTemplate: "blog-article-template",
-    headerNavMenu: "header-nav-menu"
+    headerNavMenu: "header-nav-menu",
+    announcementBar: "announcement-bar"
   },
   locales: {
     default: "en-US",

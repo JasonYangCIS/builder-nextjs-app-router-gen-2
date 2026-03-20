@@ -20,6 +20,9 @@
  *   blog-article-template:
  *     http://localhost:3000/preview?model=blog-article-template&slug={entry.data.slug}
  *
+ *   announcement-bar:
+ *     http://localhost:3000/preview?model=announcement-bar
+ *
  * The optional ?locale=<code> param selects a locale; defaults to the default locale.
  *
  * Replace localhost:3000 with your production domain for deployed environments.

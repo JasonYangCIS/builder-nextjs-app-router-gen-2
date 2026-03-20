@@ -12,6 +12,7 @@ import { heroFullBleedConfig } from "./components/HeroFullBleed/HeroFullBleed.bu
 import { heroSplitConfig } from "./components/HeroSplit/HeroSplit.builder";
 import { heroCenteredConfig } from "./components/HeroCentered/HeroCentered.builder";
 import { cloudinaryImageConfig } from "./components/CloudinaryImage/CloudinaryImage.builder";
+import { announcementBarConfig } from "@/components/AnnouncementBar/AnnouncementBar.builder";
 
 export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
   // ─── Existing ────────────────────────────────────────────────────────────
@@ -229,4 +230,7 @@ export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
 
   // ─── Media Components ───────────────────────────────────────────────────
   cloudinaryImageConfig,
+
+  // ─── Announcement Bar ────────────────────────────────────────────────────
+  announcementBarConfig,
 ];
