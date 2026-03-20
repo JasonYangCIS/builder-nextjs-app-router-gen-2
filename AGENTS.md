@@ -72,6 +72,7 @@ components/
   ui/                          # shadcn/ui primitives (Button, Badge, Input, Label, Card, Carousel, Text, FormInput)
   layout/                      # Header (RSC + NavItems client), Footer
   LocaleSwitch/                # Locale switcher dropdown (client component)
+  CloudinaryImage/             # Cloudinary image component (uses cloudinaryImageEditor plugin)
   HeroSplit/                   # Canonical example of the four-file component pattern
 
 docs/skills/                   # Detailed skill references (see Skills below)

@@ -269,6 +269,18 @@ Always sanitize HTML strings from Builder data fields with DOMPurify before `dan
 
 ---
 
+## Cloudinary Plugin
+
+The Cloudinary plugin adds a `cloudinaryImageEditor` input type to Builder. It runs inside Builder's visual editor — no npm package needed in the Next.js app.
+
+**Setup (Builder admin):** Settings → Plugins → Add Plugin → `@builder.io/plugin-cloudinary` → configure Cloud Name + API Key.
+
+**Usage in components:** Use `type: "cloudinaryImageEditor"` on a Builder input. The plugin returns `{ url, width, height }`. See `components/CloudinaryImage/` for the reference implementation.
+
+**Next.js config:** `res.cloudinary.com` is added to `images.remotePatterns` in `next.config.ts` for `next/image` optimization.
+
+---
+
 ## Builder DevTools — Playwright gotcha
 
 Builder DevTools injects extra `<header>`, `<footer>`, and `<button>` elements that break Playwright's strict-mode locators. DevTools is automatically disabled during `npm test` via the `PLAYWRIGHT_TEST=true` env flag.

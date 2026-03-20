@@ -1,0 +1,56 @@
+.figure {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.imageWrapper {
+  position: relative;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.rounded {
+  border-radius: var(--radius);
+}
+
+.link {
+  display: block;
+
+  &:focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: var(--radius);
+  }
+}
+
+.image {
+  max-width: 100%;
+  height: auto;
+}
+
+.objectCover {
+  object-fit: cover;
+}
+
+.objectContain {
+  object-fit: contain;
+}
+
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 400px;
+  height: 300px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  opacity: 0.25;
+  border-radius: var(--radius);
+}
+
+.caption {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--muted-foreground);
+}

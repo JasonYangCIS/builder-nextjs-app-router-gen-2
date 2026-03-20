@@ -11,6 +11,7 @@ import { BuilderCarousel } from "./components/builder/BuilderCarousel";
 import { heroFullBleedConfig } from "./components/HeroFullBleed/HeroFullBleed.builder";
 import { heroSplitConfig } from "./components/HeroSplit/HeroSplit.builder";
 import { heroCenteredConfig } from "./components/HeroCentered/HeroCentered.builder";
+import { cloudinaryImageConfig } from "./components/CloudinaryImage/CloudinaryImage.builder";
 
 export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
   // ─── Existing ────────────────────────────────────────────────────────────
@@ -225,4 +226,7 @@ export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
   heroFullBleedConfig,
   heroSplitConfig,
   heroCenteredConfig,
+
+  // ─── Media Components ───────────────────────────────────────────────────
+  cloudinaryImageConfig,
 ];
