@@ -1,21 +1,18 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { fetchEntries } from "@builder.io/sdk-react";
 import { config } from "@/config";
-import { getLocaleFromHeaders } from "@/utils/locale-server";
 import { NavItems } from "./NavItems";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { LocaleSwitch } from "@/components/LocaleSwitch/LocaleSwitch";
 
 export const Header = async () => {
-  const [raw, currentLocale] = await Promise.all([
-    fetchEntries({
-      apiKey: config.envs.builderApiKey,
-      model: config.models.headerNavMenu,
-      limit: 5,
-      fields: "id,data",
-    }),
-    getLocaleFromHeaders(),
-  ]);
+  const raw = await fetchEntries({
+    apiKey: config.envs.builderApiKey,
+    model: config.models.headerNavMenu,
+    limit: 5,
+    fields: "id,data",
+  });
 
   const navMenuEntries = (raw ?? [])
     .filter((entry) => entry.data?.text && entry.data?.url)
@@ -38,14 +35,17 @@ export const Header = async () => {
         <div className="flex items-center gap-4">
           {/* Desktop nav, locale switcher, and theme switcher */}
           <div className="hidden items-center gap-4 md:flex">
-            <NavItems entries={navMenuEntries} currentLocale={currentLocale} onlyDesktopNav />
-            <LocaleSwitch locales={config.locales.supported} currentLocale={currentLocale} />
+            <NavItems entries={navMenuEntries} onlyDesktopNav />
+            {/* Suspense required: LocaleSwitch uses useSearchParams() internally */}
+            <Suspense fallback={null}>
+              <LocaleSwitch locales={config.locales.supported} />
+            </Suspense>
             <ThemeSwitch />
           </div>
 
           {/* Mobile hamburger menu */}
           <div className="md:hidden">
-            <NavItems entries={navMenuEntries} currentLocale={currentLocale} onlyMobileMenu />
+            <NavItems entries={navMenuEntries} onlyMobileMenu />
           </div>
         </div>
       </div>

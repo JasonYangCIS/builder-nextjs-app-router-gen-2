@@ -5,5 +5,4 @@ export interface LocaleEntry {
 
 export interface LocaleSwitchProps {
   locales: LocaleEntry[];
-  currentLocale: string;
 }

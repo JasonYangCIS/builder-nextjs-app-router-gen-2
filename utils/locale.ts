@@ -25,3 +25,16 @@ export function stripLocalePrefix(pathname: string): string {
   }
   return pathname;
 }
+
+/**
+ * Reads the active locale directly from a URL pathname.
+ * Safe to call in client components — no server APIs required.
+ * Falls back to the default locale when no recognised prefix is found.
+ */
+export function getLocaleFromPath(pathname: string): string {
+  const segments = pathname.split("/").filter(Boolean);
+  if (segments[0] && SUPPORTED_LOCALE_CODES.includes(segments[0])) {
+    return segments[0];
+  }
+  return DEFAULT_LOCALE;
+}

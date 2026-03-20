@@ -2,21 +2,22 @@
 
 import { useState, useEffect, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { buildLocalePath, stripLocalePrefix, DEFAULT_LOCALE } from "@/utils/locale";
+import { buildLocalePath, stripLocalePrefix, getLocaleFromPath } from "@/utils/locale";
 import { config } from "@/config";
 import styles from "./LocaleSwitch.module.scss";
 
 export type { LocaleEntry, LocaleSwitchProps } from "./LocaleSwitch.types";
 import type { LocaleSwitchProps } from "./LocaleSwitch.types";
 
-const SUPPORTED_CODES = config.locales.supported.map((l) => l.code);
-
-export function LocaleSwitch({ locales, currentLocale }: LocaleSwitchProps) {
+export function LocaleSwitch({ locales }: LocaleSwitchProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  // Derive the active locale directly from the URL — no server headers needed
+  const currentLocale = getLocaleFromPath(pathname);
 
   // Close when clicking outside
   useEffect(() => {
@@ -42,7 +43,6 @@ export function LocaleSwitch({ locales, currentLocale }: LocaleSwitchProps) {
   }, []);
 
   const handleLocaleChange = (code: string) => {
-    // Strip any existing locale prefix, then re-add the new one
     const bare = stripLocalePrefix(pathname);
     const newPath = buildLocalePath(code, bare);
     // Preserve query params (e.g. Builder preview tokens)
@@ -62,7 +62,6 @@ export function LocaleSwitch({ locales, currentLocale }: LocaleSwitchProps) {
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
-        {/* Globe icon */}
         <svg
           className={styles.globeIcon}
           fill="none"

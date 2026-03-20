@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { usePathname } from "next/navigation";
 import { subscribeToEditor, isPreviewing } from "@builder.io/sdk-react";
 import { config } from "@/config";
-import { buildLocalePath } from "@/utils/locale";
+import { buildLocalePath, getLocaleFromPath } from "@/utils/locale";
 import { LocaleSwitch } from "@/components/LocaleSwitch/LocaleSwitch";
 import { ThemeSwitch } from "./ThemeSwitch";
 
@@ -16,14 +17,15 @@ interface NavEntry {
 
 interface NavItemsProps {
   entries: NavEntry[];
-  currentLocale: string;
   onlyMobileMenu?: boolean;
   onlyDesktopNav?: boolean;
 }
 
-export function NavItems({ entries: initialEntries, currentLocale, onlyMobileMenu, onlyDesktopNav }: NavItemsProps) {
+export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopNav }: NavItemsProps) {
   const [entries, setEntries] = useState<NavEntry[]>(initialEntries);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const currentLocale = getLocaleFromPath(pathname);
 
   // WCAG 2.1 AA: Keyboard support - Escape key closes menu
   useEffect(() => {
@@ -220,7 +222,9 @@ export function NavItems({ entries: initialEntries, currentLocale, onlyMobileMen
               <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Language
               </p>
-              <LocaleSwitch locales={config.locales.supported} currentLocale={currentLocale} />
+              <Suspense fallback={null}>
+                <LocaleSwitch locales={config.locales.supported} />
+              </Suspense>
               <p className="mt-4 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Theme
               </p>
