@@ -7,10 +7,9 @@
  * - Section model: use only hero/header from data; the rest is drag-and-drop via <Content />.
  */
 import { fetchEntries, fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
-import { getBuilderSearchParams } from '@builder.io/sdk-react/edge';
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
-import { getLocaleFromHeaders } from "@/utils/locale-server";
+import { DEFAULT_LOCALE } from "@/utils/locale";
 import { notFound } from "next/navigation";
 import { BlogArticleHeader } from "@/components/blog/BlogArticleHeader/BlogArticleHeader";
 import { BlogArticleHero } from "@/components/blog/BlogArticleHero/BlogArticleHero";
@@ -54,19 +53,14 @@ export const revalidate = 5;
 
 export default async function Page(props: {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const [{ slug }, searchParams, locale] = await Promise.all([
-    props.params,
-    props.searchParams,
-    getLocaleFromHeaders(),
-  ]);
+  const { slug } = await props.params;
+  const locale = DEFAULT_LOCALE;
 
   const content = await fetchOneEntry({
     apiKey: config.envs.builderApiKey,
     model: builderModelName,
     userAttributes: { locale },
-    options: getBuilderSearchParams(searchParams as unknown as URLSearchParams),
     query: { "data.slug": slug },
     locale,
   });
