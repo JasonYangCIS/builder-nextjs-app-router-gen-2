@@ -9,9 +9,11 @@ interface RenderBuilderContentProps {
   model: string;
   /** Optional data to inject (e.g. for Hybrid pattern: data={{ article: articleContent }}) */
   data?: Record<string, unknown>;
+  /** Active locale code (e.g. "es-ES") — forwarded to Builder for localized content */
+  locale?: string;
 }
 
-export function RenderBuilderContent({ content, model, data }: RenderBuilderContentProps) {
+export function RenderBuilderContent({ content, model, data, locale }: RenderBuilderContentProps) {
   if (content || isPreviewing()) {
     return (
       <Content
@@ -19,6 +21,7 @@ export function RenderBuilderContent({ content, model, data }: RenderBuilderCont
         apiKey={config.envs.builderApiKey}
         model={model}
         customComponents={CUSTOM_COMPONENTS}
+        locale={locale}
         {...(data && { data })}
       />
     );

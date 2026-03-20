@@ -10,6 +10,7 @@ import { fetchEntries, fetchOneEntry, isEditing, isPreviewing } from "@builder.i
 import { getBuilderSearchParams } from '@builder.io/sdk-react/edge';
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
+import { getLocaleFromHeaders } from "@/utils/locale-server";
 import { notFound } from "next/navigation";
 import { BlogArticleHeader } from "@/components/blog/BlogArticleHeader/BlogArticleHeader";
 import { BlogArticleHero } from "@/components/blog/BlogArticleHero/BlogArticleHero";
@@ -55,14 +56,18 @@ export default async function Page(props: {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const { slug } = await props.params;
-  const searchParams = await props.searchParams;
+  const [{ slug }, searchParams, locale] = await Promise.all([
+    props.params,
+    props.searchParams,
+    getLocaleFromHeaders(),
+  ]);
 
   const content = await fetchOneEntry({
     apiKey: config.envs.builderApiKey,
     model: builderModelName,
     options: getBuilderSearchParams(searchParams as unknown as URLSearchParams),
     query: { "data.slug": slug },
+    locale,
   });
 
   // Allow rendering with no content when in Builder (admin/visual editor or draft URL e.g. __builder_editing__)
@@ -87,7 +92,7 @@ export default async function Page(props: {
 
         <hr className="my-10 border-zinc-200" />
 
-        <RenderBuilderContent content={content} model={builderModelName} />
+        <RenderBuilderContent content={content} model={builderModelName} locale={locale} />
       </div>
     </>
   );

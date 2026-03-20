@@ -1,6 +1,7 @@
 import { fetchEntries, fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
+import { getLocaleFromHeaders } from "@/utils/locale-server";
 import { notFound } from "next/navigation";
 import type { BlogArticle, BlogArticleWithContent } from "@/types/blog.types";
 import { BlogArticleBody } from "@/components/blog/BlogArticleBody/BlogArticleBody";
@@ -46,12 +47,16 @@ export const revalidate = 5;
 export default async function Page(props: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await props.params;
+  const [{ slug }, locale] = await Promise.all([
+    props.params,
+    getLocaleFromHeaders(),
+  ]);
 
   const content = await fetchOneEntry({
     apiKey: config.envs.builderApiKey,
     model: builderModelName,
     query: { "data.slug": slug },
+    locale,
   });
 
   if (!content && !isEditing() && !isPreviewing()) {
@@ -77,7 +82,7 @@ export default async function Page(props: {
 
         {data?.content && <BlogArticleBody htmlContent={data.content} />}
 
-        <RenderBuilderContent content={content} model={builderModelName} />
+        <RenderBuilderContent content={content} model={builderModelName} locale={locale} />
       </div>
     </>
   );

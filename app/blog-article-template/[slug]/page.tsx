@@ -9,6 +9,7 @@
 import { fetchEntries, fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
+import { getLocaleFromHeaders } from "@/utils/locale-server";
 import { notFound } from "next/navigation";
 import type { BlogArticle } from "@/types/blog.types";
 
@@ -50,13 +51,17 @@ export default async function Page(props: {
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const { slug } = await props.params;
+  const [{ slug }, locale] = await Promise.all([
+    props.params,
+    getLocaleFromHeaders(),
+  ]);
 
   // Fetch article first
   const articleData = await fetchOneEntry({
     model: config.models.blogArticle,
     apiKey: config.envs.builderApiKey,
     query: { 'data.slug': slug },
+    locale,
   });
 
   // Now use the article's category to fetch the matching template
@@ -66,6 +71,7 @@ export default async function Page(props: {
     userAttributes: {
       category: articleData?.data?.category,
     },
+    locale,
   });
 
   if (!articleData && !isEditing() && !isPreviewing()) {
@@ -73,6 +79,6 @@ export default async function Page(props: {
   }
 
   return (
-    <RenderBuilderContent content={articleTemplate} model={config.models.blogArticleTemplate} data={{ article: articleData }} />
+    <RenderBuilderContent content={articleTemplate} model={config.models.blogArticleTemplate} data={{ article: articleData }} locale={locale} />
   );
 }

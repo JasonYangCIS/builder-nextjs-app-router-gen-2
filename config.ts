@@ -9,5 +9,13 @@ export const config = {
     blogArticleSection: "blog-article-section",
     blogArticleTemplate: "blog-article-template",
     headerNavMenu: "header-nav-menu"
-  }
+  },
+  locales: {
+    default: "en-US",
+    supported: [
+      { code: "en-US", label: "English (US)" },
+      { code: "es-ES", label: "Español (España)" },
+      { code: "es-MX", label: "Español (México)" },
+    ],
+  },
 }
