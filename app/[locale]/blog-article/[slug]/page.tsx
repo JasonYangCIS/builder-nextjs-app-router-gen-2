@@ -1,8 +1,8 @@
 import { fetchEntries, fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
-import { DEFAULT_LOCALE, SUPPORTED_LOCALE_CODES } from "@/utils/locale";
-import { notFound, redirect } from "next/navigation";
+import { SUPPORTED_LOCALE_CODES } from "@/utils/locale";
+import { notFound } from "next/navigation";
 import type { BlogArticle, BlogArticleWithContent } from "@/types/blog.types";
 import { BlogArticleBody } from "@/components/blog/BlogArticleBody/BlogArticleBody";
 import { BlogArticleHeader } from "@/components/blog/BlogArticleHeader/BlogArticleHeader";
@@ -21,11 +21,7 @@ export async function generateStaticParams() {
     .map((article) => (article.data as BlogArticle)?.slug)
     .filter(Boolean) as string[];
 
-  const nonDefaultLocales = SUPPORTED_LOCALE_CODES.filter(
-    (c) => c !== DEFAULT_LOCALE
-  );
-
-  return nonDefaultLocales.flatMap((locale) =>
+  return SUPPORTED_LOCALE_CODES.flatMap((locale) =>
     slugs.map((slug) => ({ locale, slug }))
   );
 }
@@ -55,10 +51,6 @@ export default async function Page(props: {
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await props.params;
-
-  if (!SUPPORTED_LOCALE_CODES.includes(locale)) return notFound();
-  // Redirect canonical default-locale URL — /blog-article/{slug}
-  if (locale === DEFAULT_LOCALE) redirect(`/blog-article/${slug}`);
 
   const content = await fetchOneEntry({
     apiKey: config.envs.builderApiKey,

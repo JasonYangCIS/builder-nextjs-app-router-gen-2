@@ -1,16 +1,12 @@
 /**
- * Blog article detail — Gen 2 version of Builder blog patterns.
- * See docs/BUILDER_BLOG_PATTERNS_GEN2.md for Data vs Section vs Hybrid.
- *
- * This page supports both:
- * - Data model: use content.data (e.g. data.content) for a fixed template (BlogArticleBody).
- * - Section model: use only hero/header from data; the rest is drag-and-drop via <Content />.
+ * Blog article detail — Section model.
+ * First fold (hero, header) is fixed in code; the rest is drag-and-drop via Builder.
  */
 import { fetchEntries, fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
-import { DEFAULT_LOCALE, SUPPORTED_LOCALE_CODES } from "@/utils/locale";
-import { notFound, redirect } from "next/navigation";
+import { SUPPORTED_LOCALE_CODES } from "@/utils/locale";
+import { notFound } from "next/navigation";
 import { BlogArticleHeader } from "@/components/blog/BlogArticleHeader/BlogArticleHeader";
 import { BlogArticleHero } from "@/components/blog/BlogArticleHero/BlogArticleHero";
 import type { BlogArticle, BlogArticleWithContent } from "@/types/blog.types";
@@ -28,11 +24,7 @@ export async function generateStaticParams() {
     .map((article) => (article.data as BlogArticle)?.slug)
     .filter(Boolean) as string[];
 
-  const nonDefaultLocales = SUPPORTED_LOCALE_CODES.filter(
-    (c) => c !== DEFAULT_LOCALE
-  );
-
-  return nonDefaultLocales.flatMap((locale) =>
+  return SUPPORTED_LOCALE_CODES.flatMap((locale) =>
     slugs.map((slug) => ({ locale, slug }))
   );
 }
@@ -63,10 +55,6 @@ export default async function Page(props: {
 }) {
   const { locale, slug } = await props.params;
 
-  if (!SUPPORTED_LOCALE_CODES.includes(locale)) return notFound();
-  // Redirect canonical default-locale URL — /blog-article-section/{slug}
-  if (locale === DEFAULT_LOCALE) redirect(`/blog-article-section/${slug}`);
-
   const content = await fetchOneEntry({
     apiKey: config.envs.builderApiKey,
     model: builderModelName,
@@ -75,7 +63,6 @@ export default async function Page(props: {
     locale,
   });
 
-  // Allow rendering with no content when in Builder (admin/visual editor or draft URL e.g. __builder_editing__)
   if (!content && !isEditing() && !isPreviewing()) {
     return notFound();
   }

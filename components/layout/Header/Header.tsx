@@ -2,11 +2,13 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { fetchEntries } from "@builder.io/sdk-react";
 import { config } from "@/config";
+import { buildLocalePath } from "@/utils/locale";
 import { NavItems } from "./NavItems";
 import { ThemeSwitch } from "./ThemeSwitch";
 import { LocaleSwitch } from "@/components/LocaleSwitch/LocaleSwitch";
 
-export const Header = async () => {
+export const Header = async ({ locale }: { locale?: string }) => {
+  const homeHref = buildLocalePath(locale ?? config.locales.default, "/");
   const raw = await fetchEntries({
     apiKey: config.envs.builderApiKey,
     model: config.models.headerNavMenu,
@@ -26,7 +28,7 @@ export const Header = async () => {
     <header className="relative border-b transition-colors" style={{ borderColor: "var(--header-border)", backgroundColor: "var(--header-bg)" }}>
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         <Link
-          href="/"
+          href={homeHref}
           className="text-xl font-bold tracking-tight transition-opacity hover:opacity-80"
         >
           Jason Yang - Builder.io

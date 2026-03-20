@@ -5,63 +5,42 @@ const SUPPORTED_LOCALE_CODES = appConfig.locales.supported.map((l) => l.code);
 const DEFAULT_LOCALE = appConfig.locales.default;
 
 /**
- * Blog detail routes that have their own `app/[locale]/…` segments and
- * generate static params per locale. This proxy must NOT strip the locale
- * prefix from these paths — let Next.js route them normally so the `[locale]`
- * param reaches the page and ISR is preserved.
- *
- * Pattern: /{locale}/{model-slug}/{article-slug}
+ * Paths that live outside the [locale] segment and must not be locale-prefixed.
+ * The proxy passes these through without rewriting.
  */
-const STATIC_LOCALE_ROUTE_PATTERNS = [
-  /^\/[^/]+\/blog-article\/[^/]+\/?$/,
-  /^\/[^/]+\/blog-article-section\/[^/]+\/?$/,
-  /^\/[^/]+\/blog-article-template\/[^/]+\/?$/,
-];
+const LOCALE_BYPASS_PREFIXES = ["/preview", "/test", "/api"];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Extract the first path segment to check if it's a locale prefix
-  const segments = pathname.split("/").filter(Boolean);
-  const firstSegment = segments[0];
-  const detectedLocale =
-    firstSegment && SUPPORTED_LOCALE_CODES.includes(firstSegment)
-      ? firstSegment
-      : null;
-
-  const locale = detectedLocale ?? DEFAULT_LOCALE;
-
-  // Clone request headers and inject x-locale so Server Components can
-  // read it via `headers()` from next/headers. Setting it only on the
-  // response headers is NOT enough — Server Components only see request headers.
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set("x-locale", locale);
-
-  if (detectedLocale) {
-    // Static ISR routes own their own [locale] segment — do not strip the
-    // prefix. Next.js routes these to app/[locale]/…/[slug]/page.tsx directly.
-    const isStaticLocaleRoute = STATIC_LOCALE_ROUTE_PATTERNS.some((re) =>
-      re.test(pathname)
-    );
-
-    if (!isStaticLocaleRoute) {
-      // Rewrite: strip the locale prefix so all other page files see the
-      // original path (Builder catch-all, list pages, design-system, etc.)
-      const strippedPath = "/" + segments.slice(1).join("/");
-      const rewriteUrl = request.nextUrl.clone();
-      rewriteUrl.pathname = strippedPath || "/";
-
-      return NextResponse.rewrite(rewriteUrl, {
-        request: { headers: requestHeaders },
-      });
-    }
+  // Skip paths that live outside the locale segment
+  if (LOCALE_BYPASS_PREFIXES.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+    return NextResponse.next();
   }
 
-  // No locale prefix, or a static ISR route — pass through with the injected
-  // locale header.
-  return NextResponse.next({
-    request: { headers: requestHeaders },
-  });
+  const segments = pathname.split("/").filter(Boolean);
+  const firstSegment = segments[0];
+  const hasLocalePrefix =
+    firstSegment && SUPPORTED_LOCALE_CODES.includes(firstSegment);
+
+  if (hasLocalePrefix) {
+    if (firstSegment === DEFAULT_LOCALE) {
+      // Redirect /en-US/about → /about to enforce canonical URLs
+      const canonicalPath = "/" + segments.slice(1).join("/") || "/";
+      const redirectUrl = request.nextUrl.clone();
+      redirectUrl.pathname = canonicalPath;
+      return NextResponse.redirect(redirectUrl, 301);
+    }
+    // Non-default locale prefix — pass through, Next.js routes to [locale]/...
+    return NextResponse.next();
+  }
+
+  // No locale prefix — rewrite internally to /{DEFAULT_LOCALE}/{path}
+  // so Next.js routes to app/[locale]/... with locale = DEFAULT_LOCALE.
+  // The browser URL stays clean (e.g. /about, not /en-US/about).
+  const rewriteUrl = request.nextUrl.clone();
+  rewriteUrl.pathname = `/${DEFAULT_LOCALE}${pathname}`;
+  return NextResponse.rewrite(rewriteUrl);
 }
 
 export const config = {
@@ -71,8 +50,7 @@ export const config = {
      * - _next (Next.js internals)
      * - Static files (images, fonts, etc.)
      * - favicon.ico
-     * - api routes
      */
-    "/((?!_next|favicon\\.ico|api|.*\\..*).*)",
+    "/((?!_next|favicon\\.ico|.*\\..*).*)",
   ],
 };

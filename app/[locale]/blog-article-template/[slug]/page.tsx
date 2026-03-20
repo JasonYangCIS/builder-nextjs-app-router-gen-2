@@ -1,16 +1,11 @@
 /**
- * Blog hybrid detail — Gen 2 version of Builder blog patterns.
- * See docs/BUILDER_BLOG_PATTERNS_GEN2.md for Data vs Section vs Hybrid.
- *
- * This page supports both:
- * - Hybrid model: use content.data (e.g. data.content) for a fixed template (BlogArticleBody).
- * - Data model: use only hero/header from data; the rest is drag-and-drop via <Content />.
+ * Blog hybrid detail — Data bindings and templates within the Section model.
  */
 import { fetchEntries, fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
-import { DEFAULT_LOCALE, SUPPORTED_LOCALE_CODES } from "@/utils/locale";
-import { notFound, redirect } from "next/navigation";
+import { SUPPORTED_LOCALE_CODES } from "@/utils/locale";
+import { notFound } from "next/navigation";
 import type { BlogArticle } from "@/types/blog.types";
 
 export async function generateStaticParams() {
@@ -24,11 +19,7 @@ export async function generateStaticParams() {
     .map((article) => (article.data as BlogArticle)?.slug)
     .filter(Boolean) as string[];
 
-  const nonDefaultLocales = SUPPORTED_LOCALE_CODES.filter(
-    (c) => c !== DEFAULT_LOCALE
-  );
-
-  return nonDefaultLocales.flatMap((locale) =>
+  return SUPPORTED_LOCALE_CODES.flatMap((locale) =>
     slugs.map((slug) => ({ locale, slug }))
   );
 }
@@ -59,16 +50,12 @@ export default async function Page(props: {
 }) {
   const { locale, slug } = await props.params;
 
-  if (!SUPPORTED_LOCALE_CODES.includes(locale)) return notFound();
-  // Redirect canonical default-locale URL — /blog-article-template/{slug}
-  if (locale === DEFAULT_LOCALE) redirect(`/blog-article-template/${slug}`);
-
   // Fetch article first
   const articleData = await fetchOneEntry({
     model: config.models.blogArticle,
     apiKey: config.envs.builderApiKey,
     userAttributes: { locale },
-    query: { 'data.slug': slug },
+    query: { "data.slug": slug },
     locale,
   });
 

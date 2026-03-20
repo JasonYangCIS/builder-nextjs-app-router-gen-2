@@ -28,7 +28,6 @@ import { fetchOneEntry, getBuilderSearchParams, isEditing, isPreviewing } from "
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALE_CODES } from "@/utils/locale";
-import { getLocaleFromHeaders } from "@/utils/locale-server";
 import { notFound } from "next/navigation";
 import { BlogArticleHeader } from "@/components/blog/BlogArticleHeader/BlogArticleHeader";
 import { BlogArticleHero } from "@/components/blog/BlogArticleHero/BlogArticleHero";
@@ -45,15 +44,9 @@ export default async function PreviewPage(props: {
   const model = typeof searchParams.model === "string" ? searchParams.model : "";
   const slug = typeof searchParams.slug === "string" ? searchParams.slug : undefined;
   const urlPath = typeof searchParams.urlPath === "string" ? searchParams.urlPath : "/";
-  // Resolve locale with a three-level fallback:
-  // 1. builder.options.locale query param — Builder's standard locale param.
-  //    "Default" is Builder's internal value for the default locale; treat it
-  //    as unrecognised so we fall through.
-  // 2. x-locale request header — set by the proxy when the URL carries a
-  //    locale path prefix (e.g. /es-MX/preview → proxy strips prefix, injects
-  //    header). This handles the case where Builder encodes locale in the URL
-  //    path rather than in builder.options.locale.
-  // 3. DEFAULT_LOCALE — final fallback.
+  // Resolve locale from query params with fallback to DEFAULT_LOCALE.
+  // builder.options.locale is Builder's standard locale param; "Default" is
+  // Builder's internal value for the default locale — treat as unrecognised.
   const builderLocale = typeof searchParams["builder.options.locale"] === "string"
     ? searchParams["builder.options.locale"]
     : undefined;
@@ -61,7 +54,7 @@ export default async function PreviewPage(props: {
   const candidateLocale = builderLocale ?? customLocale ?? "";
   const locale = SUPPORTED_LOCALE_CODES.includes(candidateLocale)
     ? candidateLocale
-    : await getLocaleFromHeaders();
+    : DEFAULT_LOCALE;
 
   // Forward all Builder editor params (builder.preview, builder.overrides.*, builder.cachebust).
   // Override builder.options.locale (which Builder sets to "Default" when locale is in the URL path)

@@ -1,18 +1,24 @@
 import { fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
-import { getLocaleFromHeaders } from "@/utils/locale-server";
 import { notFound } from "next/navigation";
 
 const builderModelName = config.models.page;
 
-export default async function Home() {
-  const locale = await getLocaleFromHeaders();
+export default async function Page(props: {
+  params: Promise<{
+    locale: string;
+    page: string[];
+  }>;
+}) {
+  const { locale, page } = await props.params;
+
+  const urlPath = "/" + (page?.join("/") || "");
 
   const content = await fetchOneEntry({
     apiKey: config.envs.builderApiKey,
     model: builderModelName,
-    userAttributes: { urlPath: "/", locale },
+    userAttributes: { urlPath, locale },
     locale,
   });
 

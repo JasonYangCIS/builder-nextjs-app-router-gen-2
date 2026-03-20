@@ -1,19 +1,23 @@
 import { fetchEntries } from "@builder.io/sdk-react";
 import { config } from "@/config";
+import { buildLocalePath } from "@/utils/locale";
 import { BlogArticleList } from "@/components/blog/BlogArticleList/BlogArticleList";
 import { Text } from "@/components/ui/text";
 import type { BlogArticle } from "@/types/blog.types";
 
-const builderModelName = config.models.blogArticleSection;
+const builderModelName = config.models.blogArticle;
 
 export const revalidate = 5;
 
 export const metadata = {
-  title: "Blog - Section Model",
-  description: "Articles and updates using section model approach",
+  title: "Blog - Hybrid Approach",
+  description: "Articles and updates using hybrid approach",
 };
 
-export default async function BlogArticleSectionPage() {
+export default async function BlogArticleTemplatePage(props: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await props.params;
   const articles = await fetchEntries({
     model: builderModelName,
     apiKey: config.envs.builderApiKey,
@@ -35,12 +39,12 @@ export default async function BlogArticleSectionPage() {
     <div className="mx-auto max-w-5xl px-6 py-14">
       <header className="mb-14">
         <Text variant="h1" className="gradient-brand-text sm:text-5xl">
-          Blog (Section Model)
+          Blog (Hybrid Approach)
         </Text>
         <Text variant="body-lg" color="muted" className="mt-3">
-          First fold is fixed in code; the rest is drag-and-drop in Builder.{" "}
+          Data bindings and templates within the Section model.{" "}
           <a
-            href="https://www.builder.io/blog/builder-drag-drop-blog#section-model"
+            href="https://www.builder.io/blog/builder-drag-drop-blog#hybrid-approach"
             target="_blank"
             rel="noopener noreferrer"
             className="text-primary hover:text-primary/80"
@@ -50,7 +54,7 @@ export default async function BlogArticleSectionPage() {
         </Text>
       </header>
 
-      <BlogArticleList articles={items} route="/blog-article-section" />
+      <BlogArticleList articles={items} route={buildLocalePath(locale, "/blog-article-template")} />
 
       {items.length === 0 && (
         <Text variant="body" color="muted">No articles yet.</Text>

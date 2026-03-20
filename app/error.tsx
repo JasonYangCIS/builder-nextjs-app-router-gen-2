@@ -28,7 +28,7 @@ export default function Error({
         <div className="mt-2 flex items-center gap-3">
           <Button variant="default" onClick={reset}>Try again</Button>
           <Link href="/">
-            <Button variant="ghost">← Back to home</Button>
+            <Button variant="ghost">&larr; Back to home</Button>
           </Link>
         </div>
       </main>
