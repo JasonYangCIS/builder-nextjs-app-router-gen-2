@@ -9,8 +9,8 @@
 import { fetchEntries, fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
-import { DEFAULT_LOCALE } from "@/utils/locale";
-import { notFound } from "next/navigation";
+import { DEFAULT_LOCALE, SUPPORTED_LOCALE_CODES } from "@/utils/locale";
+import { notFound, redirect } from "next/navigation";
 import type { BlogArticle } from "@/types/blog.types";
 
 export async function generateStaticParams() {
@@ -20,23 +20,30 @@ export async function generateStaticParams() {
     limit: 100,
   });
 
-  return (articles ?? [])
-    .map((article) => ({
-      slug: (article.data as BlogArticle)?.slug ?? "",
-    }))
-    .filter((p) => p.slug) as { slug: string }[];
+  const slugs = (articles ?? [])
+    .map((article) => (article.data as BlogArticle)?.slug)
+    .filter(Boolean) as string[];
+
+  const nonDefaultLocales = SUPPORTED_LOCALE_CODES.filter(
+    (c) => c !== DEFAULT_LOCALE
+  );
+
+  return nonDefaultLocales.flatMap((locale) =>
+    slugs.map((slug) => ({ locale, slug }))
+  );
 }
 
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const article = await fetchOneEntry({
     model: config.models.blogArticle,
     apiKey: config.envs.builderApiKey,
     query: { "data.slug": slug },
+    locale,
   });
 
   return {
@@ -48,11 +55,13 @@ export async function generateMetadata({
 export const revalidate = 5;
 
 export default async function Page(props: {
-  params: Promise<{ slug: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await props.params;
-  const locale = DEFAULT_LOCALE;
+  const { locale, slug } = await props.params;
+
+  if (!SUPPORTED_LOCALE_CODES.includes(locale)) return notFound();
+  // Redirect canonical default-locale URL — /blog-article-template/{slug}
+  if (locale === DEFAULT_LOCALE) redirect(`/blog-article-template/${slug}`);
 
   // Fetch article first
   const articleData = await fetchOneEntry({

@@ -1,8 +1,10 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { fetchEntries } from "@builder.io/sdk-react";
 import { config } from "@/config";
 import { NavItems } from "./NavItems";
 import { ThemeSwitch } from "./ThemeSwitch";
+import { LocaleSwitch } from "@/components/LocaleSwitch/LocaleSwitch";
 
 export const Header = async () => {
   const raw = await fetchEntries({
@@ -31,9 +33,13 @@ export const Header = async () => {
         </Link>
 
         <div className="flex items-center gap-4">
-          {/* Desktop nav and theme switcher */}
+          {/* Desktop nav, locale switcher, and theme switcher */}
           <div className="hidden items-center gap-4 md:flex">
             <NavItems entries={navMenuEntries} onlyDesktopNav />
+            {/* Suspense required: LocaleSwitch uses useSearchParams() internally */}
+            <Suspense fallback={null}>
+              <LocaleSwitch locales={config.locales.supported} />
+            </Suspense>
             <ThemeSwitch />
           </div>
 

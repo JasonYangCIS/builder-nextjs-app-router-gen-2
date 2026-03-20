@@ -1,9 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { usePathname } from "next/navigation";
 import { subscribeToEditor, isPreviewing } from "@builder.io/sdk-react";
 import { config } from "@/config";
+import { buildLocalePath, getLocaleFromPath } from "@/utils/locale";
+import { LocaleSwitch } from "@/components/LocaleSwitch/LocaleSwitch";
 import { ThemeSwitch } from "./ThemeSwitch";
 
 interface NavEntry {
@@ -21,6 +24,8 @@ interface NavItemsProps {
 export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopNav }: NavItemsProps) {
   const [entries, setEntries] = useState<NavEntry[]>(initialEntries);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const currentLocale = getLocaleFromPath(pathname);
 
   // WCAG 2.1 AA: Keyboard support - Escape key closes menu
   useEffect(() => {
@@ -92,7 +97,7 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
       {!onlyMobileMenu && (
         <nav className="flex items-center gap-6 text-sm">
           <Link
-            href="/design-system"
+            href={buildLocalePath(currentLocale, "/design-system")}
             className="transition-colors hover:opacity-80"
             >
             Design System
@@ -100,7 +105,7 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
           {entries.map((entry) => (
             <Link
               key={entry.id}
-              href={entry.url}
+              href={buildLocalePath(currentLocale, entry.url)}
               className="transition-colors hover:opacity-80"
               style={{ color: "var(--foreground)" }}
             >
@@ -179,7 +184,7 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
             aria-label="Mobile navigation menu"
           >
             <Link
-              href="/design-system"
+              href={buildLocalePath(currentLocale, "/design-system")}
               className={`menu-link rounded-md px-2 py-2 transition-all duration-300 hover:opacity-80 hover:translate-x-1 focus:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:hover:translate-x-0 ${
                 open ? "translate-x-0 opacity-100" : "motion-reduce:translate-x-0 motion-reduce:opacity-100 -translate-x-4 opacity-0"
               }`}
@@ -193,7 +198,7 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
             {entries.map((entry, index) => (
               <Link
                 key={entry.id}
-                href={entry.url}
+                href={buildLocalePath(currentLocale, entry.url)}
                 className={`menu-link rounded-md px-2 py-2 transition-all duration-300 hover:opacity-80 hover:translate-x-1 focus:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:hover:translate-x-0 ${
                   open ? "translate-x-0 opacity-100" : "motion-reduce:translate-x-0 motion-reduce:opacity-100 -translate-x-4 opacity-0"
                 }`}
@@ -215,6 +220,12 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
               }}
             >
               <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                Language
+              </p>
+              <Suspense fallback={null}>
+                <LocaleSwitch locales={config.locales.supported} />
+              </Suspense>
+              <p className="mt-4 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                 Theme
               </p>
               <ThemeSwitch />
