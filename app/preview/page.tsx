@@ -50,11 +50,8 @@ export default async function PreviewPage(props: {
   // Forward all Builder editor params (builder.preview, builder.overrides.*, builder.cachebust)
   const builderOptions = getBuilderSearchParams(searchParams as unknown as URLSearchParams);
 
-  // headerNavMenu is not a page model — it has no preview page
-  const previewableModels = Object.values(config.models).filter(
-    (m) => m !== config.models.headerNavMenu
-  );
-  if (!model || !previewableModels.includes(model)) return notFound();
+  // A model name is required — reject empty requests outright
+  if (!model) return notFound();
 
   // ── page model ────────────────────────────────────────────────────────────
   if (model === config.models.page) {
@@ -134,5 +131,17 @@ export default async function PreviewPage(props: {
     );
   }
 
-  return notFound();
+  // ── generic fallback (symbols, custom models, any slug-less content) ────────
+  // Relies entirely on builderOptions forwarding the builder.preview token so
+  // the SDK resolves the correct entry — no slug or urlPath needed.
+  const content = await fetchOneEntry({
+    apiKey: config.envs.builderApiKey,
+    model,
+    options: builderOptions,
+    userAttributes: { locale },
+    locale,
+  });
+
+  if (!content && !isEditing() && !isPreviewing()) return notFound();
+  return <RenderBuilderContent content={content} model={model} locale={locale} />;
 }
