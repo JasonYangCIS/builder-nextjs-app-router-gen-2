@@ -44,7 +44,12 @@ export default async function PreviewPage(props: {
   const model = typeof searchParams.model === "string" ? searchParams.model : "";
   const slug = typeof searchParams.slug === "string" ? searchParams.slug : undefined;
   const urlPath = typeof searchParams.urlPath === "string" ? searchParams.urlPath : "/";
-  const localeParam = typeof searchParams.locale === "string" ? searchParams.locale : "";
+  // Builder passes the active locale as builder.options.locale in preview URLs.
+  // Fall back to a custom ?locale= param, then to the default locale.
+  const builderLocale = typeof searchParams["builder.options.locale"] === "string"
+    ? searchParams["builder.options.locale"]
+    : undefined;
+  const localeParam = builderLocale ?? (typeof searchParams.locale === "string" ? searchParams.locale : "");
   const locale = SUPPORTED_LOCALE_CODES.includes(localeParam) ? localeParam : DEFAULT_LOCALE;
 
   // Forward all Builder editor params (builder.preview, builder.overrides.*, builder.cachebust)
