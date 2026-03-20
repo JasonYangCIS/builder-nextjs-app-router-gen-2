@@ -42,14 +42,21 @@ export function LocaleSwitch({ locales }: LocaleSwitchProps) {
   }, []);
 
   const handleLocaleChange = (code: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+
+    if (params.has("builder.options.locale")) {
+      // Preview route — locale lives in query params, not the URL path.
+      // Only update the param; keep the path unchanged.
+      params.set("builder.options.locale", code);
+      const qs = params.toString();
+      setIsOpen(false);
+      router.push(`${pathname}?${qs}`);
+      return;
+    }
+
+    // Production routes — locale is a URL path segment.
     const bare = stripLocalePrefix(pathname);
     const newPath = buildLocalePath(code, bare);
-    // Preserve query params (e.g. Builder preview tokens) but update
-    // builder.options.locale so the preview route resolves the new locale.
-    const params = new URLSearchParams(searchParams.toString());
-    if (params.has("builder.options.locale")) {
-      params.set("builder.options.locale", code);
-    }
     const qs = params.toString();
     setIsOpen(false);
     router.push(qs ? `${newPath}?${qs}` : newPath);
