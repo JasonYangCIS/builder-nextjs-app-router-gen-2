@@ -17,6 +17,7 @@ export function RenderBuilderContent({ content, model, data, locale }: RenderBui
   if (content || isPreviewing()) {
     return (
       <Content
+        key={`${content?.id ?? "empty"}-${locale ?? "default"}`}
         content={content}
         apiKey={config.envs.builderApiKey}
         model={model}
