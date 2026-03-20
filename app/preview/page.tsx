@@ -28,6 +28,7 @@ import { fetchOneEntry, getBuilderSearchParams, isEditing, isPreviewing } from "
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALE_CODES } from "@/utils/locale";
+import { getLocaleFromHeaders } from "@/utils/locale-server";
 import { notFound } from "next/navigation";
 import { BlogArticleHeader } from "@/components/blog/BlogArticleHeader/BlogArticleHeader";
 import { BlogArticleHero } from "@/components/blog/BlogArticleHero/BlogArticleHero";
@@ -44,13 +45,23 @@ export default async function PreviewPage(props: {
   const model = typeof searchParams.model === "string" ? searchParams.model : "";
   const slug = typeof searchParams.slug === "string" ? searchParams.slug : undefined;
   const urlPath = typeof searchParams.urlPath === "string" ? searchParams.urlPath : "/";
-  // Builder passes the active locale as builder.options.locale in preview URLs.
-  // Fall back to a custom ?locale= param, then to the default locale.
+  // Resolve locale with a three-level fallback:
+  // 1. builder.options.locale query param — Builder's standard locale param.
+  //    "Default" is Builder's internal value for the default locale; treat it
+  //    as unrecognised so we fall through.
+  // 2. x-locale request header — set by the proxy when the URL carries a
+  //    locale path prefix (e.g. /es-MX/preview → proxy strips prefix, injects
+  //    header). This handles the case where Builder encodes locale in the URL
+  //    path rather than in builder.options.locale.
+  // 3. DEFAULT_LOCALE — final fallback.
   const builderLocale = typeof searchParams["builder.options.locale"] === "string"
     ? searchParams["builder.options.locale"]
     : undefined;
-  const localeParam = builderLocale ?? (typeof searchParams.locale === "string" ? searchParams.locale : "");
-  const locale = SUPPORTED_LOCALE_CODES.includes(localeParam) ? localeParam : DEFAULT_LOCALE;
+  const customLocale = typeof searchParams.locale === "string" ? searchParams.locale : undefined;
+  const candidateLocale = builderLocale ?? customLocale ?? "";
+  const locale = SUPPORTED_LOCALE_CODES.includes(candidateLocale)
+    ? candidateLocale
+    : await getLocaleFromHeaders();
 
   // Forward all Builder editor params (builder.preview, builder.overrides.*, builder.cachebust)
   const builderOptions = getBuilderSearchParams(searchParams as unknown as URLSearchParams);
