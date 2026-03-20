@@ -17,21 +17,27 @@ export function middleware(request: NextRequest) {
 
   const locale = detectedLocale ?? DEFAULT_LOCALE;
 
+  // Clone request headers and inject x-locale so Server Components can
+  // read it via `headers()` from next/headers. Setting it only on the
+  // response headers is NOT enough — Server Components only see request headers.
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-locale", locale);
+
   if (detectedLocale) {
     // Rewrite: strip the locale prefix so page files see the original path
     const strippedPath = "/" + segments.slice(1).join("/");
     const rewriteUrl = request.nextUrl.clone();
     rewriteUrl.pathname = strippedPath || "/";
 
-    const response = NextResponse.rewrite(rewriteUrl);
-    response.headers.set("x-locale", locale);
-    return response;
+    return NextResponse.rewrite(rewriteUrl, {
+      request: { headers: requestHeaders },
+    });
   }
 
-  // No locale prefix — pass through with the default locale header
-  const response = NextResponse.next();
-  response.headers.set("x-locale", locale);
-  return response;
+  // No locale prefix — pass through with the injected locale header
+  return NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 }
 
 export const config = {
