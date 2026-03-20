@@ -18,11 +18,15 @@ Run the doc update checklist in `AGENTS.md` — Component File Structure section
 ## Key Files
 | File | Purpose |
 |------|---------|
-| `config.ts` | All Builder model names + API key — never hardcode elsewhere |
+| `config.ts` | All Builder model names, API key, locale config — never hardcode elsewhere |
 | `builder-registry.ts` | Custom component registration for Builder visual editor |
 | `components/builder/RenderBuilderContent.tsx` | Always use this wrapper — never `<Content>` directly |
 | `components/ui/` | shadcn/ui primitives — no barrel, import per file |
 | `components/HeroSplit/` | Canonical four-file component pattern (`.tsx` / `.types.ts` / `.module.scss` / `.builder.ts`) |
+| `app/[locale]/layout.tsx` | Locale layout — owns `<html lang>`, Header, Footer; validates locale param |
+| `proxy.ts` | Next.js 16 proxy — locale rewrites (unprefixed → default locale) and redirects |
+| `utils/locale.ts` | `buildLocalePath`, `stripLocalePrefix`, `getLocaleFromPath` |
+| `app/preview/page.tsx` | Dedicated Builder visual editor preview route (all models) |
 | `app/globals.css` | OKLCH color tokens + default/dark themes |
 | `utils/cn.ts` | className joiner (clsx + tailwind-merge) |
 | `AGENTS.md` | Full engineering standards, WCAG checklist, safety rules |
@@ -33,6 +37,7 @@ Run the doc update checklist in `AGENTS.md` — Component File Structure section
 ## Skill References
 @docs/skills/builder-io.md
 @docs/skills/design-system.md
+@docs/skills/localization.md
 @docs/skills/testing.md
 
 ## Context7 Documentation

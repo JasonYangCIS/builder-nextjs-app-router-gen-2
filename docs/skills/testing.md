@@ -56,8 +56,8 @@ New tests should mirror the component directory structure — `tests/heroes/` fo
 
 Two pages exist solely as Playwright test harnesses. They are **not linked from the app**.
 
-### `app/design-system/page.tsx` — `/design-system`
-The Storybook-style showcase page. Tests for Button, Typography, Badge, Input, Card, and Counter all run against this page. All component variants and states are pre-rendered here.
+### `app/[locale]/design-system/page.tsx` — `/design-system`
+The Storybook-style showcase page. Tests for Button, Typography, Badge, Input, Card, and Counter all run against this page. All component variants and states are pre-rendered here. Accessed via `/design-system` (the proxy rewrites to `/en-US/design-system`).
 
 ### `app/test/blog-components/page.tsx` — `/test/blog-components`
 A static fixture page that renders all blog components (`BlogArticleHero`, `BlogArticleHeader`, `BlogArticleBody`, `BlogArticleCard`, `BlogArticleList`) with hardcoded mock data. Sections are identified by `id` attributes (`#hero`, `#header-full`, `#body-normal`, `#card-full`, `#list`, etc.).

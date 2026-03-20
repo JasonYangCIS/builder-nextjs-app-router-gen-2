@@ -28,11 +28,15 @@ NEXT_PUBLIC_BUILDER_API_KEY=your_key_here
 
 | File | Purpose |
 |------|---------|
-| `config.ts` | All Builder model names + API key — never hardcode elsewhere |
+| `config.ts` | All Builder model names, API key, locale config — never hardcode elsewhere |
 | `builder-registry.ts` | Custom component registration for Builder visual editor |
 | `components/builder/RenderBuilderContent.tsx` | Always use this wrapper, never `<Content>` directly |
 | `components/ui/` | shadcn/ui components (new-york style) — Button, Badge, Input, Label, Card, Carousel, Text, FormInput |
 | `components/builder/BuilderCarousel.tsx` | Embla Carousel wrapper exposing Builder-friendly props |
+| `app/[locale]/layout.tsx` | Locale layout — owns `<html lang>`, Header, Footer; validates locale param |
+| `proxy.ts` | Next.js 16 proxy — locale rewrites and canonical redirects |
+| `utils/locale.ts` | `buildLocalePath`, `stripLocalePrefix`, `getLocaleFromPath` |
+| `app/preview/page.tsx` | Dedicated Builder visual editor preview route (all models) |
 | `app/globals.css` | shadcn OKLCH color tokens + theme overrides (default / dark) |
 | `styles/tokens.css` | Gradient utilities only — use `var(--primary)` / `var(--accent)` |
 | `utils/cn.ts` | className joiner (clsx + tailwind-merge) |
@@ -42,26 +46,41 @@ NEXT_PUBLIC_BUILDER_API_KEY=your_key_here
 ## Directory Structure
 
 ```
-app/                         # Next.js App Router pages
-  [...page]/page.tsx         # Catch-all for Builder-managed page model
-  page.tsx                   # Root "/" — also uses Builder page model
-  blog/                      # Blog index pages
-  blog-article/[slug]/       # Data model article detail
-  blog-article-section/[slug]/ # Section model article detail
-  blog-article-template/[slug]/ # Hybrid model article detail
-  design-system/             # Component showcase
+app/
+  layout.tsx                   # Root layout — passthrough (returns children only)
+  [locale]/                    # All user-facing pages live under this segment
+    layout.tsx                 # Locale layout — owns <html lang>, Header, Footer
+    page.tsx                   # Root "/" — Builder page model
+    [...page]/page.tsx         # Catch-all for Builder-managed pages
+    blog/page.tsx              # Blog index hub
+    blog-article/              # Data model blog
+      page.tsx                 #   List page
+      [slug]/page.tsx          #   Detail page
+    blog-article-section/      # Section model blog
+      page.tsx                 #   List page
+      [slug]/page.tsx          #   Detail page
+    blog-article-template/     # Hybrid model blog
+      page.tsx                 #   List page
+      [slug]/page.tsx          #   Detail page
+    design-system/page.tsx     # Component showcase
+  preview/                     # Builder visual editor preview (force-dynamic, own layout)
+  test/                        # Playwright fixture pages (own layout)
 
 components/
-  blog/                      # Blog-specific components
-  builder/                   # RenderBuilderContent wrapper + BuilderCarousel
-  ui/                        # shadcn/ui primitives (Button, Badge, Input, Label, Card, Carousel, Text, FormInput)
-  layout/                    # Header (RSC + NavItems client), Footer
-  HeroSplit/                 # Canonical example of the four-file component pattern
+  blog/                        # Blog-specific components
+  builder/                     # RenderBuilderContent wrapper + BuilderCarousel
+  ui/                          # shadcn/ui primitives (Button, Badge, Input, Label, Card, Carousel, Text, FormInput)
+  layout/                      # Header (RSC + NavItems client), Footer
+  LocaleSwitch/                # Locale switcher dropdown (client component)
+  HeroSplit/                   # Canonical example of the four-file component pattern
 
-docs/skills/                 # Detailed skill references (see Skills below)
-styles/tokens.css            # Design tokens
-types/                       # Shared TypeScript interfaces
-utils/cn.ts                  # className joiner
+docs/skills/                   # Detailed skill references (see Skills below)
+styles/tokens.css              # Design tokens
+types/                         # Shared TypeScript interfaces
+utils/
+  cn.ts                        # className joiner
+  locale.ts                    # buildLocalePath, stripLocalePrefix, getLocaleFromPath
+proxy.ts                       # Next.js 16 proxy (locale rewrites + redirects)
 ```
 
 ---
@@ -322,6 +341,8 @@ For task-specific patterns and gotchas, consult the relevant skill:
 |-------|-------------|
 | `builder-io` | Builder SDK, content fetching, models, editor/preview, custom components |
 | `design-system` | UI components, tokens, WCAG contrast, Tailwind composition |
+| `localization` | Locale routing, proxy, `buildLocalePath`, internal links, preview locale |
+| `testing` | Playwright E2E, fixture pages, selector scoping, gotchas |
 
 Skills are defined in `.builder/skills/` and reference full docs in `docs/skills/`.
 

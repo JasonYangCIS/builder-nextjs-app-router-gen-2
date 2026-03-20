@@ -22,6 +22,14 @@ Non-negotiable rules for every task. Full detail in `AGENTS.md` and `docs/skills
 - Import shadcn components from their own file: `import { Button } from "@/components/ui/button"` — no barrel
 - Import Text from `@/components/ui/text`; FormInput from `@/components/ui/form-input`
 
+## Locale Routing
+- All pages live under `app/[locale]/` — locale is always from route params, never headers
+- Always pass `locale` to `fetchOneEntry` and `RenderBuilderContent`
+- Internal links must use `buildLocalePath(locale, "/path")` — never hardcode paths without locale
+- `generateStaticParams` must return ALL supported locales × slugs
+- `getBuilderSearchParams` is only used in `app/preview/page.tsx` — never on production routes
+- See `docs/skills/localization.md` for the full architecture
+
 ## Component File Structure
 - shadcn primitives → flat file in `components/ui/my-component.tsx`
 - All other components → four-file folder in `components/MyComponent/` (see `component-structure.mdc` and `components/HeroSplit/`)

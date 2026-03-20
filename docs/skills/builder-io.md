@@ -19,49 +19,70 @@ Patterns and gotchas for working with `@builder.io/sdk-react` (Gen 2) in this re
 
 ## Route Patterns
 
+All pages live under `app/[locale]/`. Locale is always read from route params, never from headers. See `docs/skills/localization.md` for the full locale architecture.
+
 ### Catch-all (Builder page model)
 ```ts
-// app/[...page]/page.tsx
-const urlPath = "/" + ((await props?.params)?.page?.join("/") || "");
-const content = await fetchOneEntry({
-  model: config.models.page,
-  apiKey: config.envs.builderApiKey,
-  userAttributes: { urlPath },
-  options: getBuilderSearchParams(searchParams),
-});
-if (!content && !isEditing() && !isPreviewing()) return notFound();
-return <RenderBuilderContent content={content} model={config.models.page} />;
+// app/[locale]/[...page]/page.tsx
+export default async function Page(props: {
+  params: Promise<{ locale: string; page: string[] }>;
+}) {
+  const { locale, page } = await props.params;
+  const urlPath = "/" + (page?.join("/") || "");
+
+  const content = await fetchOneEntry({
+    apiKey: config.envs.builderApiKey,
+    model: config.models.page,
+    userAttributes: { urlPath, locale },
+    locale,
+  });
+  if (!content && !isEditing() && !isPreviewing()) return notFound();
+  return <RenderBuilderContent content={content} model={config.models.page} locale={locale} />;
+}
 ```
 
 ### Root route — required
-`app/[...page]` does **not** match `/`. `app/page.tsx` must also use Builder:
+`app/[locale]/[...page]` does **not** match `/`. `app/[locale]/page.tsx` must also use Builder:
 ```ts
+// app/[locale]/page.tsx
+const { locale } = await props.params;
 const content = await fetchOneEntry({
-  model: config.models.page,
   apiKey: config.envs.builderApiKey,
-  userAttributes: { urlPath: "/" },
-  options: getBuilderSearchParams(searchParams),
+  model: config.models.page,
+  userAttributes: { urlPath: "/", locale },
+  locale,
 });
 ```
 
 ### List page
 ```ts
+// app/[locale]/blog-article/page.tsx
+const { locale } = await props.params;
 const entries = await fetchEntries({ model, apiKey: config.envs.builderApiKey, limit: 100 });
 export const revalidate = 5;
+// Pass locale-prefixed route to list component:
+<BlogArticleList articles={items} route={buildLocalePath(locale, "/blog-article")} />
 ```
 
 ### Detail page (slug-based)
 ```ts
+// app/[locale]/blog-article/[slug]/page.tsx
 export async function generateStaticParams() {
   const entries = await fetchEntries({ model, apiKey: config.envs.builderApiKey, limit: 100 });
-  return (entries ?? []).map(e => ({ slug: e.data?.slug })).filter(p => p.slug);
+  const slugs = (entries ?? []).map(e => e.data?.slug).filter(Boolean);
+  // Generate for ALL supported locales
+  return SUPPORTED_LOCALE_CODES.flatMap(locale =>
+    slugs.map(slug => ({ locale, slug }))
+  );
 }
 
+const { locale, slug } = await props.params;
 const content = await fetchOneEntry({
   model,
   apiKey: config.envs.builderApiKey,
-  options: getBuilderSearchParams(searchParams),  // only on detail pages
+  userAttributes: { locale },
   query: { "data.slug": slug },
+  locale,
 });
 if (!content && !isEditing() && !isPreviewing()) return notFound();
 ```
@@ -122,8 +143,8 @@ if (!content && !isEditing() && !isPreviewing()) return notFound();
 ```
 Builder renders pages inside an iframe — `notFound()` in edit mode will break the editor.
 
-### getBuilderSearchParams — detail pages only
-`getBuilderSearchParams` converts Next.js `searchParams` into Builder SDK options, forwarding params like `builder.preview`, `builder.overrides.*`, and `builder.cachebust` that Builder injects during visual editing. Only pass it on detail/slug pages where live preview needs these URL params — not on list/index pages.
+### getBuilderSearchParams — preview route only
+`getBuilderSearchParams` converts Next.js `searchParams` into Builder SDK options, forwarding params like `builder.preview`, `builder.overrides.*`, and `builder.cachebust` that Builder injects during visual editing. **Only used in `app/preview/page.tsx`** — production routes do not use `searchParams` at all (keeping them statically generatable with ISR).
 
 ### revalidate
 Set `export const revalidate = 5` on all Builder-connected pages for near-real-time publish updates.
@@ -191,7 +212,17 @@ This pattern avoids making the entire header a client component while still supp
 
 ```ts
 if (content || isPreviewing()) {
-  return <Content content={content} apiKey={...} model={model} customComponents={CUSTOM_COMPONENTS} {...(data && { data })} />;
+  return (
+    <Content
+      key={`${content?.id ?? "empty"}-${locale ?? "default"}`}
+      content={content}
+      apiKey={...}
+      model={model}
+      customComponents={CUSTOM_COMPONENTS}
+      locale={locale}
+      {...(data && { data })}
+    />
+  );
 }
 return <DefaultErrorPage statusCode={404} />;  // from next/error
 ```
@@ -200,6 +231,8 @@ Key implications:
 - **`isPreviewing()` gates rendering, not `isEditing()`** — content can be `null` in preview mode and it still renders `<Content>` (Builder handles it in the iframe)
 - **Page-level `notFound()`** runs before this component is reached in normal 404 flow — the `DefaultErrorPage` fallback is a safety net, not the primary 404 path
 - **`data` prop** — only spread when truthy: `{...(data && { data })}`. Pass for Hybrid pattern only.
+- **`locale` prop** — always pass locale. The `key` includes locale to force remount when locale changes, ensuring Builder re-initializes with localized content.
+- **`key` prop** — `${content?.id}-${locale}` forces React to unmount/remount `<Content>` when content or locale changes, preventing stale state.
 
 ---
 
@@ -269,6 +302,28 @@ alwaysApply: false
 - Be specific and actionable — write rules like clear internal docs
 - Avoid conflicts between rule files
 - Reference concrete examples or existing files where possible
+
+---
+
+## Dedicated Preview Route
+
+All Builder models use `app/preview/page.tsx` as their preview URL. This route is `force-dynamic` and lives outside the `[locale]` segment (it has its own minimal layout).
+
+**Preview URL patterns (set in Builder admin → Model settings → Preview URL):**
+
+```
+page model:               /preview?model=page&urlPath={entry.data.url}
+blog-article:             /preview?model=blog-article&slug={entry.data.slug}
+blog-article-section:     /preview?model=blog-article-section&slug={entry.data.slug}
+blog-article-template:    /preview?model=blog-article-template&slug={entry.data.slug}
+```
+
+**Locale in preview:** Resolved from `builder.options.locale` query param (set by Builder's locale switcher), then `locale` custom param, then `DEFAULT_LOCALE`. The preview route overrides `builderOptions.locale` with the resolved value to prevent Builder's `"Default"` string from conflicting.
+
+**Key design decisions:**
+- Production routes never consume `searchParams` / `getBuilderSearchParams` — this keeps them ISR-compatible
+- The preview route handles all models via dispatch (page, blogArticle, blogArticleSection, blogArticleTemplate, generic fallback for symbols)
+- The proxy skips `/preview` paths entirely — no locale rewriting needed
 
 ---
 
