@@ -65,6 +65,7 @@ export default async function Page(props: {
   const content = await fetchOneEntry({
     apiKey: config.envs.builderApiKey,
     model: builderModelName,
+    userAttributes: { locale },
     options: getBuilderSearchParams(searchParams as unknown as URLSearchParams),
     query: { "data.slug": slug },
     locale,

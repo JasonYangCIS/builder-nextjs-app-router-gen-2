@@ -24,7 +24,7 @@ export default async function Page(props: {
     apiKey: config.envs.builderApiKey,
     model: builderModelName,
     options: getBuilderSearchParams(searchParams as unknown as URLSearchParams),
-    userAttributes: { urlPath },
+    userAttributes: { urlPath, locale },
     locale,
   });
 

@@ -60,6 +60,7 @@ export default async function Page(props: {
   const articleData = await fetchOneEntry({
     model: config.models.blogArticle,
     apiKey: config.envs.builderApiKey,
+    userAttributes: { locale },
     query: { 'data.slug': slug },
     locale,
   });
@@ -70,6 +71,7 @@ export default async function Page(props: {
     apiKey: config.envs.builderApiKey,
     userAttributes: {
       category: articleData?.data?.category,
+      locale,
     },
     locale,
   });
