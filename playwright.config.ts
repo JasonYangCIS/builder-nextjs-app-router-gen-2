@@ -8,6 +8,9 @@ dotenv.config({ path: path.resolve(__dirname, ".env.test") });
 export default defineConfig({
   testDir: "./tests",
   snapshotDir: "./tests/__snapshots__",
+  // Pre-warm pages so webpack compiles them before parallel workers start.
+  // Prevents cold-compilation queue backup causing navigation timeouts.
+  globalSetup: "./tests/global-setup.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
@@ -16,6 +19,10 @@ export default defineConfig({
   use: {
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
+    // Dev server webpack compilation can be slow under concurrent load.
+    // 60s gives enough room even when the compilation queue is busy.
+    navigationTimeout: 60_000,
+    actionTimeout: 60_000,
   },
   projects: [
     {
