@@ -9,11 +9,13 @@ import { LocaleSwitch } from "@/components/LocaleSwitch/LocaleSwitch";
 
 export const Header = async ({ locale }: { locale?: string }) => {
   const homeHref = buildLocalePath(locale ?? config.locales.default, "/");
+  const resolvedLocale = locale ?? config.locales.default;
   const raw = await fetchEntries({
     apiKey: config.envs.builderApiKey,
     model: config.models.headerNavMenu,
     limit: 5,
     fields: "id,data",
+    locale: resolvedLocale,
   });
 
   const navMenuEntries = (raw ?? [])

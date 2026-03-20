@@ -2,6 +2,8 @@ import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Text } from "@/components/ui/text";
 import { Button } from "@/components/ui/button";
+import { Header } from "@/components/layout/Header/Header";
+import { Footer } from "@/components/layout/Footer/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -20,7 +22,8 @@ export default function NotFound() {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6">
+        <Header />
+        <div className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center bg-background px-6">
           <main className="flex w-full max-w-5xl flex-col items-center gap-4 text-center">
             <span className="gradient-brand-text text-8xl font-extrabold tracking-tight">
               404
@@ -36,6 +39,7 @@ export default function NotFound() {
             </Link>
           </main>
         </div>
+        <Footer />
       </body>
     </html>
   );
