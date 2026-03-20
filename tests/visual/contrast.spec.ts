@@ -297,8 +297,8 @@ for (const theme of THEMES) {
       }
     });
 
-    // ── ThemeSwitch button ────────────────────────────────────────────────
-    test("ThemeSwitch button text meets 4.5:1", async ({ page }) => {
+    // ── ThemeSwitch toggle button ───────────────────────────────────────
+    test("ThemeSwitch button icon meets 4.5:1", async ({ page }) => {
       const result = await page.evaluate(() => {
         const btn = document.querySelector(
           ".theme-switch-button",
@@ -319,51 +319,6 @@ for (const theme of THEMES) {
         ratio,
         `ThemeSwitch button contrast (${theme}): ${ratio.toFixed(2)}:1`,
       ).toBeGreaterThanOrEqual(WCAG_AA_NORMAL);
-    });
-
-    // ── ThemeSwitch dropdown items ────────────────────────────────────────
-    test("ThemeSwitch dropdown items meet 4.5:1 after opening", async ({
-      page,
-    }) => {
-      // Trigger the ThemeSwitch via JS — the button may be inside a responsive
-      // container (hidden md:flex) that isn’t actionable at the test viewport.
-      await page.evaluate(() => {
-        const btn = document.querySelector<HTMLButtonElement>(".theme-switch-button");
-        btn?.click();
-      });
-      await expect(page.locator(".theme-dropdown").first()).toBeVisible();
-
-      const items = await page.evaluate(() => {
-        function bg(el: Element): string {
-          let cur: Element | null = el;
-          while (cur) {
-            const b = getComputedStyle(cur).backgroundColor;
-            if (b && !b.startsWith("rgba(0, 0, 0, 0)") && b !== "transparent")
-              return b;
-            cur = cur.parentElement;
-          }
-          return getComputedStyle(document.body).backgroundColor;
-        }
-        return Array.from(
-          document.querySelectorAll(".theme-dropdown [role='menuitem']"),
-        ).map((el) => ({
-          fg: getComputedStyle(el).color,
-          bg: bg(el),
-          label: (el as HTMLElement).innerText?.trim(),
-        }));
-      });
-
-      for (const { fg, bg, label } of items) {
-        const fgColor = parseRGB(fg);
-        const bgColor = parseRGB(bg);
-        if (!fgColor || !bgColor) continue;
-
-        const ratio = contrastRatio(fgColor, bgColor);
-        expect(
-          ratio,
-          `Dropdown item "${label}" contrast (${theme}): ${ratio.toFixed(2)}:1`,
-        ).toBeGreaterThanOrEqual(WCAG_AA_NORMAL);
-      }
     });
   });
 }

@@ -1,6 +1,6 @@
 /**
- * Visual regression tests for header, footer, ThemeSwitch dropdown, and
- * mobile hamburger menu across all three themes.
+ * Visual regression tests for header, footer, ThemeSwitch toggle, and
+ * mobile hamburger menu across all themes.
  *
  * Run to generate baselines:  npm run test:visual:update
  * Run to compare:             npm run test:visual
@@ -77,21 +77,16 @@ for (const theme of THEMES) {
       });
     });
 
-    test(`ThemeSwitch dropdown`, async ({ page }) => {
+    test(`ThemeSwitch toggle`, async ({ page }) => {
       await page.setViewportSize({ width: 1280, height: 900 });
       await page.goto("/design-system");
       await setTheme(page, theme);
 
-      // Trigger the ThemeSwitch via JS — the button may be inside a responsive
-      // container (hidden md:flex) that isn’t actionable at the test viewport.
-      await page.evaluate(() => {
-        const btn = document.querySelector<HTMLButtonElement>(".theme-switch-button");
-        btn?.click();
-      });
-      await expect(page.locator(".theme-dropdown").first()).toBeVisible();
+      const btn = page.locator(".theme-switch-button").first();
+      await expect(btn).toBeVisible();
 
-      await expect(page.locator(APP_HEADER)).toHaveScreenshot(
-        `theme-dropdown-${theme}.png`,
+      await expect(btn).toHaveScreenshot(
+        `theme-toggle-${theme}.png`,
         { animations: "disabled" },
       );
     });
