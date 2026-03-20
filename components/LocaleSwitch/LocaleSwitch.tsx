@@ -15,8 +15,12 @@ export function LocaleSwitch({ locales }: LocaleSwitchProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Derive the active locale directly from the URL — no server headers needed
-  const currentLocale = getLocaleFromPath(pathname);
+  // Derive the active locale: on preview routes use builder.options.locale
+  // query param; on production routes read from the URL path segment.
+  const builderLocale = searchParams.get("builder.options.locale");
+  const currentLocale = builderLocale && locales.some((l) => l.code === builderLocale)
+    ? builderLocale
+    : getLocaleFromPath(pathname);
 
   // Close when clicking outside
   useEffect(() => {
