@@ -1,10 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback } from "react";
+import Link from "next/link";
 import type { AnnouncementBarProps } from "./AnnouncementBar.types";
 import styles from "./AnnouncementBar.module.scss";
 
 export type { AnnouncementBarProps } from "./AnnouncementBar.types";
+
+// Use useLayoutEffect on the client (runs before paint, avoids dismissed-user flash)
+// and useEffect on the server (no-op, avoids SSR warning).
+const useIsomorphicLayoutEffect =
+  typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 interface TimeRemaining {
   days: number;
@@ -14,10 +20,36 @@ interface TimeRemaining {
   expired: boolean;
 }
 
+/**
+ * Validates and sanitizes a URL from Builder content.
+ * Rejects javascript: and other non-http(s) protocols.
+ * Allows relative paths (/foo, #anchor).
+ */
+function sanitizeCtaUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (url.startsWith("/") || url.startsWith("#")) return url;
+  try {
+    const { protocol } = new URL(url);
+    if (protocol === "http:" || protocol === "https:") return url;
+  } catch {
+    // Malformed URL — discard
+  }
+  return null;
+}
+
+function isExternalUrl(url: string): boolean {
+  return /^https?:\/\//i.test(url);
+}
+
 function getTimeRemaining(targetDate: string): TimeRemaining {
   const target = new Date(targetDate).getTime();
-  const now = Date.now();
-  const diff = target - now;
+
+  // Guard against invalid date strings (would otherwise produce NaN everywhere)
+  if (isNaN(target)) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
+  }
+
+  const diff = target - Date.now();
 
   if (diff <= 0) {
     return { days: 0, hours: 0, minutes: 0, seconds: 0, expired: true };
@@ -53,22 +85,30 @@ export default function AnnouncementBar({
   countdownLabel,
   dismissKey,
 }: AnnouncementBarProps) {
-  // null = not yet determined (avoids SSR flash), false = visible, true = dismissed
-  const [dismissed, setDismissed] = useState<boolean | null>(null);
+  // Start as false (bar visible) so the server renders the bar in the initial HTML.
+  // useIsomorphicLayoutEffect will sync-hide it before first paint if already dismissed.
+  const [dismissed, setDismissed] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState<TimeRemaining | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const storageKey = dismissKey ? `announcement-dismissed-${dismissKey}` : null;
 
-  // On mount, check localStorage to avoid flash of bar then hide
-  useEffect(() => {
-    if (storageKey) {
-      const stored = localStorage.getItem(storageKey);
-      setDismissed(stored === "true");
-    } else {
-      setDismissed(false);
+  // Runs before first paint on the client — prevents dismissed-user flash without CLS.
+  useIsomorphicLayoutEffect(() => {
+    if (storageKey && localStorage.getItem(storageKey) === "true") {
+      setDismissed(true);
     }
   }, [storageKey]);
+
+  // Clear the countdown interval immediately when the bar is dismissed.
+  // The component stays mounted in the App Router locale layout, so we need
+  // an explicit effect rather than relying on unmount cleanup alone.
+  useEffect(() => {
+    if (dismissed && intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }, [dismissed]);
 
   // Countdown ticker
   const startCountdown = useCallback(() => {
@@ -109,9 +149,9 @@ export default function AnnouncementBar({
     }
   };
 
-  // Render nothing until hydration resolves localStorage check (prevents layout shift)
-  if (dismissed === null || dismissed === true) return null;
+  if (dismissed) return null;
 
+  const safeCtaUrl = sanitizeCtaUrl(ctaUrl);
   const showCountdown =
     countdownEnabled &&
     countdownTargetDate &&
@@ -124,12 +164,16 @@ export default function AnnouncementBar({
   };
 
   return (
+    // suppressHydrationWarning prevents React from complaining about the
+    // server (dismissed=false → rendered) vs client (dismissed=true → null) mismatch
+    // for users who have already dismissed the bar.
     <div
       role="complementary"
       aria-label="Announcement"
       className={styles.bar}
       style={inlineStyles}
       onKeyDown={handleKeyDown}
+      suppressHydrationWarning
     >
       <div className={styles.content}>
         {message && <p className={styles.message}>{message}</p>}
@@ -151,14 +195,20 @@ export default function AnnouncementBar({
           </>
         )}
 
-        {ctaLabel && ctaUrl && (
+        {ctaLabel && safeCtaUrl && (
           <>
             {(message || showCountdown) && (
               <span className={styles.divider} aria-hidden="true">·</span>
             )}
-            <a href={ctaUrl} className={styles.cta}>
+            <Link
+              href={safeCtaUrl}
+              className={styles.cta}
+              {...(isExternalUrl(safeCtaUrl)
+                ? { rel: "noopener noreferrer", target: "_blank" }
+                : {})}
+            >
               {ctaLabel}
-            </a>
+            </Link>
           </>
         )}
       </div>

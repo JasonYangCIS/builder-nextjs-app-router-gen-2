@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
+import { fetchOneEntry } from "@builder.io/sdk-react";
 import { Header } from "@/components/layout/Header/Header";
 import { Footer } from "@/components/layout/Footer/Footer";
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
@@ -47,7 +47,6 @@ export default async function LocaleLayout({
     locale,
   });
 
-  const showBar = !!(announcementBar || isEditing() || isPreviewing());
   const barPosition = (announcementBar?.data?.position as string | undefined) ?? "above-header";
 
   return (
@@ -55,7 +54,7 @@ export default async function LocaleLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {showBar && barPosition === "above-header" && (
+        {announcementBar && barPosition === "above-header" && (
           <RenderBuilderContent
             content={announcementBar}
             model={config.models.announcementBar}
@@ -63,7 +62,7 @@ export default async function LocaleLayout({
           />
         )}
         <Header locale={locale} />
-        {showBar && barPosition === "below-header" && (
+        {announcementBar && barPosition === "below-header" && (
           <RenderBuilderContent
             content={announcementBar}
             model={config.models.announcementBar}
