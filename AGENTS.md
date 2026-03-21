@@ -74,6 +74,7 @@ components/
   LocaleSwitch/                # Locale switcher dropdown (client component)
   CloudinaryImage/             # Cloudinary image component (uses cloudinaryImageEditor plugin)
   HeroSplit/                   # Canonical example of the four-file component pattern
+  AnnouncementBar/             # Dismissable site-wide bar with optional countdown timer; fetched in locale layout and registered as a Builder section component
 
 docs/skills/                   # Detailed skill references (see Skills below)
 styles/tokens.css              # Design tokens
