@@ -27,7 +27,9 @@ interface TimeRemaining {
  */
 function sanitizeCtaUrl(url: string | null | undefined): string | null {
   if (!url) return null;
-  if (url.startsWith("/") || url.startsWith("#")) return url;
+  // Reject protocol-relative URLs (//evil.com) — they resolve as external but
+  // bypass the https? check and lose noopener protection.
+  if ((url.startsWith("/") && !url.startsWith("//")) || url.startsWith("#")) return url;
   try {
     const { protocol } = new URL(url);
     if (protocol === "http:" || protocol === "https:") return url;
@@ -100,17 +102,10 @@ export default function AnnouncementBar({
     }
   }, [storageKey]);
 
-  // Clear the countdown interval immediately when the bar is dismissed.
-  // The component stays mounted in the App Router locale layout, so we need
-  // an explicit effect rather than relying on unmount cleanup alone.
-  useEffect(() => {
-    if (dismissed && intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-  }, [dismissed]);
-
-  // Countdown ticker
+  // Countdown ticker — guarded by dismissed so the interval never starts for
+  // users who were already dismissed before passive effects ran. Adding dismissed
+  // to deps also means the cleanup function fires when the user actively dismisses,
+  // stopping the interval without needing a separate dismissed-watcher effect.
   const startCountdown = useCallback(() => {
     if (!countdownEnabled || !countdownTargetDate) return;
 
@@ -128,13 +123,15 @@ export default function AnnouncementBar({
   }, [countdownEnabled, countdownTargetDate]);
 
   useEffect(() => {
+    if (dismissed) return;
     startCountdown();
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
+        intervalRef.current = null;
       }
     };
-  }, [startCountdown]);
+  }, [startCountdown, dismissed]);
 
   const handleDismiss = () => {
     if (storageKey) {
