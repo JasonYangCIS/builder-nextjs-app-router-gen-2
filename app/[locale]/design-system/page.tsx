@@ -19,7 +19,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Counter from "@/components/Counter/Counter";
-import AlgoliaSearch from "@/components/AlgoliaSearch/AlgoliaSearch";
+import AlgoliaSearch from "@/components/Algolia/AlgoliaSearch/AlgoliaSearch";
 
 export const metadata: Metadata = {
   title: "Design System",

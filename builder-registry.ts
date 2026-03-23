@@ -13,7 +13,7 @@ import { heroSplitConfig } from "./components/HeroSplit/HeroSplit.builder";
 import { heroCenteredConfig } from "./components/HeroCentered/HeroCentered.builder";
 import { cloudinaryImageConfig } from "./components/CloudinaryImage/CloudinaryImage.builder";
 import { announcementBarConfig } from "@/components/AnnouncementBar/AnnouncementBar.builder";
-import { algoliaSearchConfig } from "@/components/AlgoliaSearch/AlgoliaSearch.builder";
+import { algoliaSearchConfig } from "@/components/Algolia/AlgoliaSearch/AlgoliaSearch.builder";
 
 export const CUSTOM_COMPONENTS: RegisteredComponent[] = [
   // ─── Existing ────────────────────────────────────────────────────────────

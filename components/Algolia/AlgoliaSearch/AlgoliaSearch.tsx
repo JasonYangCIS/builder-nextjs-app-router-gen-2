@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Link from "next/link";
 import { algoliasearch } from "algoliasearch";
-import type { AlgoliaSearchProps, AlgoliaHit } from "./AlgoliaSearch.types";
 import { config } from "@/config";
+import SearchForm from "@/components/Algolia/SearchForm/SearchForm";
+import ResultsList from "@/components/Algolia/ResultsList/ResultsList";
+import type { AlgoliaSearchProps, AlgoliaHit } from "./AlgoliaSearch.types";
 
 export type { AlgoliaSearchProps, AlgoliaHit } from "./AlgoliaSearch.types";
 
@@ -35,7 +36,6 @@ export default function AlgoliaSearch({
   const isActive = query.trim().length > 0;
 
   // Capture focus when search activates; restore it when it deactivates.
-  // This covers both Escape and backdrop-click dismissal paths.
   useEffect(() => {
     if (isActive) {
       previousFocusRef.current = document.activeElement as HTMLElement | null;
@@ -55,20 +55,18 @@ export default function AlgoliaSearch({
       const focusable = Array.from(
         sectionRef.current.querySelectorAll<HTMLElement>(FOCUSABLE)
       );
-      if (focusable.length === 0) return;
+      if (!focusable.length) return;
 
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
       const active = document.activeElement;
 
       if (e.shiftKey) {
-        // Shift+Tab from first (or outside) → wrap to last
         if (active === first || !sectionRef.current.contains(active)) {
           e.preventDefault();
           last.focus();
         }
       } else {
-        // Tab from last (or outside) → wrap to first
         if (active === last || !sectionRef.current.contains(active)) {
           e.preventDefault();
           first.focus();
@@ -80,12 +78,10 @@ export default function AlgoliaSearch({
     return () => document.removeEventListener("keydown", handleTab);
   }, [isActive]);
 
-  // Escape dismisses search (focus restoration is handled by the effect above).
+  // Escape dismisses search; focus restoration is handled by the effect above.
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && query) {
-        setQuery("");
-      }
+      if (e.key === "Escape" && query) setQuery("");
     };
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
@@ -93,9 +89,7 @@ export default function AlgoliaSearch({
 
   // Debounced Algolia search
   useEffect(() => {
-    if (debounceRef.current) {
-      clearTimeout(debounceRef.current);
-    }
+    if (debounceRef.current) clearTimeout(debounceRef.current);
 
     if (!query.trim()) {
       setHits([]);
@@ -125,14 +119,9 @@ export default function AlgoliaSearch({
     }, 300);
 
     return () => {
-      if (debounceRef.current) {
-        clearTimeout(debounceRef.current);
-      }
+      if (debounceRef.current) clearTimeout(debounceRef.current);
     };
   }, [query, indexName, maxResults]);
-
-  const getTitle = (hit: AlgoliaHit) => hit.title ?? hit.name ?? "Untitled";
-  const getUrl = (hit: AlgoliaHit) => hit.url ?? "#";
 
   if (!searchClient) {
     return (
@@ -164,63 +153,25 @@ export default function AlgoliaSearch({
         role="search"
         aria-label={searchLabel}
       >
-        <div className="relative flex items-center">
-          <label className="sr-only" htmlFor="algolia-search-input">
-            {searchLabel}
-          </label>
-          <input
-            id="algolia-search-input"
-            className="w-full h-10 pl-3 pr-10 border border-border rounded-[var(--radius)] bg-background text-foreground text-sm leading-normal outline-none placeholder:text-muted-foreground transition-[border-color,box-shadow] duration-150 focus:border-ring focus:shadow-[0_0_0_2px_var(--ring)] motion-reduce:transition-none [&::-webkit-search-cancel-button]:appearance-none"
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={placeholder}
-            autoComplete="off"
-            spellCheck={false}
-          />
-          {isLoading && (
-            <span
-              className="absolute right-3 size-4 rounded-full border-2 border-muted border-t-primary animate-spin motion-reduce:animate-none motion-reduce:opacity-50"
-              aria-hidden="true"
-            />
-          )}
-        </div>
+        <SearchForm
+          query={query}
+          onChange={setQuery}
+          isLoading={isLoading}
+          placeholder={placeholder}
+          searchLabel={searchLabel}
+        />
 
         <div
           className="absolute top-full left-0 right-0 z-50 mt-1"
           aria-live="polite"
           aria-atomic="true"
         >
-          {hasSearched && hits.length === 0 && !isLoading && (
-            <p className="p-3 text-sm text-muted-foreground border border-border rounded-[var(--radius)] bg-card shadow-lg">
-              {noResultsMessage}
-            </p>
-          )}
-
-          {hits.length > 0 && (
-            <ul
-              className="list-none m-0 p-0 border border-border rounded-[var(--radius)] bg-card overflow-hidden divide-y divide-border shadow-lg"
-              role="list"
-            >
-              {hits.map((hit) => (
-                <li key={hit.objectID}>
-                  <Link
-                    href={getUrl(hit)}
-                    className="flex flex-col gap-0.5 px-4 py-3 no-underline text-inherit transition-colors duration-100 hover:bg-muted focus-visible:outline-2 focus-visible:outline-[var(--ring)] focus-visible:outline-offset-[-2px] motion-reduce:transition-none"
-                  >
-                    <span className="text-[0.9375rem] font-medium text-foreground">
-                      {getTitle(hit)}
-                    </span>
-                    {hit.description && (
-                      <span className="text-[0.8125rem] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
-                        {hit.description}
-                      </span>
-                    )}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+          <ResultsList
+            hits={hits}
+            hasSearched={hasSearched}
+            isLoading={isLoading}
+            noResultsMessage={noResultsMessage}
+          />
         </div>
       </section>
     </>
