@@ -8,6 +8,8 @@ import { config } from "@/config";
 
 export type { AlgoliaSearchProps, AlgoliaHit } from "./AlgoliaSearch.types";
 
+const FOCUSABLE = 'input, a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
 const { algoliaAppId, algoliaSearchApiKey } = config.envs;
 
 const searchClient =
@@ -27,10 +29,58 @@ export default function AlgoliaSearch({
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const previousFocusRef = useRef<HTMLElement | null>(null);
 
   const isActive = query.trim().length > 0;
 
-  // Escape key dismisses search — mirrors mobile menu behaviour
+  // Capture focus when search activates; restore it when it deactivates.
+  // This covers both Escape and backdrop-click dismissal paths.
+  useEffect(() => {
+    if (isActive) {
+      previousFocusRef.current = document.activeElement as HTMLElement | null;
+    } else if (previousFocusRef.current) {
+      previousFocusRef.current.focus();
+      previousFocusRef.current = null;
+    }
+  }, [isActive]);
+
+  // Focus trap: keep Tab / Shift+Tab cycling within the search section.
+  useEffect(() => {
+    if (!isActive) return;
+
+    const handleTab = (e: KeyboardEvent) => {
+      if (e.key !== "Tab" || !sectionRef.current) return;
+
+      const focusable = Array.from(
+        sectionRef.current.querySelectorAll<HTMLElement>(FOCUSABLE)
+      );
+      if (focusable.length === 0) return;
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      const active = document.activeElement;
+
+      if (e.shiftKey) {
+        // Shift+Tab from first (or outside) → wrap to last
+        if (active === first || !sectionRef.current.contains(active)) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        // Tab from last (or outside) → wrap to first
+        if (active === last || !sectionRef.current.contains(active)) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleTab);
+    return () => document.removeEventListener("keydown", handleTab);
+  }, [isActive]);
+
+  // Escape dismisses search (focus restoration is handled by the effect above).
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape" && query) {
@@ -41,6 +91,7 @@ export default function AlgoliaSearch({
     return () => document.removeEventListener("keydown", handleEscape);
   }, [query]);
 
+  // Debounced Algolia search
   useEffect(() => {
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
@@ -53,9 +104,7 @@ export default function AlgoliaSearch({
       return;
     }
 
-    if (!searchClient) {
-      return;
-    }
+    if (!searchClient) return;
 
     setIsLoading(true);
 
@@ -110,6 +159,7 @@ export default function AlgoliaSearch({
       )}
 
       <section
+        ref={sectionRef}
         className={`relative w-full max-w-[640px] ${isActive ? "z-50" : ""}`}
         role="search"
         aria-label={searchLabel}
@@ -136,7 +186,11 @@ export default function AlgoliaSearch({
           )}
         </div>
 
-        <div className="absolute top-full left-0 right-0 z-50 mt-1" aria-live="polite" aria-atomic="true">
+        <div
+          className="absolute top-full left-0 right-0 z-50 mt-1"
+          aria-live="polite"
+          aria-atomic="true"
+        >
           {hasSearched && hits.length === 0 && !isLoading && (
             <p className="p-3 text-sm text-muted-foreground border border-border rounded-[var(--radius)] bg-card shadow-lg">
               {noResultsMessage}
