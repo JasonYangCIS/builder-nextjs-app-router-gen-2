@@ -3,45 +3,25 @@ description: Next.js App Router routing conventions for Builder-connected pages
 globs: app/**/*.tsx,app/**/*.ts
 alwaysApply: false
 ---
-# Routing Conventions
+# Routing Rules
 
-Full route code patterns: `docs/skills/builder-io.md`
+Full route patterns: `docs/skills/builder-io.md`
 Full locale architecture: `docs/skills/localization.md`
 
 ## Critical Rules
-
-- All pages live under `app/[locale]/` — locale is always read from route params, never from headers
-- `app/[locale]/[...page]/page.tsx` does NOT match `/` — `app/[locale]/page.tsx` must separately implement Builder with `userAttributes: { urlPath: "/" }`
-- Always pass `locale` from params to `fetchOneEntry` and `RenderBuilderContent`
-- `getBuilderSearchParams` is only used in `app/preview/page.tsx` — never on production routes
-- Always set `export const revalidate = 5` on Builder-connected pages for near-real-time publish updates
-- Every `page.tsx` must export `metadata` or `generateMetadata` with at minimum `title` and `description`
-- Use `generateStaticParams` on all `[slug]` routes — return ALL supported locales × slugs
-- Internal links must use `buildLocalePath(locale, "/path")` to preserve the active locale
+- All pages under `app/[locale]/` — locale from route params, never headers
+- `[...page]` does NOT match `/` — `app/[locale]/page.tsx` must separately handle root with `urlPath: "/"`
+- Always pass `locale` to `fetchOneEntry` and `RenderBuilderContent`
+- `getBuilderSearchParams` only in `app/preview/page.tsx` — never on production routes
+- `export const revalidate = 5` on all Builder-connected pages
+- `generateStaticParams` on all `[slug]` routes — return ALL locales × slugs
+- Internal links: `buildLocalePath(locale, "/path")`
 
 ## Route Types
-
-| Route type | File | Builder fetch |
+| Route | File | Fetch |
 |---|---|---|
-| Catch-all (Builder pages) | `app/[locale]/[...page]/page.tsx` | `fetchOneEntry` with `userAttributes: { urlPath, locale }` |
-| Root route | `app/[locale]/page.tsx` | `fetchOneEntry` with `userAttributes: { urlPath: "/", locale }` |
-| List page | `app/[locale]/[model]/page.tsx` | `fetchEntries` |
-| Detail/slug page | `app/[locale]/[model]/[slug]/page.tsx` | `fetchOneEntry` with `query: { "data.slug": slug }` and `locale` |
-| Preview (all models) | `app/preview/page.tsx` | `fetchOneEntry` with `getBuilderSearchParams` + locale from query params |
-
-## Proxy Rules (`proxy.ts`)
-
-| URL pattern | Proxy action |
-|---|---|
-| `/about` (no locale prefix) | Rewrite → `/en-US/about` (invisible to browser) |
-| `/en-US/about` (default locale) | 301 redirect → `/about` (canonical URL enforcement) |
-| `/es-MX/about` (non-default locale) | Pass through |
-| `/preview`, `/test`, `/api` | Skip — no locale handling |
-
-## Three Blog Patterns
-
-| Pattern | Model type | Body source |
-|---|---|---|
-| Data model | Data | `data.content` HTML field → `BlogArticleBody` |
-| Section model | Section | Builder visual blocks → `<RenderBuilderContent>` |
-| Hybrid | Section + Data | Data bindings in template → `<RenderBuilderContent data={{ article }}>` |
+| Catch-all | `[locale]/[...page]/page.tsx` | `fetchOneEntry` + `userAttributes: { urlPath, locale }` |
+| Root | `[locale]/page.tsx` | `fetchOneEntry` + `userAttributes: { urlPath: "/", locale }` |
+| List | `[locale]/[model]/page.tsx` | `fetchEntries` |
+| Detail | `[locale]/[model]/[slug]/page.tsx` | `fetchOneEntry` + `query: { "data.slug": slug }` |
+| Preview | `preview/page.tsx` | `fetchOneEntry` + `getBuilderSearchParams` |

@@ -8,65 +8,21 @@ alwaysApply: false
 Full conventions and component reference: `docs/skills/design-system.md`
 
 ## Critical Rules
-
-- Import each shadcn component from its own file — **no barrel**:
-  `import { Button } from "@/components/ui/button"`
-  `import { Text } from "@/components/ui/text"`
-  `import { FormInput } from "@/components/ui/form-input"`
-- Never hardcode hex colors or raw zinc/slate shades for text — always use shadcn semantic tokens (`text-foreground`, `text-muted-foreground`, `text-primary`, `text-destructive`, etc.)
+- Import each shadcn component from its own file — **no barrel**
+- Never hardcode hex colors — always use shadcn semantic tokens (`text-foreground`, `text-muted-foreground`, etc.)
 - Use `cn()` from `@/utils/cn` for conditional Tailwind class composition
-- Focus rings on custom interactive elements must use: `focus-visible:ring-[3px] focus-visible:ring-ring/50`
+- Focus rings: `focus-visible:ring-[3px] focus-visible:ring-ring/50`
+- Before adding any color: verify contrast in both themes (default, dark)
 
 ## Variant Mappings (old → shadcn)
-
-**Button:** `primary→default`, `secondary→outline`, `ghost→ghost`, `destructive→destructive`
-- Use children for button text — there is no `label` prop on shadcn Button
-
-**Badge:** `neutral→secondary`, `primary→default`, `error→destructive`, `success/warning→secondary`
-- Use children for badge text — there is no `label` prop on shadcn Badge
-
-## Color Tokens
-
-shadcn/ui uses OKLCH CSS variables defined in `app/globals.css`. Two themes exist: `default`, `dark`.
-
-| Token | Tailwind | Use |
-|-------|----------|-----|
-| `--foreground` | `text-foreground` | Primary body text |
-| `--muted-foreground` | `text-muted-foreground` | De-emphasised text |
-| `--primary` | `text-primary` / `bg-primary` | Primary actions, CTAs |
-| `--primary-foreground` | `text-primary-foreground` | Text on primary bg |
-| `--destructive` | `text-destructive` / `bg-destructive` | Error/danger |
-| `--border` | `border-border` | Default borders |
-| `--muted` | `bg-muted` | Subtle backgrounds |
-| `--card` | `bg-card` | Card surfaces |
+**Button:** `primary→default`, `secondary→outline`, `ghost→ghost`, `destructive→destructive` — use children, no `label` prop
+**Badge:** `neutral→secondary`, `primary→default`, `error→destructive` — use children, no `label` prop
 
 ## Design Tokens (Builder Visual Editor)
-
-### Publish — Visual Editor token registration
-`components/builder/BuilderDesignTokens.ts` calls `register("editor.settings", { designTokens })`
-to surface shadcn semantic tokens in the Style tab (color pickers, background image fields).
-Imported as a side-effect in `builder-registry.ts`.
-
-To update a token: edit `BuilderDesignTokens.ts` — token values reference `var(--*)` from `app/globals.css`.
-
-### Fusion — DSI indexing
-`builder.config.json` + `styles/.builderrules` configure `index-repo` to catalog CSS variables
-from `app/globals.css` into Builder's Design System Intelligence.
-Run: `npx "@builder.io/dev-tools@latest" index-repo`
-
-### Gradient utilities (`styles/tokens.css`)
-
-| Class | Use |
-|-------|-----|
-| `gradient-brand` | Background: primary → accent blend. CTAs, active states |
-| `gradient-brand-subtle` | Light wash. Section backgrounds, card tints |
-| `gradient-brand-dark` | Dark tone. Hero sections, banners |
-| `gradient-mesh` | Multi-stop radial. Hero backgrounds |
-| `gradient-brand-text` | CSS gradient text. Headings, display type only |
+- `components/builder/BuilderDesignTokens.ts` registers shadcn tokens in Builder's Style tab — imported as side-effect in `builder-registry.ts`
+- `builder.config.json` + `styles/.builderrules` configure DSI indexing via `npx "@builder.io/dev-tools@latest" index-repo`
 
 ## Extending
-
-- **New shadcn component** → copy from ui.shadcn.com (new-york style) into `components/ui/my-component.tsx`, import `cn` from `@/utils/cn`, install any needed `@radix-ui/react-*` package
-- **Register in Builder** → create the four-file folder structure first (see `component-structure.mdc`), then add the `camelCaseConfig` export to `builder-registry.ts`; add showcase section to `app/design-system/page.tsx`
-- **New CSS variable** → add to the appropriate `[data-theme]` block in `app/globals.css`, then expose via `@theme inline`
-- **Before adding any color**: verify contrast with `text-foreground` background in both themes (default, dark)
+- **New shadcn component** → copy from ui.shadcn.com (new-york), `components/ui/`, install `@radix-ui/react-*` if needed
+- **Register in Builder** → four-file folder first (see `component-structure.mdc`), then `builder-registry.ts`
+- **New CSS variable** → add to `[data-theme]` block in `app/globals.css`, expose via `@theme inline`

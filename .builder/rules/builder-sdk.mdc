@@ -7,24 +7,19 @@ alwaysApply: false
 
 Full patterns and gotchas: `docs/skills/builder-io.md`
 
-Critical rules (also in `.builderrules`) — never skip these:
+## Critical Rules
 - `RenderBuilderContent` not `<Content>`, `config.models.*` not string literals, `notFound()` guard, DOMPurify on HTML fields
 
 ## Adding a New Model
-
 1. Add name to `config.ts` → `models: { myModel: "my-model" }`
 2. Create `types/mymodel.types.ts` — use `string | null` for optional fields
-3. Create route — see `docs/skills/builder-io.md` for the correct fetch pattern per route type
-4. If using custom components: create the four-file folder structure first (see `component-structure.mdc`), then add to `builder-registry.ts`
+3. Create route — see `docs/skills/builder-io.md` for the correct fetch pattern
+4. If using custom components: four-file folder first (see `component-structure.mdc`), then add to `builder-registry.ts`
 
 ## subscribeToEditor guard — always required
-
 Without this guard, editing any model triggers "Model Name Mismatch Detected":
-
 ```ts
 if (!isPreviewing()) return;
-const params = new URLSearchParams(window.location.search);
-const previewModel = params.get("builder.preview");
+const previewModel = new URLSearchParams(window.location.search).get("builder.preview");
 if (previewModel && previewModel !== config.models.myModel) return;
-const unsubscribe = subscribeToEditor({ model, apiKey, callback });
 ```

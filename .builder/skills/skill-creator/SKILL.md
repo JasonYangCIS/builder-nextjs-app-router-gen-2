@@ -19,7 +19,7 @@ Help the user through one of these workflows:
 
 1. **Create a new skill** — capture intent, scaffold the directory, write the SKILL.md
 2. **Improve an existing skill** — read it, diagnose issues, rewrite
-3. **Choose the right tool** — help decide between a skill, AGENTS.md, or .builderrules
+3. **Choose the right tool** — help decide between a skill, CLAUDE.md, or .builderrules
 
 ## Creating a New Skill
 
@@ -40,11 +40,11 @@ Before creating a skill, confirm it's the right choice:
 |---------------|----------|-----|
 | Any reusable AI instruction or workflow | **Skill** (`.builder/skills/<name>/SKILL.md`) | Loads only when needed — keeps context lean. Supports bundled files, scripts, and progressive disclosure. |
 | Background knowledge + supporting files | **Skill** | Reference docs and scripts alongside instructions, loaded on demand |
-| Instructions the AI should always have | `AGENTS.md` | Loaded into context like a system prompt. Good for essential project-wide conventions. |
+| Instructions the AI should always have | `CLAUDE.md` | Loaded into context like a system prompt. Good for essential project-wide conventions. |
 | Quick directory-scoped rules | `.builderrules` or `.builder/rules/*.mdc` | Lightweight rules scoped to a specific directory |
 | Style rules a linter can enforce | Linter config (ESLint, Prettier, etc.) | Don't burn AI context on mechanical checks |
 
-**Skills are the recommended default.** Unlike AGENTS.md which is always loaded into the AI's context, skills only load when relevant. This means you can have many skills without bloating the context window. Reserve AGENTS.md for the small set of instructions the AI truly needs in every conversation.
+**Skills are the recommended default.** Unlike CLAUDE.md which is always loaded into the AI's context, skills only load when relevant. This means you can have many skills without bloating the context window. Reserve CLAUDE.md for the small set of instructions the AI truly needs in every conversation.
 
 ### Step 3: Scaffold the Skill
 

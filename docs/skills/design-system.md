@@ -249,6 +249,122 @@ import Autoplay from "embla-carousel-autoplay"
 
 ---
 
+## Feature Components
+
+These components combine shadcn primitives with project-specific logic. They follow the four-file folder pattern (see `.builder/rules/component-structure.mdc`).
+
+### BuilderCarousel
+
+Wraps shadcn Carousel (Embla) for use in the Builder.io visual editor. Handles Builder's child-wrapping behavior and exposes flat props instead of the composition API.
+
+```ts
+import { BuilderCarousel } from "@/components/builder/BuilderCarousel"
+```
+
+```tsx
+<BuilderCarousel loop autoplay autoplayDelay={3000} slidesPerView={3} navigation>
+  <div>Slide 1</div>
+  <div>Slide 2</div>
+</BuilderCarousel>
+```
+
+| Prop | Type | Default | Notes |
+|------|------|---------|-------|
+| `orientation` | `"horizontal" \| "vertical"` | `"horizontal"` | |
+| `loop` | `boolean` | `false` | |
+| `autoplay` | `boolean` | `false` | Uses `embla-carousel-autoplay` plugin |
+| `autoplayDelay` | `number` | `3000` | Milliseconds |
+| `pauseOnHover` | `boolean` | `true` | |
+| `navigation` | `boolean` | `true` | Prev/next buttons; hidden if only 1 slide |
+| `align` | `"start" \| "center" \| "end"` | `"start"` | |
+| `slidesPerView` | `number` | `1` | Max 4; generates `basis-1/N` class |
+| `minHeight` | `number` | — | Inline style in px |
+
+**When to use:** Builder.io pages where editors need a flat-prop carousel. For code-authored pages, prefer the shadcn `<Carousel>` composition API directly.
+
+**Gotchas:**
+- Unwraps nested children (Builder wraps slides in a single div)
+- `slidesPerView > 4` falls back to `basis-full`
+- `autoplay` with `stopOnInteraction: false` — carousel keeps rotating even after user clicks prev/next
+
+---
+
+### AnnouncementBar
+
+Dismissible site-wide banner with optional countdown timer. Registered as a Builder section component.
+
+```ts
+import AnnouncementBar from "@/components/AnnouncementBar/AnnouncementBar"
+```
+
+| Prop | Type | Default | Notes |
+|------|------|---------|-------|
+| `message` | `string \| null` | — | Main announcement text |
+| `ctaLabel` | `string \| null` | — | Button text |
+| `ctaUrl` | `string \| null` | — | Sanitized: rejects `javascript:` and `//` URLs |
+| `backgroundColor` | `string \| null` | — | Inline style override |
+| `textColor` | `string \| null` | — | Inline style override |
+| `countdownEnabled` | `boolean \| null` | `false` | Shows live countdown timer |
+| `countdownTargetDate` | `string \| null` | — | ISO 8601 date string |
+| `countdownLabel` | `string \| null` | — | Label before the countdown |
+| `dismissKey` | `string \| null` | — | localStorage key; required for dismiss persistence |
+
+**Key behavior:**
+- Client component; dismiss state persists in `localStorage` via `dismissKey`
+- Uses `useIsomorphicLayoutEffect` to prevent "flash of dismissed bar" without CLS
+- Countdown updates every 1 second; adapts format (days vs HH:MM:SS)
+- External CTA links get `rel="noopener noreferrer"` + `target="_blank"`
+
+**Gotchas:**
+- `dismissKey` is required for persistence; without it dismissal resets on reload
+- Countdown is empty on initial SSR — starts after hydration
+
+---
+
+### LocaleSwitch
+
+Dropdown locale switcher. Used in the Header; not Builder-registered.
+
+```ts
+import LocaleSwitch from "@/components/LocaleSwitch/LocaleSwitch"
+```
+
+| Prop | Type | Notes |
+|------|------|-------|
+| `locales` | `{ code: string; label: string }[]` | From `config.locales.supported` |
+
+**Key behavior:**
+- Derives active locale from `usePathname()` via `getLocaleFromPath()`
+- On production routes: `router.push()` to locale-prefixed path
+- On preview routes: updates `builder.options.locale` query param
+- Accessible: `role="listbox"`, `aria-expanded`, keyboard close (Escape), click-outside close
+
+---
+
+### CloudinaryImage
+
+Next.js Image wrapper for Cloudinary assets. Registered in Builder with `cloudinaryImageEditor` input type.
+
+```ts
+import CloudinaryImage from "@/components/CloudinaryImage/CloudinaryImage"
+```
+
+| Prop | Type | Default | Notes |
+|------|------|---------|-------|
+| `cloudinaryOptions` | `CloudinaryImageData \| null` | — | `{ url, secure_url, width, height }` from Cloudinary plugin |
+| `alt` | `string \| null` | — | Image alt text |
+| `caption` | `string \| null` | — | Renders `<figcaption>` |
+| `linkUrl` | `string \| null` | — | Wraps image in a link; sanitized via `sanitizeHref()` |
+| `priority` | `boolean \| null` | `false` | LCP optimization — above-the-fold only |
+| `objectFit` | `"cover" \| "contain" \| null` | `"cover"` | |
+| `rounded` | `boolean \| null` | `false` | Applies `var(--radius)` |
+
+**Key behavior:** Uses `secure_url` (https) over `url` (http). Renders `<figure>` + `<figcaption>`. Shows gradient placeholder if no image. `aria-hidden="true"` when both `alt` and `caption` are empty.
+
+**Gotchas:** `next/image` logs 404 warnings if Cloudinary URL is unreachable, but the placeholder still renders.
+
+---
+
 ## Adding a New shadcn Component
 
 If you need a shadcn component that isn't in `components/ui/` yet:
