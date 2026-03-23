@@ -5,11 +5,8 @@ export interface SearchFormProps {
   onChange: (value: string) => void;
   onFocus: (e: FocusEvent<HTMLInputElement>) => void;
   isLoading: boolean;
-  isExpanded: boolean;
   placeholder: string;
   searchLabel: string;
-  /** Unique id for the input element — generated via useId() in the parent */
+  /** Unique id for the input — generated via useId() in the parent, links the label */
   inputId: string;
-  /** Unique id for the results listbox — generated via useId() in the parent */
-  resultsId: string;
 }

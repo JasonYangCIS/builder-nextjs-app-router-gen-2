@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useId, useCallback } from "react";
+import { usePathname } from "next/navigation";
 import { algoliasearch } from "algoliasearch";
 import { config } from "@/config";
 import SearchForm from "@/components/Algolia/SearchForm/SearchForm";
@@ -35,14 +36,23 @@ export default function AlgoliaSearch({
   const sectionRef = useRef<HTMLElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  // Unique IDs per instance — fixes WCAG 4.1.1 duplicate-id violation when
-  // multiple AlgoliaSearch components are on the same page (e.g. design system).
+  // Unique id per instance — fixes WCAG 4.1.1 duplicate-id when multiple
+  // AlgoliaSearch components are on the same page (e.g. design system).
   const uid = useId();
   const inputId = `algolia-search-${uid}`;
-  const resultsId = `algolia-results-${uid}`;
 
   const isActive = query.trim().length > 0;
-  const isExpanded = isActive && (hits.length > 0 || (hasSearched && !isLoading));
+
+  // Reset search when the user navigates to a new page via a result link.
+  // Without this the backdrop and focus trap persist across client-side navigations.
+  const pathname = usePathname();
+  const prevPathnameRef = useRef(pathname);
+  useEffect(() => {
+    if (pathname !== prevPathnameRef.current) {
+      prevPathnameRef.current = pathname;
+      setQuery("");
+    }
+  }, [pathname]);
 
   // Capture the pre-search focused element via relatedTarget on the input's focus event.
   // Using onFocus (not useEffect) avoids a race where document.activeElement is already
@@ -53,7 +63,7 @@ export default function AlgoliaSearch({
     }
   }, []);
 
-  // Restore focus when search deactivates (Escape or backdrop click).
+  // Restore focus when search deactivates (Escape, backdrop click, or navigation).
   useEffect(() => {
     if (!isActive && previousFocusRef.current) {
       previousFocusRef.current.focus();
@@ -180,11 +190,9 @@ export default function AlgoliaSearch({
           onChange={setQuery}
           onFocus={handleInputFocus}
           isLoading={isLoading}
-          isExpanded={isExpanded}
           placeholder={placeholder}
           searchLabel={searchLabel}
           inputId={inputId}
-          resultsId={resultsId}
         />
 
         <div
@@ -192,7 +200,6 @@ export default function AlgoliaSearch({
           aria-live="polite"
         >
           <ResultsList
-            id={resultsId}
             hits={hits}
             hasSearched={hasSearched}
             isLoading={isLoading}

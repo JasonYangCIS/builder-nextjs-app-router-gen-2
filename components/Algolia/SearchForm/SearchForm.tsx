@@ -7,11 +7,9 @@ export default function SearchForm({
   onChange,
   onFocus,
   isLoading,
-  isExpanded,
   placeholder,
   searchLabel,
   inputId,
-  resultsId,
 }: SearchFormProps) {
   return (
     <div className="relative flex items-center">
@@ -20,11 +18,6 @@ export default function SearchForm({
       </label>
       <input
         id={inputId}
-        role="combobox"
-        aria-expanded={isExpanded}
-        aria-haspopup="listbox"
-        aria-controls={resultsId}
-        aria-autocomplete="list"
         className="w-full h-10 pl-3 pr-10 border border-border rounded-[var(--radius)] bg-background text-foreground text-sm leading-normal outline-none placeholder:text-muted-foreground transition-[border-color,box-shadow] duration-150 focus:border-ring focus:shadow-[0_0_0_2px_var(--ring)] motion-reduce:transition-none [&::-webkit-search-cancel-button]:appearance-none"
         type="search"
         value={query}

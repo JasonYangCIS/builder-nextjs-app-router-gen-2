@@ -8,25 +8,18 @@ function getTitle(hit: AlgoliaHit): string {
 }
 
 /**
- * Validates hit.url from Algolia — external data that must not be trusted.
- * Only relative paths (/) and absolute http(s) URLs are allowed.
- * Everything else (javascript:, data:, attacker-controlled) falls back to "#".
+ * Only relative paths (starting with /) are allowed.
+ * This component is used for site-internal search (Builder page entries),
+ * where all URLs are relative. Allowing absolute URLs is unnecessary risk
+ * — a compromised Algolia index could redirect users to phishing domains.
  */
 function sanitizeUrl(hit: AlgoliaHit): string {
   const url = hit.url;
-  if (!url || typeof url !== "string") return "#";
-  if (url.startsWith("/")) return url;
-  try {
-    const { protocol } = new URL(url);
-    if (protocol === "http:" || protocol === "https:") return url;
-  } catch {
-    // malformed URL — fall through to safe default
-  }
+  if (typeof url === "string" && url.startsWith("/")) return url;
   return "#";
 }
 
 export default function ResultsList({
-  id,
   hits,
   hasSearched,
   isLoading,
@@ -48,13 +41,9 @@ export default function ResultsList({
   if (hits.length === 0) return null;
 
   return (
-    <ul
-      id={id}
-      role="listbox"
-      className="list-none m-0 p-0 border border-border rounded-[var(--radius)] bg-card overflow-hidden divide-y divide-border shadow-lg"
-    >
+    <ul className="list-none m-0 p-0 border border-border rounded-[var(--radius)] bg-card overflow-hidden divide-y divide-border shadow-lg">
       {hits.map((hit) => (
-        <li key={hit.objectID} role="option" aria-selected="false">
+        <li key={hit.objectID}>
           <Link
             href={sanitizeUrl(hit)}
             className="flex flex-col gap-0.5 px-4 py-3 no-underline text-inherit transition-colors duration-100 hover:bg-muted focus-visible:outline-2 focus-visible:outline-[var(--ring)] focus-visible:outline-offset-[-2px] motion-reduce:transition-none"
