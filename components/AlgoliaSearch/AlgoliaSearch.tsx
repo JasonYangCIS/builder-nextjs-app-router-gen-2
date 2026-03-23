@@ -86,7 +86,7 @@ export default function AlgoliaSearch({
   }
 
   return (
-    <section className="w-full max-w-[640px]" role="search" aria-label={searchLabel}>
+    <section className="relative w-full max-w-[640px]" role="search" aria-label={searchLabel}>
       <div className="relative flex items-center">
         <label className="sr-only" htmlFor="algolia-search-input">
           {searchLabel}
@@ -109,14 +109,14 @@ export default function AlgoliaSearch({
         )}
       </div>
 
-      <div className="mt-2" aria-live="polite" aria-atomic="true">
+      <div className="absolute top-full left-0 right-0 z-50 mt-1" aria-live="polite" aria-atomic="true">
         {hasSearched && hits.length === 0 && !isLoading && (
           <p className="p-3 text-sm text-muted-foreground">{noResultsMessage}</p>
         )}
 
         {hits.length > 0 && (
           <ul
-            className="list-none m-0 p-0 border border-border rounded-[var(--radius)] bg-card overflow-hidden divide-y divide-border"
+            className="list-none m-0 p-0 border border-border rounded-[var(--radius)] bg-card overflow-hidden divide-y divide-border shadow-lg"
             role="list"
           >
             {hits.map((hit) => (
