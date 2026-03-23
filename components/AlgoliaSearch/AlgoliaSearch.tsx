@@ -28,6 +28,19 @@ export default function AlgoliaSearch({
   const [hasSearched, setHasSearched] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const isActive = query.trim().length > 0;
+
+  // Escape key dismisses search — mirrors mobile menu behaviour
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && query) {
+        setQuery("");
+      }
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [query]);
+
   useEffect(() => {
     if (debounceRef.current) {
       clearTimeout(debounceRef.current);
@@ -86,59 +99,76 @@ export default function AlgoliaSearch({
   }
 
   return (
-    <section className="relative w-full max-w-[640px]" role="search" aria-label={searchLabel}>
-      <div className="relative flex items-center">
-        <label className="sr-only" htmlFor="algolia-search-input">
-          {searchLabel}
-        </label>
-        <input
-          id="algolia-search-input"
-          className="w-full h-10 pl-3 pr-10 border border-border rounded-[var(--radius)] bg-background text-foreground text-sm leading-normal outline-none placeholder:text-muted-foreground transition-[border-color,box-shadow] duration-150 focus:border-ring focus:shadow-[0_0_0_2px_var(--ring)] motion-reduce:transition-none [&::-webkit-search-cancel-button]:appearance-none"
-          type="search"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder={placeholder}
-          autoComplete="off"
-          spellCheck={false}
+    <>
+      {/* Backdrop — same pattern as mobile nav overlay */}
+      {isActive && (
+        <div
+          className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px] transition-opacity duration-300 motion-reduce:transition-none"
+          onClick={() => setQuery("")}
+          aria-hidden="true"
         />
-        {isLoading && (
-          <span
-            className="absolute right-3 size-4 rounded-full border-2 border-muted border-t-primary animate-spin motion-reduce:animate-none motion-reduce:opacity-50"
-            aria-hidden="true"
+      )}
+
+      <section
+        className={`relative w-full max-w-[640px] ${isActive ? "z-50" : ""}`}
+        role="search"
+        aria-label={searchLabel}
+      >
+        <div className="relative flex items-center">
+          <label className="sr-only" htmlFor="algolia-search-input">
+            {searchLabel}
+          </label>
+          <input
+            id="algolia-search-input"
+            className="w-full h-10 pl-3 pr-10 border border-border rounded-[var(--radius)] bg-background text-foreground text-sm leading-normal outline-none placeholder:text-muted-foreground transition-[border-color,box-shadow] duration-150 focus:border-ring focus:shadow-[0_0_0_2px_var(--ring)] motion-reduce:transition-none [&::-webkit-search-cancel-button]:appearance-none"
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={placeholder}
+            autoComplete="off"
+            spellCheck={false}
           />
-        )}
-      </div>
+          {isLoading && (
+            <span
+              className="absolute right-3 size-4 rounded-full border-2 border-muted border-t-primary animate-spin motion-reduce:animate-none motion-reduce:opacity-50"
+              aria-hidden="true"
+            />
+          )}
+        </div>
 
-      <div className="absolute top-full left-0 right-0 z-50 mt-1" aria-live="polite" aria-atomic="true">
-        {hasSearched && hits.length === 0 && !isLoading && (
-          <p className="p-3 text-sm text-muted-foreground border border-border rounded-[var(--radius)] bg-card shadow-lg">{noResultsMessage}</p>
-        )}
+        <div className="absolute top-full left-0 right-0 z-50 mt-1" aria-live="polite" aria-atomic="true">
+          {hasSearched && hits.length === 0 && !isLoading && (
+            <p className="p-3 text-sm text-muted-foreground border border-border rounded-[var(--radius)] bg-card shadow-lg">
+              {noResultsMessage}
+            </p>
+          )}
 
-        {hits.length > 0 && (
-          <ul
-            className="list-none m-0 p-0 border border-border rounded-[var(--radius)] bg-card overflow-hidden divide-y divide-border shadow-lg"
-            role="list"
-          >
-            {hits.map((hit) => (
-              <li key={hit.objectID}>
-                <Link
-                  href={getUrl(hit)}
-                  className="flex flex-col gap-0.5 px-4 py-3 no-underline text-inherit transition-colors duration-100 hover:bg-muted focus-visible:outline-2 focus-visible:outline-[var(--ring)] focus-visible:outline-offset-[-2px] motion-reduce:transition-none"
-                >
-                  <span className="text-[0.9375rem] font-medium text-foreground">
-                    {getTitle(hit)}
-                  </span>
-                  {hit.description && (
-                    <span className="text-[0.8125rem] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
-                      {hit.description}
+          {hits.length > 0 && (
+            <ul
+              className="list-none m-0 p-0 border border-border rounded-[var(--radius)] bg-card overflow-hidden divide-y divide-border shadow-lg"
+              role="list"
+            >
+              {hits.map((hit) => (
+                <li key={hit.objectID}>
+                  <Link
+                    href={getUrl(hit)}
+                    className="flex flex-col gap-0.5 px-4 py-3 no-underline text-inherit transition-colors duration-100 hover:bg-muted focus-visible:outline-2 focus-visible:outline-[var(--ring)] focus-visible:outline-offset-[-2px] motion-reduce:transition-none"
+                  >
+                    <span className="text-[0.9375rem] font-medium text-foreground">
+                      {getTitle(hit)}
                     </span>
-                  )}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </section>
+                    {hit.description && (
+                      <span className="text-[0.8125rem] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
+                        {hit.description}
+                      </span>
+                    )}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </section>
+    </>
   );
 }
