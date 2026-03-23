@@ -1,7 +1,11 @@
 export const config = {
   envs: {
     // Builder Public API Key set in .env file
-    builderApiKey: process.env.NEXT_PUBLIC_BUILDER_API_KEY!
+    builderApiKey: process.env.NEXT_PUBLIC_BUILDER_API_KEY!,
+    // Algolia credentials set in .env.local
+    algoliaAppId: process.env.NEXT_PUBLIC_ALGOLIA_APP_ID ?? "",
+    algoliaSearchApiKey: process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY ?? "",
+    algoliaIndexName: process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME ?? "builder-page",
   },
   models: {
     page: "page",

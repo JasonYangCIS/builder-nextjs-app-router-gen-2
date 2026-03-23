@@ -6,18 +6,20 @@ import { algoliasearch } from "algoliasearch";
 import type { AlgoliaSearchProps, AlgoliaHit } from "./AlgoliaSearch.types";
 import styles from "./AlgoliaSearch.module.scss";
 import { cn } from "@/utils/cn";
+import { config } from "@/config";
 
 export type { AlgoliaSearchProps, AlgoliaHit } from "./AlgoliaSearch.types";
 
-const appId = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID ?? "";
-const searchApiKey = process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY ?? "";
+const { algoliaAppId, algoliaSearchApiKey } = config.envs;
 
 const searchClient =
-  appId && searchApiKey ? algoliasearch(appId, searchApiKey) : null;
+  algoliaAppId && algoliaSearchApiKey
+    ? algoliasearch(algoliaAppId, algoliaSearchApiKey)
+    : null;
 
 export default function AlgoliaSearch({
   placeholder = "Search pages…",
-  indexName = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME ?? "builder-page",
+  indexName = config.envs.algoliaIndexName,
   maxResults = 6,
   noResultsMessage = "No results found.",
   searchLabel = "Search",

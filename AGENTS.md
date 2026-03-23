@@ -28,7 +28,7 @@ NEXT_PUBLIC_BUILDER_API_KEY=your_key_here
 
 | File | Purpose |
 |------|---------|
-| `config.ts` | All Builder model names, API key, locale config — never hardcode elsewhere |
+| `config.ts` | All Builder model names, API keys, env vars, locale config — never hardcode or read `process.env` elsewhere |
 | `builder-registry.ts` | Custom component registration for Builder visual editor |
 | `components/builder/RenderBuilderContent.tsx` | Always use this wrapper, never `<Content>` directly |
 | `components/ui/` | shadcn/ui components (new-york style) — Button, Badge, Input, Label, Card, Carousel, Text, FormInput |
@@ -158,6 +158,7 @@ After scaffolding a net-new component, check each item below and update if appli
 ## Conventions
 
 - **Path alias:** `@/` maps to repo root — always use it for internal imports
+- **Environment variables:** Never read `process.env.*` directly in components or utilities. Always add the variable to `config.envs` in `config.ts` first, then import `config` where needed. This keeps all env access in one place and makes it easy to audit.
 - **Model names:** Read from `config.ts`, never as string literals
 - **shadcn components:** Import from each component's own file — `import { Button } from "@/components/ui/button"`. No barrel.
 - **Typography:** Use `Text` from `@/components/ui/text` — same variant/color API as the old Typography component
