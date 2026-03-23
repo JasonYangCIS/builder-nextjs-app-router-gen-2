@@ -4,8 +4,6 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { algoliasearch } from "algoliasearch";
 import type { AlgoliaSearchProps, AlgoliaHit } from "./AlgoliaSearch.types";
-import styles from "./AlgoliaSearch.module.scss";
-import { cn } from "@/utils/cn";
 import { config } from "@/config";
 
 export type { AlgoliaSearchProps, AlgoliaHit } from "./AlgoliaSearch.types";
@@ -76,7 +74,10 @@ export default function AlgoliaSearch({
 
   if (!searchClient) {
     return (
-      <div className={styles.missingConfig} role="alert">
+      <div
+        className="px-4 py-3 border border-border rounded-[var(--radius)] bg-muted text-muted-foreground text-sm [&_code]:font-mono [&_code]:bg-background [&_code]:px-1 [&_code]:rounded"
+        role="alert"
+      >
         Algolia is not configured. Set{" "}
         <code>NEXT_PUBLIC_ALGOLIA_APP_ID</code> and{" "}
         <code>NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY</code>.
@@ -85,18 +86,14 @@ export default function AlgoliaSearch({
   }
 
   return (
-    <section
-      className={styles.searchSection}
-      role="search"
-      aria-label={searchLabel}
-    >
-      <div className={styles.inputWrapper}>
-        <label className={styles.srOnly} htmlFor="algolia-search-input">
+    <section className="w-full max-w-[640px]" role="search" aria-label={searchLabel}>
+      <div className="relative flex items-center">
+        <label className="sr-only" htmlFor="algolia-search-input">
           {searchLabel}
         </label>
         <input
           id="algolia-search-input"
-          className={styles.searchInput}
+          className="w-full h-10 pl-3 pr-10 border border-border rounded-[var(--radius)] bg-background text-foreground text-sm leading-normal outline-none placeholder:text-muted-foreground transition-[border-color,box-shadow] duration-150 focus:border-ring focus:shadow-[0_0_0_2px_var(--ring)] motion-reduce:transition-none [&::-webkit-search-cancel-button]:appearance-none"
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
@@ -105,29 +102,34 @@ export default function AlgoliaSearch({
           spellCheck={false}
         />
         {isLoading && (
-          <span className={styles.loadingSpinner} aria-hidden="true" />
+          <span
+            className="absolute right-3 size-4 rounded-full border-2 border-muted border-t-primary animate-spin motion-reduce:animate-none motion-reduce:opacity-50"
+            aria-hidden="true"
+          />
         )}
       </div>
 
-      <div
-        className={styles.resultsRegion}
-        aria-live="polite"
-        aria-atomic="true"
-      >
+      <div className="mt-2" aria-live="polite" aria-atomic="true">
         {hasSearched && hits.length === 0 && !isLoading && (
-          <p className={styles.noResults}>{noResultsMessage}</p>
+          <p className="p-3 text-sm text-muted-foreground">{noResultsMessage}</p>
         )}
 
         {hits.length > 0 && (
-          <ul className={styles.resultsList} role="list">
+          <ul
+            className="list-none m-0 p-0 border border-border rounded-[var(--radius)] bg-card overflow-hidden divide-y divide-border"
+            role="list"
+          >
             {hits.map((hit) => (
-              <li key={hit.objectID} className={styles.resultItem}>
-                <Link href={getUrl(hit)} className={styles.resultLink}>
-                  <span className={cn(styles.resultTitle)}>
+              <li key={hit.objectID}>
+                <Link
+                  href={getUrl(hit)}
+                  className="flex flex-col gap-0.5 px-4 py-3 no-underline text-inherit transition-colors duration-100 hover:bg-muted focus-visible:outline-2 focus-visible:outline-[var(--ring)] focus-visible:outline-offset-[-2px] motion-reduce:transition-none"
+                >
+                  <span className="text-[0.9375rem] font-medium text-foreground">
                     {getTitle(hit)}
                   </span>
                   {hit.description && (
-                    <span className={styles.resultDescription}>
+                    <span className="text-[0.8125rem] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
                       {hit.description}
                     </span>
                   )}
