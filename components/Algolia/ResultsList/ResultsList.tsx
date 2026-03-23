@@ -5,12 +5,33 @@ import type { ResultsListProps, AlgoliaHit } from "./ResultsList.types";
 
 export type { ResultsListProps } from "./ResultsList.types";
 
+/** Safely resolves a Builder data field that may be a plain string or a
+ *  localized object like `{ Default: "value", "@type": "..." }`. */
+function resolveField(value: unknown): string | undefined {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object" && "Default" in value) {
+    const def = (value as Record<string, unknown>).Default;
+    if (typeof def === "string") return def;
+  }
+  return undefined;
+}
+
 function getTitle(hit: AlgoliaHit): string {
-  return hit.title ?? hit.name ?? "Untitled";
+  return resolveField(hit.data?.title) ?? resolveField(hit.title) ?? hit.name ?? "Untitled";
+}
+
+function getDescription(hit: AlgoliaHit): string | undefined {
+  return resolveField(hit.data?.description) ?? resolveField(hit.description);
+}
+
+/** Extracts the URL path from the hit's query array (urlPath targeting rule) or flat url field. */
+function getUrlFromHit(hit: AlgoliaHit): string {
+  const urlPathEntry = hit.query?.find((q) => q.property === "urlPath");
+  return urlPathEntry?.value ?? hit.url ?? "";
 }
 
 function getHref(hit: AlgoliaHit, locale: string): string {
-  const safe = sanitizeHref(hit.url ?? "");
+  const safe = sanitizeHref(getUrlFromHit(hit));
   if (!safe) return "#";
   return buildLocalePath(locale, safe);
 }
@@ -50,9 +71,9 @@ export default function ResultsList({
             <span className="text-[0.9375rem] font-medium text-foreground">
               {getTitle(hit)}
             </span>
-            {hit.description && (
+            {getDescription(hit) && (
               <span className="text-[0.8125rem] text-muted-foreground whitespace-nowrap overflow-hidden text-ellipsis">
-                {hit.description}
+                {getDescription(hit)}
               </span>
             )}
           </Link>

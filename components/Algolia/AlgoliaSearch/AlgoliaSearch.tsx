@@ -223,7 +223,14 @@ export default function AlgoliaSearch({
             isLoading={isLoading}
             noResultsMessage={noResultsMessage}
             locale={locale}
-            onResultClick={() => setQuery("")}
+            onResultClick={() => {
+              // Defer clearing so the Link's startTransition-based navigation
+              // isn't interrupted by an urgent state update that unmounts the
+              // results list. For cross-page navigations the pathname watcher
+              // (useEffect on pathname) handles cleanup; this covers same-page
+              // hash navigations where pathname stays the same.
+              requestAnimationFrame(() => setQuery(""));
+            }}
           />
         </div>
       </section>

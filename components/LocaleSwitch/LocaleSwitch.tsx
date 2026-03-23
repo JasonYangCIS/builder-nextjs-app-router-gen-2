@@ -66,19 +66,17 @@ export function LocaleSwitch({ locales }: LocaleSwitchProps) {
     router.push(qs ? `${newPath}?${qs}` : newPath);
   };
 
-  const currentLabel = locales.find((l) => l.code === currentLocale)?.label ?? currentLocale;
-
   return (
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen((prev) => !prev)}
-        className={styles.localeButton}
+        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-md border border-border bg-card text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
         aria-label="Select language"
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
         <svg
-          className={styles.globeIcon}
+          className="h-4 w-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -90,16 +88,6 @@ export function LocaleSwitch({ locales }: LocaleSwitchProps) {
             strokeWidth={2}
             d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0c-3 0-5-4-5-9s2-9 5-9m0 18c3 0 5-4 5-9s-2-9-5-9M3 12h18"
           />
-        </svg>
-        <span>{currentLabel}</span>
-        <svg
-          className={`${styles.chevron}${isOpen ? ` ${styles.open}` : ""}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-          aria-hidden="true"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
       </button>
 

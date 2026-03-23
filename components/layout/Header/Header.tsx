@@ -5,6 +5,7 @@ import { config } from "@/config";
 import { buildLocalePath } from "@/utils/locale";
 import { NavItems } from "./NavItems";
 import { ThemeSwitch } from "./ThemeSwitch";
+import { SearchButton } from "./SearchButton";
 import { LocaleSwitch } from "@/components/LocaleSwitch/LocaleSwitch";
 
 export const Header = async ({ locale }: { locale?: string }) => {
@@ -44,11 +45,13 @@ export const Header = async ({ locale }: { locale?: string }) => {
             <Suspense fallback={null}>
               <LocaleSwitch locales={config.locales.supported} />
             </Suspense>
+            <SearchButton />
             <ThemeSwitch />
           </div>
 
-          {/* Mobile hamburger menu */}
-          <div className="md:hidden">
+          {/* Mobile: search + hamburger */}
+          <div className="flex items-center gap-2 md:hidden">
+            <SearchButton />
             <NavItems entries={navMenuEntries} onlyMobileMenu />
           </div>
         </div>

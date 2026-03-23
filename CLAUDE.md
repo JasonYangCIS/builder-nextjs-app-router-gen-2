@@ -56,8 +56,9 @@ components/
   blog/                        # Blog-specific components
   builder/                     # RenderBuilderContent wrapper + BuilderCarousel
   ui/                          # shadcn/ui primitives (Button, Badge, Input, Card, Carousel, Text, FormInput)
-  layout/                      # Header (RSC + NavItems client), Footer
-  LocaleSwitch/                # Locale switcher dropdown (client component)
+  Algolia/                     # AlgoliaSearch, SearchForm, ResultsList (Algolia integration)
+  layout/                      # Header (RSC + NavItems, SearchButton, ThemeSwitch client), Footer
+  LocaleSwitch/                # Locale switcher icon button + dropdown (client component)
   CloudinaryImage/             # Cloudinary image component (cloudinaryImageEditor plugin)
   HeroSplit/                   # Canonical four-file component pattern
   AnnouncementBar/             # Dismissable site-wide bar with optional countdown timer
