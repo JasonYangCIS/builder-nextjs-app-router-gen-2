@@ -111,7 +111,7 @@ export default function AlgoliaSearch({
 
       <div className="absolute top-full left-0 right-0 z-50 mt-1" aria-live="polite" aria-atomic="true">
         {hasSearched && hits.length === 0 && !isLoading && (
-          <p className="p-3 text-sm text-muted-foreground">{noResultsMessage}</p>
+          <p className="p-3 text-sm text-muted-foreground border border-border rounded-[var(--radius)] bg-card shadow-lg">{noResultsMessage}</p>
         )}
 
         {hits.length > 0 && (
