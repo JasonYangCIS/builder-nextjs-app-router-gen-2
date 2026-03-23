@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useId, useCallback } from "react";
 import { algoliasearch } from "algoliasearch";
 import { config } from "@/config";
 import SearchForm from "@/components/Algolia/SearchForm/SearchForm";
@@ -30,16 +30,32 @@ export default function AlgoliaSearch({
   const [isLoading, setIsLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Incremented on every new search; compared in the async callback to discard stale responses
+  const requestIdRef = useRef(0);
   const sectionRef = useRef<HTMLElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
 
-  const isActive = query.trim().length > 0;
+  // Unique IDs per instance — fixes WCAG 4.1.1 duplicate-id violation when
+  // multiple AlgoliaSearch components are on the same page (e.g. design system).
+  const uid = useId();
+  const inputId = `algolia-search-${uid}`;
+  const resultsId = `algolia-results-${uid}`;
 
-  // Capture focus when search activates; restore it when it deactivates.
+  const isActive = query.trim().length > 0;
+  const isExpanded = isActive && (hits.length > 0 || (hasSearched && !isLoading));
+
+  // Capture the pre-search focused element via relatedTarget on the input's focus event.
+  // Using onFocus (not useEffect) avoids a race where document.activeElement is already
+  // the input by the time the effect fires — making Escape restoration a no-op (WCAG 2.4.3).
+  const handleInputFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+    if (!previousFocusRef.current) {
+      previousFocusRef.current = (e.relatedTarget as HTMLElement | null) ?? document.body;
+    }
+  }, []);
+
+  // Restore focus when search deactivates (Escape or backdrop click).
   useEffect(() => {
-    if (isActive) {
-      previousFocusRef.current = document.activeElement as HTMLElement | null;
-    } else if (previousFocusRef.current) {
+    if (!isActive && previousFocusRef.current) {
       previousFocusRef.current.focus();
       previousFocusRef.current = null;
     }
@@ -87,7 +103,10 @@ export default function AlgoliaSearch({
     return () => document.removeEventListener("keydown", handleEscape);
   }, [query]);
 
-  // Debounced Algolia search
+  // Debounced Algolia search.
+  // setIsLoading is intentionally moved *inside* the timeout so previous results
+  // stay visible during the debounce window — no flicker on every keystroke.
+  // requestIdRef guards against stale responses overwriting newer results.
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
@@ -100,21 +119,24 @@ export default function AlgoliaSearch({
 
     if (!searchClient) return;
 
-    setIsLoading(true);
+    const currentId = ++requestIdRef.current;
 
     debounceRef.current = setTimeout(async () => {
+      setIsLoading(true);
       try {
         const response = await searchClient.searchSingleIndex({
           indexName,
           searchParams: { query, hitsPerPage: maxResults },
         });
+        if (currentId !== requestIdRef.current) return; // discard stale response
         setHits(response.hits as AlgoliaHit[]);
         setHasSearched(true);
       } catch {
+        if (currentId !== requestIdRef.current) return;
         setHits([]);
         setHasSearched(true);
       } finally {
-        setIsLoading(false);
+        if (currentId === requestIdRef.current) setIsLoading(false);
       }
     }, 300);
 
@@ -156,17 +178,21 @@ export default function AlgoliaSearch({
         <SearchForm
           query={query}
           onChange={setQuery}
+          onFocus={handleInputFocus}
           isLoading={isLoading}
+          isExpanded={isExpanded}
           placeholder={placeholder}
           searchLabel={searchLabel}
+          inputId={inputId}
+          resultsId={resultsId}
         />
 
         <div
           className="absolute top-full left-0 right-0 z-50 mt-1"
           aria-live="polite"
-          aria-atomic="true"
         >
           <ResultsList
+            id={resultsId}
             hits={hits}
             hasSearched={hasSearched}
             isLoading={isLoading}
