@@ -17,4 +17,4 @@ Key areas covered:
 - Builder carousel wrapper: `import { BuilderCarousel } from "@/components/builder/BuilderCarousel"`
 - Two component locations: shadcn primitives → flat file in `components/ui/`; feature components → four-file folder in `components/[Name]/`
 - When to add a new shadcn component vs. compose from existing primitives
-- After creating a new component: run the doc update checklist in AGENTS.md
+- After creating a new component: run the doc update checklist in the `project-maintenance` skill

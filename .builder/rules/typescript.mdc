@@ -3,49 +3,23 @@ description: TypeScript conventions for Builder data fields, model types, and li
 globs: types/**,components/**/*.types.ts,app/**/*.tsx
 alwaysApply: false
 ---
-# TypeScript Conventions
+# TypeScript Rules
+
+Full conventions: `docs/skills/engineering-standards.md`
 
 ## Builder Data Fields
-
-- `slug: string` — always required, no null (used as identifier and routing key)
-- All other Builder data fields: `string | null` for optional — never `string | undefined`
-- Builder may return `null` for empty fields; `undefined` will cause type errors
-
-```ts
-// types/mymodel.types.ts
-export interface MyModel {
-  slug: string;
-  title?: string | null;
-  image?: string | null;
-}
-
-// Extend for detail-page variants — don't duplicate
-export interface MyModelWithContent extends MyModel {
-  content?: string | null;
-}
-```
-
-## Access Pattern
-
-Always use optional chaining from a Builder entry: `entry.data?.slug`, `entry.data?.title`
+- `slug: string` — always required, never null
+- All other Builder fields: `string | null` — never `string | undefined`
+- Access: `entry.data?.slug`, `entry.data?.title`
 
 ## Library Type Re-exports
-
-Never redefine types that a library already exports — import and re-export them:
-
+Never redefine library types — import and re-export:
 ```ts
-// ❌ BAD
-export type MyVariant = "default" | "destructive" | "outline";
-
-// ✅ GOOD
 import type { VariantProps } from "class-variance-authority";
-import { buttonVariants } from "@/components/ui/button";
 export type ButtonVariant = VariantProps<typeof buttonVariants>["variant"];
 ```
 
 ## File Conventions
-
-- Type files for Builder models live in `types/` — one file per model: `types/mymodel.types.ts`
-- Component-specific types live in `ComponentName.types.ts` alongside the component
-- Always use `@/` path alias — never relative paths like `../../`
-- Use `import type` for type-only imports
+- Builder model types: `types/mymodel.types.ts`
+- Component types: `ComponentName.types.ts` alongside the component
+- Always `@/` path alias, always `import type` for type-only imports

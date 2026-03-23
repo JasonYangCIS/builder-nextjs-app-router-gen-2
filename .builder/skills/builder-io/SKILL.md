@@ -15,4 +15,4 @@ Key areas covered:
 - RenderBuilderContent render logic
 - TypeScript type conventions for Builder data fields
 - Dynamic preview URL setup in Builder admin
-- After creating a new component: run the doc update checklist in AGENTS.md
+- After creating a new component: run the doc update checklist in the `project-maintenance` skill

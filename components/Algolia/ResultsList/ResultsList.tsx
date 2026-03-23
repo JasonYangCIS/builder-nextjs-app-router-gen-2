@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { sanitizeHref } from "@/utils/url";
+import { buildLocalePath } from "@/utils/locale";
 import type { ResultsListProps, AlgoliaHit } from "./ResultsList.types";
 
 export type { ResultsListProps } from "./ResultsList.types";
@@ -7,16 +9,10 @@ function getTitle(hit: AlgoliaHit): string {
   return hit.title ?? hit.name ?? "Untitled";
 }
 
-/**
- * Only relative paths (starting with /) are allowed.
- * This component is used for site-internal search (Builder page entries),
- * where all URLs are relative. Allowing absolute URLs is unnecessary risk
- * — a compromised Algolia index could redirect users to phishing domains.
- */
-function sanitizeUrl(hit: AlgoliaHit): string {
-  const url = hit.url;
-  if (typeof url === "string" && url.startsWith("/")) return url;
-  return "#";
+function getHref(hit: AlgoliaHit, locale: string): string {
+  const safe = sanitizeHref(hit.url ?? "");
+  if (!safe) return "#";
+  return buildLocalePath(locale, safe);
 }
 
 export default function ResultsList({
@@ -24,6 +20,7 @@ export default function ResultsList({
   hasSearched,
   isLoading,
   noResultsMessage,
+  locale,
 }: ResultsListProps) {
   // Nothing to show before the first search completes
   if (!hasSearched) return null;
@@ -45,7 +42,7 @@ export default function ResultsList({
       {hits.map((hit) => (
         <li key={hit.objectID}>
           <Link
-            href={sanitizeUrl(hit)}
+            href={getHref(hit, locale)}
             className="flex flex-col gap-0.5 px-4 py-3 no-underline text-inherit transition-colors duration-100 hover:bg-muted focus-visible:outline-2 focus-visible:outline-[var(--ring)] focus-visible:outline-offset-[-2px] motion-reduce:transition-none"
           >
             <span className="text-[0.9375rem] font-medium text-foreground">

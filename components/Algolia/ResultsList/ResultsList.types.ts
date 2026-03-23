@@ -7,4 +7,6 @@ export interface ResultsListProps {
   hasSearched: boolean;
   isLoading: boolean;
   noResultsMessage: string;
+  /** Active locale code — used to build locale-aware hrefs via buildLocalePath */
+  locale: string;
 }

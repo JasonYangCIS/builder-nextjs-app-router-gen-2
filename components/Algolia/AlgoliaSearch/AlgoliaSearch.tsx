@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useId, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { algoliasearch } from "algoliasearch";
 import { config } from "@/config";
+import { getLocaleFromPath } from "@/utils/locale";
 import SearchForm from "@/components/Algolia/SearchForm/SearchForm";
 import ResultsList from "@/components/Algolia/ResultsList/ResultsList";
 import type { AlgoliaSearchProps, AlgoliaHit } from "./AlgoliaSearch.types";
@@ -35,6 +36,9 @@ export default function AlgoliaSearch({
   const requestIdRef = useRef(0);
   const sectionRef = useRef<HTMLElement>(null);
   const previousFocusRef = useRef<HTMLElement | null>(null);
+  // Only restore focus on intentional dismissal (Escape / backdrop).
+  // Without this, backspacing to clear the input steals focus from the user.
+  const wasExplicitlyDismissedRef = useRef(false);
 
   // Unique id per instance — fixes WCAG 4.1.1 duplicate-id when multiple
   // AlgoliaSearch components are on the same page (e.g. design system).
@@ -47,6 +51,7 @@ export default function AlgoliaSearch({
   // Without this the backdrop and focus trap persist across client-side navigations.
   const pathname = usePathname();
   const prevPathnameRef = useRef(pathname);
+  const locale = getLocaleFromPath(pathname);
   useEffect(() => {
     if (pathname !== prevPathnameRef.current) {
       prevPathnameRef.current = pathname;
@@ -63,11 +68,15 @@ export default function AlgoliaSearch({
     }
   }, []);
 
-  // Restore focus when search deactivates (Escape, backdrop click, or navigation).
+  // Restore focus only on intentional dismissal — not when the user simply
+  // backspaces to an empty input, which would steal focus unexpectedly.
   useEffect(() => {
     if (!isActive && previousFocusRef.current) {
-      previousFocusRef.current.focus();
+      if (wasExplicitlyDismissedRef.current) {
+        previousFocusRef.current.focus();
+      }
       previousFocusRef.current = null;
+      wasExplicitlyDismissedRef.current = false;
     }
   }, [isActive]);
 
@@ -104,10 +113,13 @@ export default function AlgoliaSearch({
     return () => document.removeEventListener("keydown", handleTab);
   }, [isActive]);
 
-  // Escape dismisses search; focus restoration is handled by the effect above.
+  // Escape explicitly dismisses search; marks for focus restoration.
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && query) setQuery("");
+      if (e.key === "Escape" && query) {
+        wasExplicitlyDismissedRef.current = true;
+        setQuery("");
+      }
     };
     document.addEventListener("keydown", handleEscape);
     return () => document.removeEventListener("keydown", handleEscape);
@@ -121,6 +133,7 @@ export default function AlgoliaSearch({
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     if (!query.trim()) {
+      requestIdRef.current++; // invalidate any in-flight request
       setHits([]);
       setHasSearched(false);
       setIsLoading(false);
@@ -174,7 +187,7 @@ export default function AlgoliaSearch({
       {isActive && (
         <div
           className="fixed inset-0 z-40 bg-black/20 backdrop-blur-[2px] transition-opacity duration-300 motion-reduce:transition-none"
-          onClick={() => setQuery("")}
+          onClick={() => { wasExplicitlyDismissedRef.current = true; setQuery(""); }}
           aria-hidden="true"
         />
       )}
@@ -204,6 +217,7 @@ export default function AlgoliaSearch({
             hasSearched={hasSearched}
             isLoading={isLoading}
             noResultsMessage={noResultsMessage}
+            locale={locale}
           />
         </div>
       </section>

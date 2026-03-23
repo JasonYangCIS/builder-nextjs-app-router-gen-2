@@ -1,6 +1,6 @@
 # Builder.io Fusion — Project Rules
 
-Non-negotiable rules for every task. Full detail in `AGENTS.md` and `docs/skills/`.
+Non-negotiable rules for every task. Full detail in `CLAUDE.md` and `docs/skills/`.
 
 ## Dev Server
 - Always start with `npm run dev`
@@ -12,25 +12,9 @@ Non-negotiable rules for every task. Full detail in `AGENTS.md` and `docs/skills
 - When adding a new model, add its name to `config.ts` before using it anywhere
 - **All environment variables must be surfaced through `config.envs` in `config.ts`** — never read `process.env.*` directly inside components or utilities. Add a new entry to `config.envs` first, then import `config` where needed.
 
-## Builder SDK
-- Never use `<Content>` directly — always `import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent"`
-- Always guard notFound: `if (!content && !isEditing() && !isPreviewing()) return notFound()`
-- Always guard `subscribeToEditor` with a `builder.preview` URL param check — see `docs/skills/builder-io.md`
-- Never use `dangerouslySetInnerHTML` on Builder HTML fields without DOMPurify sanitization
-
 ## Imports & Paths
 - Always use the `@/` path alias — never relative paths like `../../`
 - Import shadcn components from their own file: `import { Button } from "@/components/ui/button"` — no barrel
 - Import Text from `@/components/ui/text`; FormInput from `@/components/ui/form-input`
 
-## Locale Routing
-- All pages live under `app/[locale]/` — locale is always from route params, never headers
-- Always pass `locale` to `fetchOneEntry` and `RenderBuilderContent`
-- Internal links must use `buildLocalePath(locale, "/path")` — never hardcode paths without locale
-- `generateStaticParams` must return ALL supported locales × slugs
-- `getBuilderSearchParams` is only used in `app/preview/page.tsx` — never on production routes
-- See `docs/skills/localization.md` for the full architecture
-
-## Component File Structure
-- shadcn primitives → flat file in `components/ui/my-component.tsx`
-- All other components → four-file folder in `components/MyComponent/` (see `component-structure.mdc` and `components/HeroSplit/`)
+For Builder SDK, locale routing, component structure, design tokens, and TypeScript patterns, see the scoped rules in `.builder/rules/`.
