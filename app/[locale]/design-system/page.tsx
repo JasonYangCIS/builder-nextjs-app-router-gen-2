@@ -33,11 +33,13 @@ function Section({
   title,
   description,
   children,
+  allowOverflow = false,
 }: {
   id: string;
   title: string;
   description?: string;
   children: React.ReactNode;
+  allowOverflow?: boolean;
 }) {
   return (
     <section id={id} className="scroll-mt-8">
@@ -47,7 +49,7 @@ function Section({
           <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
         )}
       </div>
-      <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <div className={`rounded-xl border border-border bg-card ${allowOverflow ? "" : "overflow-hidden"}`}>
         {children}
       </div>
     </section>
@@ -357,6 +359,7 @@ export default function DesignSystemPage() {
               id="algolia-search"
               title="Algolia Search"
               description="As-you-type search powered by Algolia. Queries the Builder.io Algolia index and displays results in real time. Registered as a Builder component."
+              allowOverflow
             >
               <DemoRow label="default" className="px-5 py-5">
                 <AlgoliaSearch />
