@@ -10,6 +10,7 @@ Non-negotiable rules for every task. Full detail in `CLAUDE.md` and `docs/skills
 - Never hardcode Builder model names — always use `config.models.*` from `config.ts`
 - API key is `config.envs.builderApiKey` — never inline it
 - When adding a new model, add its name to `config.ts` before using it anywhere
+- **All environment variables must be surfaced through `config.envs` in `config.ts`** — never read `process.env.*` directly inside components or utilities. Add a new entry to `config.envs` first, then import `config` where needed.
 
 ## Imports & Paths
 - Always use the `@/` path alias — never relative paths like `../../`

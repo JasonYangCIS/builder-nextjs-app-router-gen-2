@@ -19,6 +19,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import Counter from "@/components/Counter/Counter";
+import AlgoliaSearch from "@/components/Algolia/AlgoliaSearch/AlgoliaSearch";
 
 export const metadata: Metadata = {
   title: "Design System",
@@ -32,11 +33,13 @@ function Section({
   title,
   description,
   children,
+  allowOverflow = false,
 }: {
   id: string;
   title: string;
   description?: string;
   children: React.ReactNode;
+  allowOverflow?: boolean;
 }) {
   return (
     <section id={id} className="scroll-mt-8">
@@ -46,7 +49,7 @@ function Section({
           <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>
         )}
       </div>
-      <div className="overflow-hidden rounded-xl border border-border bg-card">
+      <div className={`rounded-xl border border-border bg-card ${allowOverflow ? "" : "overflow-hidden"}`}>
         {children}
       </div>
     </section>
@@ -103,6 +106,7 @@ const NAV = [
   { id: "card",       label: "Card" },
   { id: "carousel",   label: "Carousel" },
   { id: "counter",    label: "Counter" },
+  { id: "algolia-search", label: "Algolia Search" },
 ];
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -347,6 +351,21 @@ export default function DesignSystemPage() {
                     <CarouselNext />
                   </Carousel>
                 </div>
+              </DemoRow>
+            </Section>
+
+            {/* ── Algolia Search ────────────────────────────────────────── */}
+            <Section
+              id="algolia-search"
+              title="Algolia Search"
+              description="As-you-type search powered by Algolia. Queries the Builder.io Algolia index and displays results in real time. Registered as a Builder component."
+              allowOverflow
+            >
+              <DemoRow label="default" className="px-5 py-5">
+                <AlgoliaSearch />
+              </DemoRow>
+              <DemoRow label="custom placeholder + maxResults" className="px-5 py-5">
+                <AlgoliaSearch placeholder="Find a page…" maxResults={3} />
               </DemoRow>
             </Section>
 
