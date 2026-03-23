@@ -21,6 +21,7 @@ export default function ResultsList({
   isLoading,
   noResultsMessage,
   locale,
+  onResultClick,
 }: ResultsListProps) {
   // Nothing to show before the first search completes
   if (!hasSearched) return null;
@@ -43,6 +44,7 @@ export default function ResultsList({
         <li key={hit.objectID}>
           <Link
             href={getHref(hit, locale)}
+            onClick={onResultClick}
             className="flex flex-col gap-0.5 px-4 py-3 no-underline text-inherit transition-colors duration-100 hover:bg-muted focus-visible:outline-2 focus-visible:outline-[var(--ring)] focus-visible:outline-offset-[-2px] motion-reduce:transition-none"
           >
             <span className="text-[0.9375rem] font-medium text-foreground">

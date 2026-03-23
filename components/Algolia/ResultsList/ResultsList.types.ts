@@ -9,4 +9,6 @@ export interface ResultsListProps {
   noResultsMessage: string;
   /** Active locale code — used to build locale-aware hrefs via buildLocalePath */
   locale: string;
+  /** Called when a result link is clicked — used to close the overlay on same-page/hash navigation */
+  onResultClick: () => void;
 }

@@ -70,9 +70,14 @@ export default function AlgoliaSearch({
 
   // Restore focus only on intentional dismissal — not when the user simply
   // backspaces to an empty input, which would steal focus unexpectedly.
+  // wasExplicitlyDismissedRef is always reset here (not just when previousFocusRef
+  // is set) to prevent it from getting stuck as `true` in sessions where the user
+  // typed → backspaced → typed again (no blur, so previousFocusRef was cleared by
+  // the backspace path) → pressed Escape. Without the unconditional reset, the next
+  // focus cycle would incorrectly treat a backspace-to-empty as an explicit dismiss.
   useEffect(() => {
-    if (!isActive && previousFocusRef.current) {
-      if (wasExplicitlyDismissedRef.current) {
+    if (!isActive) {
+      if (previousFocusRef.current && wasExplicitlyDismissedRef.current) {
         previousFocusRef.current.focus();
       }
       previousFocusRef.current = null;
@@ -218,6 +223,7 @@ export default function AlgoliaSearch({
             isLoading={isLoading}
             noResultsMessage={noResultsMessage}
             locale={locale}
+            onResultClick={() => setQuery("")}
           />
         </div>
       </section>
