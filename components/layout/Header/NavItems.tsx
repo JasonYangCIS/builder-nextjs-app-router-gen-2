@@ -105,12 +105,6 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
       {/* Desktop nav */}
       {!onlyMobileMenu && (
         <nav className="flex items-center gap-6 text-sm">
-          <Link
-            href={buildLocalePath(currentLocale, "/design-system")}
-            className="transition-colors hover:opacity-80"
-            >
-            Design System
-          </Link>
           {entries.map((entry) => (
             <Link
               key={entry.id}
