@@ -24,8 +24,19 @@ interface NavItemsProps {
 export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopNav }: NavItemsProps) {
   const [entries, setEntries] = useState<NavEntry[]>(initialEntries);
   const [open, setOpen] = useState(false);
+  const [backdropTop, setBackdropTop] = useState(0);
   const pathname = usePathname();
   const currentLocale = getLocaleFromPath(pathname);
+
+  // Measure the header's actual bottom position so the backdrop clears both
+  // the announcement bar (dynamic height) and the header itself.
+  useEffect(() => {
+    if (!open) return;
+    const header = document.querySelector("header");
+    if (header) {
+      setBackdropTop(header.getBoundingClientRect().bottom);
+    }
+  }, [open]);
 
   // WCAG 2.1 AA: Keyboard support - Escape key closes menu
   useEffect(() => {
@@ -89,8 +100,6 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
     return unsubscribe;
   }, []);
 
-  if (!entries.length) return null;
-
   return (
     <>
       {/* Desktop nav */}
@@ -119,7 +128,7 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
       {!onlyDesktopNav && open && (
         <div
           className="fixed left-0 right-0 bottom-0 z-40 bg-black/20 backdrop-blur-[2px] transition-opacity duration-300"
-          style={{ top: "calc(var(--header-height, 73px))" }}
+          style={{ top: backdropTop || "calc(var(--header-height, 73px))" }}
           onClick={() => setOpen(false)}
           aria-hidden="true"
         />
@@ -183,18 +192,6 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
             }}
             aria-label="Mobile navigation menu"
           >
-            <Link
-              href={buildLocalePath(currentLocale, "/design-system")}
-              className={`menu-link rounded-md px-2 py-2 transition-all duration-300 hover:opacity-80 hover:translate-x-1 focus:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 motion-reduce:transition-none motion-reduce:hover:translate-x-0 ${
-                open ? "translate-x-0 opacity-100" : "motion-reduce:translate-x-0 motion-reduce:opacity-100 -translate-x-4 opacity-0"
-              }`}
-              style={{
-                transitionDelay: open ? "50ms" : "0ms",
-              }}
-              onClick={() => setOpen(false)}
-            >
-              Design System
-            </Link>
             {entries.map((entry, index) => (
               <Link
                 key={entry.id}
@@ -203,7 +200,7 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
                   open ? "translate-x-0 opacity-100" : "motion-reduce:translate-x-0 motion-reduce:opacity-100 -translate-x-4 opacity-0"
                 }`}
                 style={{
-                  transitionDelay: open ? `${(index + 1) * 50 + 50}ms` : "0ms",
+                  transitionDelay: open ? `${index * 50 + 50}ms` : "0ms",
                 }}
                 onClick={() => setOpen(false)}
               >
@@ -211,7 +208,7 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
               </Link>
             ))}
             <div
-              className={`border-t pt-4 transition-all duration-300 ${
+              className={`flex flex-col gap-4 pt-2 pb-2 transition-all duration-300 ${
                 open ? "translate-x-0 opacity-100" : "-translate-x-4 opacity-0"
               }`}
               style={{
@@ -219,16 +216,20 @@ export function NavItems({ entries: initialEntries, onlyMobileMenu, onlyDesktopN
                 transitionDelay: open ? `${(entries.length + 1) * 50 + 50}ms` : "0ms",
               }}
             >
-              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Language
-              </p>
-              <Suspense fallback={null}>
-                <LocaleSwitch locales={config.locales.supported} />
-              </Suspense>
-              <p className="mt-4 mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                Theme
-              </p>
-              <ThemeSwitch />
+              <div className="flex flex-col gap-2">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Language
+                </p>
+                <Suspense fallback={null}>
+                  <LocaleSwitch locales={config.locales.supported} />
+                </Suspense>
+              </div>
+              <div className="flex flex-col gap-2">
+                <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Theme
+                </p>
+                <ThemeSwitch />
+              </div>
             </div>
           </nav>
         </div>
