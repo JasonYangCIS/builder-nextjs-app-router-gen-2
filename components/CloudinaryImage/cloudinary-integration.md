@@ -45,7 +45,7 @@ export const cloudinaryImageConfig: RegisteredComponent = {
 
 ## Cloudinary Asset Payload
 
-When an editor selects an image, the plugin passes this object to your component:
+Here's a sample JSON that is passed to your component when an editor selects an image. [Cloudinary docs](https://cloudinary.com/documentation/media_library_widget#sample_json_response_for_a_transformed_image):
 
 ```json
 {
@@ -89,5 +89,3 @@ When an editor selects an image, the plugin passes this object to your component
   }
 }
 ```
-
-- [Cloudinary docs for sample JSON](https://cloudinary.com/documentation/media_library_widget#sample_json_response_for_a_transformed_image)
