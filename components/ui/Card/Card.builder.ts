@@ -1,9 +1,12 @@
-import type { RegisteredComponent } from "@builder.io/sdk-react";
+import type { ComponentConfig } from "@/utils/register-insert-menu";
+import { config } from "@/config";
 import { Card } from "./Card";
 
-export const cardConfig: RegisteredComponent = {
+export const cardConfig: ComponentConfig = {
   component: Card,
-  name: "DS Card",
+  name: config.components.card,
+  image: "https://unpkg.com/css.gg@2.0.0/icons/svg/card-diamonds.svg",
+  excludeModels: [config.models.announcementBar],
   canHaveChildren: true,
   inputs: [
     {

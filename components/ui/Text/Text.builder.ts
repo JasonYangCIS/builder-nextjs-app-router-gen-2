@@ -1,9 +1,12 @@
-import type { RegisteredComponent } from "@builder.io/sdk-react";
+import type { ComponentConfig } from "@/utils/register-insert-menu";
+import { config } from "@/config";
 import { Text } from "./Text";
 
-export const textConfig: RegisteredComponent = {
+export const textConfig: ComponentConfig = {
   component: Text,
-  name: "DS Text",
+  name: config.components.text,
+  image: "https://unpkg.com/css.gg@2.0.0/icons/svg/format-text.svg",
+  excludeModels: [config.models.announcementBar],
   inputs: [
     {
       name: "text",

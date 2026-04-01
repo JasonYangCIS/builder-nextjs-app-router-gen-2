@@ -1,8 +1,11 @@
-import type { RegisteredComponent } from "@builder.io/sdk-react";
+import type { ComponentConfig } from "@/utils/register-insert-menu";
+import { config } from "@/config";
 import Counter from "./Counter";
 
-export const counterConfig: RegisteredComponent = {
+export const counterConfig: ComponentConfig = {
   component: Counter,
-  name: "Counter",
+  name: config.components.counter,
+  image: "https://unpkg.com/css.gg@2.0.0/icons/svg/add-r.svg",
+  excludeModels: [config.models.announcementBar],
   inputs: [{ name: "initialCount", type: "number" }],
 };

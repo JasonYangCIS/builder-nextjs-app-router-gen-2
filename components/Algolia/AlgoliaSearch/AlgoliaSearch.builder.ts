@@ -1,9 +1,12 @@
-import type { RegisteredComponent } from "@builder.io/sdk-react";
+import type { ComponentConfig } from "@/utils/register-insert-menu";
+import { config } from "@/config";
 import AlgoliaSearch from "./AlgoliaSearch";
 
-export const algoliaSearchConfig: RegisteredComponent = {
+export const algoliaSearchConfig: ComponentConfig = {
   component: AlgoliaSearch,
-  name: "Algolia Search",
+  name: config.components.algoliaSearch,
+  image: "https://unpkg.com/css.gg@2.0.0/icons/svg/search.svg",
+  excludeModels: [config.models.announcementBar],
   inputs: [
     {
       name: "placeholder",

@@ -14,7 +14,7 @@ Key areas covered:
 - Per-folder import pattern: `import { Button } from "@/components/ui/Button/Button"` — no barrel
 - Text component (Typography replacement): `import { Text } from "@/components/ui/Text/Text"`
 - Labeled input wrapper: `import { FormInput } from "@/components/ui/FormInput/FormInput"`
-- Builder carousel wrapper: `import { BuilderCarousel } from "@/components/builder/BuilderCarousel"`
+- Builder carousel wrapper: `import { BuilderCarousel } from "@/components/BuilderCarousel/BuilderCarousel"`
 - All components live in their own folder: shadcn primitives in `components/ui/[name]/`; feature components in `components/[Name]/`
 - When to add a new shadcn component vs. compose from existing primitives
 - After creating a new component: run the doc update checklist in the `project-maintenance` skill

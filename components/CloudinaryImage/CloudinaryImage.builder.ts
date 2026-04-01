@@ -1,9 +1,12 @@
-import type { RegisteredComponent } from "@builder.io/sdk-react";
+import type { ComponentConfig } from "@/utils/register-insert-menu";
+import { config } from "@/config";
 import CloudinaryImage from "./CloudinaryImage";
 
-export const cloudinaryImageConfig: RegisteredComponent = {
+export const cloudinaryImageConfig: ComponentConfig = {
   component: CloudinaryImage,
-  name: "Cloudinary Image",
+  name: config.components.cloudinaryImage,
+  image: "https://unpkg.com/css.gg@2.0.0/icons/svg/image.svg",
+  excludeModels: [config.models.announcementBar],
   inputs: [
     {
       name: "cloudinaryOptions",

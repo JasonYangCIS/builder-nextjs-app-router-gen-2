@@ -1,9 +1,12 @@
-import type { RegisteredComponent } from "@builder.io/sdk-react";
+import type { ComponentConfig } from "@/utils/register-insert-menu";
+import { config } from "@/config";
 import HeroFullBleed from "./HeroFullBleed";
 
-export const heroFullBleedConfig: RegisteredComponent = {
+export const heroFullBleedConfig: ComponentConfig = {
   component: HeroFullBleed,
-  name: "Hero: Full Bleed",
+  name: config.components.heroFullBleed,
+  image: "https://unpkg.com/css.gg@2.0.0/icons/svg/maximize.svg",
+  excludeModels: [config.models.announcementBar],
   inputs: [
     {
       name: "headline",

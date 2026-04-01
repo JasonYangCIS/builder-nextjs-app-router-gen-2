@@ -3,6 +3,7 @@ import { BuilderContent, isPreviewing, Content } from "@builder.io/sdk-react";
 import DefaultErrorPage from "next/error";
 import { config } from "@/config";
 import { CUSTOM_COMPONENTS } from "@/builder-registry";
+import { filterComponentsForModel } from "@/utils/register-insert-menu";
 
 interface RenderBuilderContentProps {
   content: BuilderContent | null;
@@ -21,7 +22,7 @@ export function RenderBuilderContent({ content, model, data, locale }: RenderBui
         content={content}
         apiKey={config.envs.builderApiKey}
         model={model}
-        customComponents={CUSTOM_COMPONENTS}
+        customComponents={filterComponentsForModel(CUSTOM_COMPONENTS, model)}
         locale={locale}
         {...(data && { data })}
       />

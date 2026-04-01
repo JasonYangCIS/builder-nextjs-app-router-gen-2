@@ -54,7 +54,7 @@ app/
 
 components/
   blog/                        # Blog-specific components
-  builder/                     # RenderBuilderContent wrapper + BuilderCarousel
+  builder/                     # RenderBuilderContent wrapper + BuilderDesignTokens
   ui/                          # shadcn/ui primitives — one folder per component (button/, badge/, card/, etc.)
   Algolia/                     # AlgoliaSearch, SearchForm, ResultsList (Algolia integration)
   layout/                      # Header (RSC + NavItems, SearchButton, ThemeSwitch client), Footer

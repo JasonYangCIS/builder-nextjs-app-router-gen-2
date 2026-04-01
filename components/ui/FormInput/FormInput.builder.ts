@@ -1,9 +1,12 @@
-import type { RegisteredComponent } from "@builder.io/sdk-react";
+import type { ComponentConfig } from "@/utils/register-insert-menu";
+import { config } from "@/config";
 import { FormInput } from "./FormInput";
 
-export const formInputConfig: RegisteredComponent = {
+export const formInputConfig: ComponentConfig = {
   component: FormInput,
-  name: "DS Input",
+  name: config.components.input,
+  image: "https://unpkg.com/css.gg@2.0.0/icons/svg/select-r.svg",
+  excludeModels: [config.models.announcementBar],
   inputs: [
     {
       name: "label",

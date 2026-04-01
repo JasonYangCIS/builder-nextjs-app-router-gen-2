@@ -1,9 +1,12 @@
-import type { RegisteredComponent } from "@builder.io/sdk-react";
+import type { ComponentConfig } from "@/utils/register-insert-menu";
+import { config } from "@/config";
 import { Button } from "./Button";
 
-export const buttonConfig: RegisteredComponent = {
+export const buttonConfig: ComponentConfig = {
   component: Button,
-  name: "DS Button",
+  name: config.components.button,
+  image: "https://unpkg.com/css.gg@2.0.0/icons/svg/toggle-square.svg",
+  excludeModels: [config.models.announcementBar],
   canHaveChildren: true,
   inputs: [
     {

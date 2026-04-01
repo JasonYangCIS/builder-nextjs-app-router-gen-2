@@ -12,7 +12,7 @@ Use `React.lazy()` for component references in the registry:
 import { lazy } from "react";
 
 const Counter = lazy(() => import("./components/Counter/Counter"));
-const BuilderCarousel = lazy(() => import("./components/builder/BuilderCarousel").then(m => ({ default: m.BuilderCarousel })));
+const BuilderCarousel = lazy(() => import("./components/BuilderCarousel/BuilderCarousel").then(m => ({ default: m.BuilderCarousel })));
 // ... repeat for other components
 ```
 

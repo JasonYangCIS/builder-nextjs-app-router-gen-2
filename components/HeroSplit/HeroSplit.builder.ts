@@ -1,9 +1,12 @@
-import type { RegisteredComponent } from "@builder.io/sdk-react";
+import type { ComponentConfig } from "@/utils/register-insert-menu";
+import { config } from "@/config";
 import HeroSplit from "./HeroSplit";
 
-export const heroSplitConfig: RegisteredComponent = {
+export const heroSplitConfig: ComponentConfig = {
   component: HeroSplit,
-  name: "Hero: Split",
+  name: config.components.heroSplit,
+  image: "https://unpkg.com/css.gg@2.0.0/icons/svg/view-split.svg",
+  excludeModels: [config.models.announcementBar],
   inputs: [
     {
       name: "headline",

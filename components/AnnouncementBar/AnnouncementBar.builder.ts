@@ -1,10 +1,11 @@
-import type { RegisteredComponent } from "@builder.io/sdk-react";
+import type { ComponentConfig } from "@/utils/register-insert-menu";
 import AnnouncementBar from "./AnnouncementBar";
 import { config } from "@/config";
 
-export const announcementBarConfig: RegisteredComponent = {
+export const announcementBarConfig: ComponentConfig = {
   component: AnnouncementBar,
-  name: "Announcement Bar",
+  name: config.components.announcementBar,
+  image: "https://unpkg.com/css.gg@2.0.0/icons/svg/bell.svg",
   models: [config.models.announcementBar],
   inputs: [
     {

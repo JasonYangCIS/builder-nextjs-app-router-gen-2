@@ -1,9 +1,12 @@
-import type { RegisteredComponent } from "@builder.io/sdk-react";
+import type { ComponentConfig } from "@/utils/register-insert-menu";
+import { config } from "@/config";
 import HeroCentered from "./HeroCentered";
 
-export const heroCenteredConfig: RegisteredComponent = {
+export const heroCenteredConfig: ComponentConfig = {
   component: HeroCentered,
-  name: "Hero: Centered",
+  name: config.components.heroCentered,
+  image: "https://unpkg.com/css.gg@2.0.0/icons/svg/format-center.svg",
+  excludeModels: [config.models.announcementBar],
   inputs: [
     {
       name: "badgeLabel",

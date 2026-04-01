@@ -1,9 +1,12 @@
-import type { RegisteredComponent } from "@builder.io/sdk-react";
+import type { ComponentConfig } from "@/utils/register-insert-menu";
+import { config } from "@/config";
 import { BuilderCarousel } from "./BuilderCarousel";
 
-export const builderCarouselConfig: RegisteredComponent = {
+export const builderCarouselConfig: ComponentConfig = {
   component: BuilderCarousel,
-  name: "DS Carousel",
+  name: config.components.carousel,
+  image: "https://unpkg.com/css.gg@2.0.0/icons/svg/play-list.svg",
+  excludeModels: [config.models.announcementBar],
   canHaveChildren: true,
   childRequirements: {
     message: "You can drop any content here to create carousel slides",

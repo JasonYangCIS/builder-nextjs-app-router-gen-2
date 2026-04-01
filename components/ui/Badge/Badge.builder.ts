@@ -1,9 +1,12 @@
-import type { RegisteredComponent } from "@builder.io/sdk-react";
+import type { ComponentConfig } from "@/utils/register-insert-menu";
+import { config } from "@/config";
 import { Badge } from "./Badge";
 
-export const badgeConfig: RegisteredComponent = {
+export const badgeConfig: ComponentConfig = {
   component: Badge,
-  name: "DS Badge",
+  name: config.components.badge,
+  image: "https://unpkg.com/css.gg@2.0.0/icons/svg/tag.svg",
+  excludeModels: [config.models.announcementBar],
   canHaveChildren: true,
   inputs: [
     {

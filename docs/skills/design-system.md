@@ -12,7 +12,7 @@ Conventions for working with the shadcn/ui design system in this repo.
 | Gradient utilities | `styles/tokens.css` | `gradient-brand`, `gradient-brand-subtle`, etc. — use `var(--primary)` / `var(--accent)` |
 | shadcn primitives | `components/ui/` | Button, Badge, Input, Label, Card, Carousel, Text, FormInput — flat files, one per component |
 | Feature components | `components/[Name]/` | Four-file folder pattern (`.tsx` / `.types.ts` / `.module.scss` / `.builder.ts`) — see `HeroSplit/` |
-| Builder wrappers | `components/builder/` | BuilderCarousel — wraps shadcn Carousel for Builder.io editor |
+| Builder wrappers | `components/BuilderCarousel/` | BuilderCarousel — wraps shadcn Carousel for Builder.io editor |
 | Showcase | `app/design-system/page.tsx` | Visual reference at `/design-system`; also Playwright test harness |
 
 ---
@@ -97,7 +97,7 @@ import { Text } from "@/components/ui/Text/Text"
 import { FormInput } from "@/components/ui/FormInput/FormInput"
 
 // Builder.io wrapper (only in builder-registry.ts and Builder pages)
-import { BuilderCarousel } from "@/components/builder/BuilderCarousel"
+import { BuilderCarousel } from "@/components/BuilderCarousel/BuilderCarousel"
 ```
 
 ---
@@ -258,7 +258,7 @@ These components combine shadcn primitives with project-specific logic. They fol
 Wraps shadcn Carousel (Embla) for use in the Builder.io visual editor. Handles Builder's child-wrapping behavior and exposes flat props instead of the composition API.
 
 ```ts
-import { BuilderCarousel } from "@/components/builder/BuilderCarousel"
+import { BuilderCarousel } from "@/components/BuilderCarousel/BuilderCarousel"
 ```
 
 ```tsx
