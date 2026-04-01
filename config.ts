@@ -8,6 +8,7 @@ export const config = {
     algoliaIndexName: process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME ?? "builder-page",
   },
   components: {
+    uiBlocks: "UI Blocks",
     button: "DS Button",
     text: "DS Text",
     badge: "DS Badge",

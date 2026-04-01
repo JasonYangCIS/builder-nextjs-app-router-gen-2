@@ -16,6 +16,7 @@ import { heroCenteredConfig } from "@/components/HeroCentered/HeroCentered.build
 import { cloudinaryImageConfig } from "@/components/CloudinaryImage/CloudinaryImage.builder";
 import { announcementBarConfig } from "@/components/AnnouncementBar/AnnouncementBar.builder";
 import { algoliaSearchConfig } from "@/components/Algolia/AlgoliaSearch/AlgoliaSearch.builder";
+import { uiBlocksConfig } from "./components/UiBlocks/UiBlocks.config";
 
 export const CUSTOM_COMPONENTS: ComponentConfig[] = [
   // ─── General Components ─────────────────────────────────────────────────
@@ -26,6 +27,7 @@ export const CUSTOM_COMPONENTS: ComponentConfig[] = [
   cardConfig,
   counterConfig,
   builderCarouselConfig,
+  uiBlocksConfig,
 
   // ─── Hero Components ──────────────────────────────────────────────────────
   heroFullBleedConfig,
@@ -57,6 +59,7 @@ registerInsertMenu([
       cardConfig,
       counterConfig,
       builderCarouselConfig,
+      uiBlocksConfig,
     ],
   },
   {
