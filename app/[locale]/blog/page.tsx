@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Text } from "@/components/ui/text";
+import { Text } from "@/components/ui/Text/Text";
 import { buildLocalePath } from "@/utils/locale";
 
 export const metadata = {

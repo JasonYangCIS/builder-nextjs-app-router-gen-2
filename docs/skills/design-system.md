@@ -85,16 +85,16 @@ Defined in `styles/tokens.css`. Apply as `className` values:
 
 ```ts
 // shadcn UI primitives
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/card"
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+import { Button } from "@/components/ui/Button/Button"
+import { Badge } from "@/components/ui/Badge/Badge"
+import { Input } from "@/components/ui/Input/Input"
+import { Label } from "@/components/ui/Label/Label"
+import { Card, CardHeader, CardContent, CardFooter, CardTitle, CardDescription } from "@/components/ui/Card/Card"
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/Carousel/Carousel"
 
 // Wrappers (composed from shadcn primitives)
-import { Text } from "@/components/ui/text"
-import { FormInput } from "@/components/ui/form-input"
+import { Text } from "@/components/ui/Text/Text"
+import { FormInput } from "@/components/ui/FormInput/FormInput"
 
 // Builder.io wrapper (only in builder-registry.ts and Builder pages)
 import { BuilderCarousel } from "@/components/builder/BuilderCarousel"
@@ -181,7 +181,7 @@ Composes shadcn Input + Label + helper/error text. Use this wherever you need a 
 <FormInput label="Username" defaultValue="jsmith" disabled />
 ```
 
-For bare input without a label, use `<Input>` directly from `@/components/ui/input`.
+For bare input without a label, use `<Input>` directly from `@/components/ui/Input/Input`.
 
 ---
 
@@ -384,7 +384,7 @@ export type MyVariant = "default" | "destructive"
 
 // ✅ GOOD — re-export from the library
 import type { VariantProps } from "class-variance-authority"
-import { buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/Button/Button"
 export type ButtonVariant = VariantProps<typeof buttonVariants>["variant"]
 ```
 

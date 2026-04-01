@@ -28,7 +28,7 @@ After creating a new component or adding/removing a skill, run the checklists in
 | `config.ts` | All Builder model names, API key, locale config — never hardcode elsewhere |
 | `builder-registry.ts` | Custom component registration for Builder visual editor |
 | `components/builder/RenderBuilderContent.tsx` | Always use this wrapper, never `<Content>` directly |
-| `components/ui/` | shadcn/ui primitives (new-york style) — one file per component, no barrel |
+| `components/ui/` | shadcn/ui primitives (new-york style) — one folder per component, no barrel |
 | `components/HeroSplit/` | Canonical four-file component pattern — see `.builder/rules/component-structure.mdc` |
 | `app/[locale]/layout.tsx` | Locale layout — owns `<html lang>`, Header, Footer; validates locale param |
 | `proxy.ts` | Next.js 16 proxy — locale rewrites and canonical redirects |
@@ -55,7 +55,7 @@ app/
 components/
   blog/                        # Blog-specific components
   builder/                     # RenderBuilderContent wrapper + BuilderCarousel
-  ui/                          # shadcn/ui primitives (Button, Badge, Input, Card, Carousel, Text, FormInput)
+  ui/                          # shadcn/ui primitives — one folder per component (button/, badge/, card/, etc.)
   Algolia/                     # AlgoliaSearch, SearchForm, ResultsList (Algolia integration)
   layout/                      # Header (RSC + NavItems, SearchButton, ThemeSwitch client), Footer
   LocaleSwitch/                # Locale switcher icon button + dropdown (client component)

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Geist, Geist_Mono } from "next/font/google";
-import { Text } from "@/components/ui/text";
-import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/Text/Text";
+import { Button } from "@/components/ui/Button/Button";
 import { Header } from "@/components/layout/Header/Header";
 import { Footer } from "@/components/layout/Footer/Footer";
 import "./globals.css";

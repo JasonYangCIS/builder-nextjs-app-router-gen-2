@@ -2,7 +2,7 @@ import { fetchEntries } from "@builder.io/sdk-react";
 import { config } from "@/config";
 import { buildLocalePath } from "@/utils/locale";
 import { BlogArticleList } from "@/components/blog/BlogArticleList/BlogArticleList";
-import { Text } from "@/components/ui/text";
+import { Text } from "@/components/ui/Text/Text";
 import type { BlogArticle } from "@/types/blog.types";
 
 const builderModelName = config.models.blogArticle;

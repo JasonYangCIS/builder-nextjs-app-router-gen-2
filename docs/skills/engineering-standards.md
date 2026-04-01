@@ -24,7 +24,7 @@ export type MyVariant = "default" | "destructive" | "outline";
 
 // ✅ GOOD: Import and re-export library types
 import type { VariantProps } from "class-variance-authority";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/Button/Button";
 
 export type ButtonVariant = VariantProps<typeof buttonVariants>["variant"];
 ```

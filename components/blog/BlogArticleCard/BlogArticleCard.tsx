@@ -1,8 +1,8 @@
 import NextImage from "next/image";
 import Link from "next/link";
 import { formatBlogDate } from "@/utils/date";
-import { Badge } from "@/components/ui/badge";
-import { Text } from "@/components/ui/text";
+import { Badge } from "@/components/ui/Badge/Badge";
+import { Text } from "@/components/ui/Text/Text";
 import { cn } from "@/utils/cn";
 import type { BlogArticleCardProps } from "./BlogArticleCard.types";
 

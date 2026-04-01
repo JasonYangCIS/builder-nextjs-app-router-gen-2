@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/Button/Button";
+import { Badge } from "@/components/ui/Badge/Badge";
 import { sanitizeHref } from "@/utils/url";
 import type { HeroCenteredProps } from "./HeroCentered.types";
 import styles from "./HeroCentered.module.scss";

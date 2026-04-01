@@ -1,5 +1,5 @@
 import { formatBlogDate } from "@/utils/date";
-import { Text } from "@/components/ui/text";
+import { Text } from "@/components/ui/Text/Text";
 import type { BlogArticleHeaderProps } from "./BlogArticleHeader.types";
 
 export function BlogArticleHeader({ title, blurb, date }: BlogArticleHeaderProps) {

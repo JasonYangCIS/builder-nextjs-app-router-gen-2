@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-import { Text } from "@/components/ui/text";
-import { Button } from "@/components/ui/button";
+import { Text } from "@/components/ui/Text/Text";
+import { Button } from "@/components/ui/Button/Button";
 
 export default function Error({
   error,

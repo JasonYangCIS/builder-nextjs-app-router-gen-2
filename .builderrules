@@ -14,7 +14,7 @@ Non-negotiable rules for every task. Full detail in `CLAUDE.md` and `docs/skills
 
 ## Imports & Paths
 - Always use the `@/` path alias — never relative paths like `../../`
-- Import shadcn components from their own file: `import { Button } from "@/components/ui/button"` — no barrel
-- Import Text from `@/components/ui/text`; FormInput from `@/components/ui/form-input`
+- Import shadcn components from their own file: `import { Button } from "@/components/ui/button/Button"` — no barrel
+- Import Text from `@/components/ui/text/Text`; FormInput from `@/components/ui/form-input/FormInput`
 
 For Builder SDK, locale routing, component structure, design tokens, and TypeScript patterns, see the scoped rules in `.builder/rules/`.

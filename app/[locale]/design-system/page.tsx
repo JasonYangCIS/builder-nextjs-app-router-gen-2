@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Button } from "@/components/ui/button";
-import { Text } from "@/components/ui/text";
-import { Badge } from "@/components/ui/badge";
-import { FormInput } from "@/components/ui/form-input";
+import { Button } from "@/components/ui/Button/Button";
+import { Text } from "@/components/ui/Text/Text";
+import { Badge } from "@/components/ui/Badge/Badge";
+import { FormInput } from "@/components/ui/FormInput/FormInput";
 import {
   Card,
   CardContent,
@@ -10,14 +10,14 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/Card/Card";
 import {
   Carousel,
   CarouselContent,
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel";
+} from "@/components/ui/Carousel/Carousel";
 import Counter from "@/components/Counter/Counter";
 import AlgoliaSearch from "@/components/Algolia/AlgoliaSearch/AlgoliaSearch";
 

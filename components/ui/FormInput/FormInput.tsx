@@ -2,8 +2,8 @@
 
 import { useId } from "react"
 import { cn } from "@/utils/cn"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Input } from "@/components/ui/Input/Input"
+import { Label } from "@/components/ui/Label/Label"
 
 export interface FormInputProps {
   label?: string

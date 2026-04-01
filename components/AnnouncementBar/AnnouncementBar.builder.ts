@@ -1,9 +1,11 @@
 import type { RegisteredComponent } from "@builder.io/sdk-react";
 import AnnouncementBar from "./AnnouncementBar";
+import { config } from "@/config";
 
 export const announcementBarConfig: RegisteredComponent = {
   component: AnnouncementBar,
   name: "Announcement Bar",
+  models: [config.models.announcementBar],
   inputs: [
     {
       name: "message",

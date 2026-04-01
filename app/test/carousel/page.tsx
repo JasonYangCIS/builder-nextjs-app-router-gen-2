@@ -4,9 +4,9 @@ import {
   CarouselItem,
   CarouselNext,
   CarouselPrevious,
-} from "@/components/ui/carousel";
-import { Card, CardContent } from "@/components/ui/card";
-import { Text } from "@/components/ui/text";
+} from "@/components/ui/Carousel/Carousel";
+import { Card, CardContent } from "@/components/ui/Card/Card";
+import { Text } from "@/components/ui/Text/Text";
 
 export default function CarouselTestPage() {
   return (

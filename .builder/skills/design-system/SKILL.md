@@ -11,10 +11,10 @@ Key areas covered:
 - Gradient utilities in `styles/tokens.css` — use `var(--primary)` / `var(--accent)`
 - WCAG AA: use semantic tokens (`text-foreground`, `text-muted-foreground`, etc.) — never hardcode hex
 - `cn()` utility from `@/utils/cn` for conditional Tailwind class composition
-- Per-file import pattern: `import { Button } from "@/components/ui/button"` — no barrel
-- Text component (Typography replacement): `import { Text } from "@/components/ui/text"`
-- Labeled input wrapper: `import { FormInput } from "@/components/ui/form-input"`
+- Per-folder import pattern: `import { Button } from "@/components/ui/Button/Button"` — no barrel
+- Text component (Typography replacement): `import { Text } from "@/components/ui/Text/Text"`
+- Labeled input wrapper: `import { FormInput } from "@/components/ui/FormInput/FormInput"`
 - Builder carousel wrapper: `import { BuilderCarousel } from "@/components/builder/BuilderCarousel"`
-- Two component locations: shadcn primitives → flat file in `components/ui/`; feature components → four-file folder in `components/[Name]/`
+- All components live in their own folder: shadcn primitives in `components/ui/[name]/`; feature components in `components/[Name]/`
 - When to add a new shadcn component vs. compose from existing primitives
 - After creating a new component: run the doc update checklist in the `project-maintenance` skill
