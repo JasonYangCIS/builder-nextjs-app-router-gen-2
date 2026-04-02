@@ -27,10 +27,20 @@ export const announcementBarConfig: ComponentConfig = {
       helperText: "URL the CTA link points to",
     },
     {
+      name: "backgroundPreset",
+      type: "string",
+      enum: [
+        { label: "Default (primary)", value: "default" },
+        { label: "Purple", value: "purple" },
+      ],
+      defaultValue: "default",
+      helperText: "Choose a preset background color for the bar",
+    },
+    {
       name: "backgroundColor",
       type: "color",
       defaultValue: "",
-      helperText: "Bar background color — leave blank to use the primary brand color",
+      helperText: "Custom background color — overrides the preset above when set",
     },
     {
       name: "textColor",

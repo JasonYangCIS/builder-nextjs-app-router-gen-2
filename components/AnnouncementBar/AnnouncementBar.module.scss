@@ -24,6 +24,11 @@
   }
 }
 
+.bar--purple {
+  background-color: var(--purple);
+  color: var(--purple-foreground);
+}
+
 .content {
   display: flex;
   align-items: center;
