@@ -80,6 +80,7 @@ export default function AnnouncementBar({
   message,
   ctaLabel,
   ctaUrl,
+  backgroundPreset,
   backgroundColor,
   textColor,
   countdownEnabled,
@@ -160,6 +161,13 @@ export default function AnnouncementBar({
     ...(textColor ? { color: textColor } : {}),
   };
 
+  const barClassName = [
+    styles.bar,
+    backgroundPreset === "purple" && !backgroundColor ? styles["bar--purple"] : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     // suppressHydrationWarning prevents React from complaining about the
     // server (dismissed=false → rendered) vs client (dismissed=true → null) mismatch
@@ -167,7 +175,7 @@ export default function AnnouncementBar({
     <div
       role="complementary"
       aria-label="Announcement"
-      className={styles.bar}
+      className={barClassName}
       style={inlineStyles}
       onKeyDown={handleKeyDown}
       suppressHydrationWarning
