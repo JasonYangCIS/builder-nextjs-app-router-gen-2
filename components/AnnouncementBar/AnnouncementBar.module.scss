@@ -29,6 +29,11 @@
   color: var(--purple-foreground);
 }
 
+.bar--yellow {
+  background-color: var(--yellow);
+  color: var(--yellow-foreground);
+}
+
 .content {
   display: flex;
   align-items: center;

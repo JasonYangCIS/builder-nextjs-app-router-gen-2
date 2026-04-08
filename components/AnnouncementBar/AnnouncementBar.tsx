@@ -164,6 +164,7 @@ export default function AnnouncementBar({
   const barClassName = [
     styles.bar,
     backgroundPreset === "purple" && !backgroundColor ? styles["bar--purple"] : "",
+    backgroundPreset === "yellow" && !backgroundColor ? styles["bar--yellow"] : "",
   ]
     .filter(Boolean)
     .join(" ");
