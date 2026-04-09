@@ -1,12 +1,8 @@
-import DOMPurify from "isomorphic-dompurify";
+import { sanitizeHtml } from "@/utils/sanitize-html";
 import type { BlogArticleBodyProps } from "./BlogArticleBody.types";
 
-const SANITIZE_OPTIONS = {
-  ALLOWED_ATTR: ["href", "src", "alt", "title"] as string[],
-};
-
 export function BlogArticleBody({ htmlContent }: BlogArticleBodyProps) {
-  const sanitized = DOMPurify.sanitize(htmlContent, SANITIZE_OPTIONS);
+  const sanitized = sanitizeHtml(htmlContent);
 
   return (
     <section className="mb-12 overflow-hidden rounded-xl">

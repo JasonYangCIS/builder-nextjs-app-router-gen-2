@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { cn } from "@/utils/cn";
+import { sanitizeHtml } from "@/utils/sanitize-html";
 import type { FaqListProps } from "./FaqList.types";
 
 export type { FaqListProps } from "./FaqList.types";
@@ -108,10 +109,9 @@ export default function FaqList({ title, faqItems }: FaqListProps) {
               </summary>
               <div
                 className="pb-5 text-[0.9375rem] leading-[1.7] text-muted-foreground [&_a]:text-primary [&_a]:underline [&_p:last-child]:mb-0"
-                // Builder rich-text answers may contain HTML markup
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{
-                  __html: entry?.answer ?? "",
+                  __html: sanitizeHtml(entry?.answer ?? ""),
                 }}
               />
             </details>
