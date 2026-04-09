@@ -19,7 +19,7 @@ export const faqListConfig: ComponentConfig = {
         {
           name: "faqEntry",
           type: "reference",
-          model: "faq",
+          model: config.models.faq,
           helperText: "Pick an FAQ entry from the faq data model",
         },
       ],
