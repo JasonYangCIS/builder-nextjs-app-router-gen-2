@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { isPreviewing, isEditing, fetchOneEntry } from "@builder.io/sdk-react";
+import { config } from "@/config";
 import { cn } from "@/utils/cn";
 import { sanitizeHtml } from "@/utils/sanitize-html";
-import type { FaqTag } from "@/types/faq.types";
-import type { FaqListProps } from "./FaqList.types";
+import type { FaqTag, FaqEntry } from "@/types/faq.types";
+import type { FaqListProps, FaqReference } from "./FaqList.types";
 
 function faqTagLabel(t: FaqTag | null | undefined): string | null {
   const s = t?.tag?.trim();
@@ -19,23 +21,85 @@ const pillBase =
 const pillActive =
   "bg-primary text-primary-foreground border-primary hover:bg-primary hover:text-primary-foreground hover:border-primary";
 
+/**
+ * In Builder's visual editor / preview mode, `type: "reference"` inputs pass
+ * the selected entry's `id` but do NOT resolve the `value`. We detect that
+ * state and fetch the missing FAQ entries from the Builder API client-side so
+ * the component renders correctly while editing.
+ */
+async function resolveUnresolved(
+  items: FaqReference[],
+): Promise<FaqReference[]> {
+  const resolved = await Promise.all(
+    items.map(async (item) => {
+      // Already resolved — nothing to do.
+      if (item?.faqEntry?.value?.data) return item;
+
+      const id = item?.faqEntry?.id;
+      if (!id) return item;
+
+      const entry = await fetchOneEntry({
+        model: config.models.faq,
+        apiKey: config.envs.builderApiKey,
+        query: { id },
+      });
+
+      if (!entry?.data) return item;
+
+      return {
+        ...item,
+        faqEntry: {
+          ...item.faqEntry,
+          value: { data: entry.data as FaqEntry },
+        },
+      } satisfies FaqReference;
+    }),
+  );
+  return resolved;
+}
+
 export default function FaqList({ title, faqItems }: FaqListProps) {
   // null = no filter (show all); string = filter to that tag
   const [activeTag, setActiveTag] = useState<string | null>(null);
 
+  // In editor/preview, references aren't resolved by Builder — use local state
+  // so we can populate it via a client-side fetch.
+  const [resolvedItems, setResolvedItems] = useState<FaqReference[]>(
+    faqItems ?? [],
+  );
+
+  useEffect(() => {
+    // Always sync when props change (editor updates component props live).
+    setResolvedItems(faqItems ?? []);
+
+    if (!isPreviewing() && !isEditing()) return;
+    if (!faqItems?.length) return;
+
+    let cancelled = false;
+
+    resolveUnresolved(faqItems).then((items) => {
+      if (!cancelled) setResolvedItems(items);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [faqItems]);
+
   const entries = useMemo(
     () =>
-      (faqItems ?? [])
-        .flatMap((item) => {
-          const data = item?.faqEntry?.value?.data;
-          if (!data) return [];
-          return [{
+      resolvedItems.flatMap((item) => {
+        const data = item?.faqEntry?.value?.data;
+        if (!data) return [];
+        return [
+          {
             ...data,
             id: item?.faqEntry?.id ?? null,
             sanitizedAnswer: sanitizeHtml(data.answer ?? ""),
-          }];
-        }),
-    [faqItems],
+          },
+        ];
+      }),
+    [resolvedItems],
   );
 
   const allTags = useMemo(() => {
