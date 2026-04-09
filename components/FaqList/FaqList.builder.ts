@@ -15,6 +15,8 @@ export const faqListConfig: ComponentConfig = {
     {
       name: "faqItems",
       type: "list",
+      defaultValue: [],
+      helperText: "Select one or more FAQ entries to display in this section",
       subFields: [
         {
           name: "faqEntry",
@@ -23,8 +25,6 @@ export const faqListConfig: ComponentConfig = {
           helperText: "Pick an FAQ entry from the faq data model",
         },
       ],
-      defaultValue: [],
-      helperText: "Select one or more FAQ entries to display in this section",
     },
   ],
 };

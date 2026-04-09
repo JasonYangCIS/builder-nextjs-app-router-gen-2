@@ -3,7 +3,13 @@
 import { useState, useMemo } from "react";
 import { cn } from "@/utils/cn";
 import { sanitizeHtml } from "@/utils/sanitize-html";
+import type { FaqTag } from "@/types/faq.types";
 import type { FaqListProps } from "./FaqList.types";
+
+function faqTagLabel(t: FaqTag | null | undefined): string | null {
+  const s = t?.tag?.trim();
+  return s || null;
+}
 
 export type { FaqListProps } from "./FaqList.types";
 
@@ -36,7 +42,8 @@ export default function FaqList({ title, faqItems }: FaqListProps) {
     const tagSet = new Set<string>();
     for (const entry of entries) {
       for (const tag of entry?.tags ?? []) {
-        if (tag) tagSet.add(tag);
+        const label = faqTagLabel(tag);
+        if (label) tagSet.add(label);
       }
     }
     return Array.from(tagSet).sort();
@@ -44,14 +51,16 @@ export default function FaqList({ title, faqItems }: FaqListProps) {
 
   const filteredEntries = useMemo(() => {
     if (activeTag === null) return entries;
-    return entries.filter((entry) => entry?.tags?.includes(activeTag));
+    return entries.filter((entry) =>
+      entry?.tags?.some((t) => faqTagLabel(t) === activeTag),
+    );
   }, [entries, activeTag]);
 
   const hasTags = allTags.length > 0;
 
   return (
     <section
-      className="max-w-[860px] mx-auto px-6 py-16"
+      className="max-w-[860px] mx-auto px-6 py-16 w-full"
       data-testid="faq-list"
     >
       {title && (
