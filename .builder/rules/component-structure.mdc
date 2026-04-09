@@ -14,17 +14,31 @@ Full reference: see `components/HeroSplit/` as the canonical example.
 | Feature / Builder component | `components/MyComponent/` | Four-file folder pattern |
 
 ## Four-file folder pattern
-```
+
 components/MyComponent/
   MyComponent.tsx          # Component + re-exports types
   MyComponent.types.ts     # Interfaces only (Builder optional fields: string | null)
-  MyComponent.module.scss  # CSS Modules — var(--token) not hex, no Tailwind utilities
+  MyComponent.module.scss  # CSS Modules — only when Tailwind can't solve it (optional)
   MyComponent.builder.ts   # RegisteredComponent config — omit if not Builder-registered
 ```
+
+## Styling — Tailwind first
+**Default to Tailwind utilities in JSX.** Only create a `.module.scss` file for styles that Tailwind cannot express:
+
+| Use Tailwind | Use SCSS module |
+|---|---|
+| Layout, spacing, typography, color tokens | Descendant selectors into `dangerouslySetInnerHTML` content (e.g. `[&_a]` arbitrary variants are acceptable in Tailwind v4) |
+| Hover / focus / active variants | Complex keyframe animations |
+| `group-open:` for `<details>` open state | Rarely: deeply nested pseudo-element chains |
+| `[&::-webkit-details-marker]:hidden` | — |
+| `[&_a]:text-primary` for innerHTML links | — |
+
+- If `.module.scss` exists, use `var(--token)` custom properties only — never hardcoded hex/rgba
+- Omit `.module.scss` entirely if pure Tailwind covers all the component's styles
 
 ## Rules
 - No `index.ts` barrel — import directly: `import MyComponent from "@/components/MyComponent/MyComponent"`
 - `.tsx` re-exports types: `export type { MyComponentProps } from "./MyComponent.types"`
 - `.builder.ts` uses named export + default import: `import MyComponent from "./MyComponent"`
-- `.module.scss` uses CSS custom properties only — never hardcoded hex/rgba
 - Only create `.builder.ts` for components registered in `builder-registry.ts`
+- Use `cn()` from `@/utils/cn` for conditional Tailwind class composition

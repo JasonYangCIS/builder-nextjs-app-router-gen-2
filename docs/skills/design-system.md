@@ -11,7 +11,7 @@ Conventions for working with the shadcn/ui design system in this repo.
 | CSS variables | `app/globals.css` | shadcn OKLCH color tokens + theme overrides (default/dark) |
 | Gradient utilities | `styles/tokens.css` | `gradient-brand`, `gradient-brand-subtle`, etc. — use `var(--primary)` / `var(--accent)` |
 | shadcn primitives | `components/ui/` | Button, Badge, Input, Label, Card, Carousel, Text, FormInput — flat files, one per component |
-| Feature components | `components/[Name]/` | Four-file folder pattern (`.tsx` / `.types.ts` / `.module.scss` / `.builder.ts`) — see `HeroSplit/` |
+| Feature components | `components/[Name]/` | Four-file folder pattern (`.tsx` / `.types.ts` / `.builder.ts`, optional `.module.scss`) — see `HeroSplit/` |
 | Builder wrappers | `components/BuilderCarousel/` | BuilderCarousel — wraps shadcn Carousel for Builder.io editor |
 | Showcase | `app/design-system/page.tsx` | Visual reference at `/design-system`; also Playwright test harness |
 
@@ -62,6 +62,39 @@ Gradient utilities in `styles/tokens.css` automatically adapt to the active them
 **Do NOT hardcode hex colors or zinc/slate shades for text.** Always use semantic tokens so contrast is maintained across all themes.
 
 **Focus rings:** shadcn components use `focus-visible:ring-[3px] focus-visible:ring-ring/50` — use the same pattern on any custom interactive element.
+
+---
+
+## Styling Approach — Tailwind First
+
+**Always default to Tailwind utilities. Only create a `.module.scss` file for styles that Tailwind genuinely cannot express.**
+
+### Use Tailwind for
+- All layout, spacing, typography, and color token utilities
+- Hover / focus / active / disabled variants
+- `group-open:` modifier for `<details>` open state
+- Arbitrary variants for pseudo-elements: `[&::-webkit-details-marker]:hidden`
+- Arbitrary variants for innerHTML descendant elements: `[&_a]:text-primary [&_a]:underline`
+
+### Use a `.module.scss` file only when
+- Complex keyframe animations are needed
+- Deeply nested pseudo-element chains that become unreadable as Tailwind arbitrary variants
+- Third-party component overrides that require specificity control
+
+### Key patterns
+```tsx
+// Conditional classes — always use cn()
+import { cn } from "@/utils/cn";
+<button className={cn("base-classes", isActive && "active-classes")} />
+
+// Descendant selectors for dangerouslySetInnerHTML content
+<div className="text-muted-foreground [&_a]:text-primary [&_a]:underline [&_p:last-child]:mb-0" />
+
+// details/summary open state — use group + group-open
+<details className="group">
+  <svg className="group-open:rotate-180 transition-transform" />
+</details>
+```
 
 ---
 

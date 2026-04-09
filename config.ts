@@ -22,6 +22,7 @@ export const config = {
     algoliaSearch: "Algolia Search",
     cloudinaryImage: "Cloudinary Image",
     announcementBar: "Announcement Bar",
+    faqList: "FAQ List",
   },
   models: {
     page: "page",
@@ -29,7 +30,8 @@ export const config = {
     blogArticleSection: "blog-article-section",
     blogArticleTemplate: "blog-article-template",
     headerNavMenu: "header-nav-menu",
-    announcementBar: "announcement-bar"
+    announcementBar: "announcement-bar",
+    faq: "faq",
   },
   locales: {
     default: "en-US",
