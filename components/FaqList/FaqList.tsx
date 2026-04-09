@@ -23,7 +23,11 @@ export default function FaqList({ title, faqItems }: FaqListProps) {
         .flatMap((item) => {
           const data = item?.faqEntry?.value?.data;
           if (!data) return [];
-          return [{ ...data, sanitizedAnswer: sanitizeHtml(data.answer ?? "") }];
+          return [{
+            ...data,
+            id: item?.faqEntry?.id ?? null,
+            sanitizedAnswer: sanitizeHtml(data.answer ?? ""),
+          }];
         }),
     [faqItems],
   );
@@ -90,7 +94,7 @@ export default function FaqList({ title, faqItems }: FaqListProps) {
         <div>
           {filteredEntries.map((entry, index) => (
             <details
-              key={`${entry?.question ?? ""}-${index}`}
+              key={entry.id ?? `${entry.question ?? ""}-${index}`}
               className="border-b border-border first:border-t group"
             >
               <summary className="flex justify-between items-center gap-4 py-5 text-base font-semibold text-foreground cursor-pointer select-none [&::-webkit-details-marker]:hidden">
