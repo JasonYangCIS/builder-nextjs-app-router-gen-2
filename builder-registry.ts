@@ -15,6 +15,7 @@ import { heroSplitConfig } from "@/components/HeroSplit/HeroSplit.builder";
 import { heroCenteredConfig } from "@/components/HeroCentered/HeroCentered.builder";
 import { cloudinaryImageConfig } from "@/components/CloudinaryImage/CloudinaryImage.builder";
 import { announcementBarConfig } from "@/components/AnnouncementBar/AnnouncementBar.builder";
+import { faqListConfig } from "@/components/FaqList/FaqList.builder";
 import { algoliaSearchConfig } from "@/components/Algolia/AlgoliaSearch/AlgoliaSearch.builder";
 import { uiBlocksConfig } from "./components/UiBlocks/UiBlocks.config";
 
@@ -28,6 +29,7 @@ export const CUSTOM_COMPONENTS: ComponentConfig[] = [
   counterConfig,
   builderCarouselConfig,
   uiBlocksConfig,
+  faqListConfig,
 
   // ─── Hero Components ──────────────────────────────────────────────────────
   heroFullBleedConfig,
@@ -60,6 +62,7 @@ registerInsertMenu([
       counterConfig,
       builderCarouselConfig,
       uiBlocksConfig,
+      faqListConfig,
     ],
   },
   {
