@@ -20,8 +20,11 @@ export default function FaqList({ title, faqItems }: FaqListProps) {
   const entries = useMemo(
     () =>
       (faqItems ?? [])
-        .map((item) => item?.faqEntry?.value?.data)
-        .filter(Boolean),
+        .flatMap((item) => {
+          const data = item?.faqEntry?.value?.data;
+          if (!data) return [];
+          return [{ ...data, sanitizedAnswer: sanitizeHtml(data.answer ?? "") }];
+        }),
     [faqItems],
   );
 
@@ -110,7 +113,7 @@ export default function FaqList({ title, faqItems }: FaqListProps) {
                 className="pb-5 text-[0.9375rem] leading-[1.7] text-muted-foreground [&_a]:text-primary [&_a]:underline [&_p:last-child]:mb-0"
                 // eslint-disable-next-line react/no-danger
                 dangerouslySetInnerHTML={{
-                  __html: sanitizeHtml(entry?.answer ?? ""),
+                  __html: entry.sanitizedAnswer,
                 }}
               />
             </details>
