@@ -9,6 +9,9 @@ import type { Config } from "dompurify";
  * formatting, links, images, and basic table structure are permitted;
  * scripts, event handlers, and dangerous attributes are stripped.
  *
+ * Any link with target="_blank" has rel="noopener noreferrer" enforced
+ * via an afterSanitizeAttributes hook to prevent reverse tabnapping.
+ *
  * @example
  * <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(rawHtml) }} />
  */
@@ -16,6 +19,14 @@ export function sanitizeHtml(html: string): string {
   if (!html) return "";
   return DOMPurify.sanitize(html, SANITIZE_OPTIONS) as string;
 }
+
+// Enforce rel="noopener noreferrer" on every <a target="_blank"> after
+// sanitization. ADD_ATTR only extends the allowlist — it does not set values.
+DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+  if (node.tagName === "A" && node.getAttribute("target") === "_blank") {
+    node.setAttribute("rel", "noopener noreferrer");
+  }
+});
 
 const SANITIZE_OPTIONS: Config = {
   ALLOWED_TAGS: [
@@ -34,12 +45,9 @@ const SANITIZE_OPTIONS: Config = {
   ALLOWED_ATTR: [
     "href", "src", "alt", "title",
     "target", "rel",
-    "class", "id",
     "width", "height",
     "colspan", "rowspan",
     "aria-label", "aria-hidden",
   ],
-  // Force rel="noopener noreferrer" on any link that opens in a new tab
-  ADD_ATTR: ["target"],
   FORCE_BODY: false,
 };

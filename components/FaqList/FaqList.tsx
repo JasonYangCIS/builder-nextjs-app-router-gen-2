@@ -7,8 +7,6 @@ import type { FaqListProps } from "./FaqList.types";
 
 export type { FaqListProps } from "./FaqList.types";
 
-const ALL_TAG = "All";
-
 const pillBase =
   "py-[0.375rem] px-[0.875rem] rounded-full border border-border bg-transparent text-muted-foreground text-sm font-medium cursor-pointer transition-[background-color,color,border-color] duration-150 ease-in hover:bg-accent hover:text-accent-foreground hover:border-accent motion-reduce:transition-none";
 
@@ -16,7 +14,8 @@ const pillActive =
   "bg-primary text-primary-foreground border-primary hover:bg-primary hover:text-primary-foreground hover:border-primary";
 
 export default function FaqList({ title, faqItems }: FaqListProps) {
-  const [activeTag, setActiveTag] = useState<string>(ALL_TAG);
+  // null = no filter (show all); string = filter to that tag
+  const [activeTag, setActiveTag] = useState<string | null>(null);
 
   const entries = useMemo(
     () =>
@@ -37,7 +36,7 @@ export default function FaqList({ title, faqItems }: FaqListProps) {
   }, [entries]);
 
   const filteredEntries = useMemo(() => {
-    if (activeTag === ALL_TAG) return entries;
+    if (activeTag === null) return entries;
     return entries.filter((entry) => entry?.tags?.includes(activeTag));
   }, [entries, activeTag]);
 
@@ -61,11 +60,11 @@ export default function FaqList({ title, faqItems }: FaqListProps) {
           aria-label="Filter by tag"
         >
           <button
-            className={cn(pillBase, activeTag === ALL_TAG && pillActive)}
-            onClick={() => setActiveTag(ALL_TAG)}
-            aria-pressed={activeTag === ALL_TAG}
+            className={cn(pillBase, activeTag === null && pillActive)}
+            onClick={() => setActiveTag(null)}
+            aria-pressed={activeTag === null}
           >
-            {ALL_TAG}
+            All
           </button>
           {allTags.map((tag) => (
             <button
