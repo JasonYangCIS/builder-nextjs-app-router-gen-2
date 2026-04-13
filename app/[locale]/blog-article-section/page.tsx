@@ -1,11 +1,15 @@
 import { fetchEntries } from "@builder.io/sdk-react";
 import { config } from "@/config";
-import { buildLocalePath } from "@/utils/locale";
+import { buildLocalePath, SUPPORTED_LOCALE_CODES } from "@/utils/locale";
 import { BlogArticleList } from "@/components/blog/BlogArticleList/BlogArticleList";
 import { Text } from "@/components/ui/Text/Text";
 import type { BlogArticle } from "@/types/blog.types";
 
 const builderModelName = config.models.blogArticleSection;
+
+export function generateStaticParams() {
+  return SUPPORTED_LOCALE_CODES.map((locale) => ({ locale }));
+}
 
 export const revalidate = 5;
 
