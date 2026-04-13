@@ -2,7 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import { usePathname } from "next/navigation";
-import AlgoliaSearch from "@/components/Algolia/AlgoliaSearch/AlgoliaSearch";
+import dynamic from "next/dynamic";
+
+const AlgoliaSearch = dynamic(
+  () => import("@/components/Algolia/AlgoliaSearch/AlgoliaSearch"),
+  { ssr: false }
+);
 
 export function SearchButton() {
   const [open, setOpen] = useState(false);
