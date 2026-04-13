@@ -23,7 +23,7 @@ export async function generateStaticParams() {
 
   const pagePaths = (pages ?? [])
     .map((entry) => (entry.data as { url?: string })?.url)
-    .filter((url): url is string => !!url && url !== "/")
+    .filter((url): url is string => typeof url === "string" && url !== "/")
     .map((url) => url.replace(/^\//, "").split("/").filter(Boolean))
     .filter((segments) => segments.length > 0);
 
