@@ -7,12 +7,19 @@ import { notFound } from "next/navigation";
 const builderModelName = config.models.page;
 
 export async function generateStaticParams() {
-  const pages = await fetchEntries({
-    model: builderModelName,
-    apiKey: config.envs.builderApiKey,
-    limit: 100,
-    fields: "data.url",
-  });
+  let pages;
+  try {
+    pages = await fetchEntries({
+      model: builderModelName,
+      apiKey: config.envs.builderApiKey,
+      limit: 100,
+      fields: "data.url",
+    });
+  } catch {
+    // If the Builder API is unavailable at build time, skip static generation
+    // and fall back to on-demand rendering for all catch-all routes.
+    return [];
+  }
 
   const pagePaths = (pages ?? [])
     .map((entry) => (entry.data as { url?: string })?.url)
