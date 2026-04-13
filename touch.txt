@@ -1,4 +1,3 @@
-touchConflict
 touch
 touch
 touch
