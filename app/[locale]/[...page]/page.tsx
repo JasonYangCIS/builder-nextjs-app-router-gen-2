@@ -18,22 +18,34 @@ function resolveUrlField(value: unknown): string | undefined {
   return undefined;
 }
 
+const PAGE_FETCH_LIMIT = 100;
+
 export async function generateStaticParams() {
-  let pages;
+  const allPages: Awaited<ReturnType<typeof fetchEntries>> = [];
+  let offset = 0;
+
   try {
-    pages = await fetchEntries({
-      model: builderModelName,
-      apiKey: config.envs.builderApiKey,
-      limit: 100,
-      fields: "data.url",
-    });
+    while (true) {
+      const batch = await fetchEntries({
+        model: builderModelName,
+        apiKey: config.envs.builderApiKey,
+        limit: PAGE_FETCH_LIMIT,
+        offset,
+        fields: "data.url",
+      });
+
+      if (!batch || batch.length === 0) break;
+      allPages.push(...batch);
+      if (batch.length < PAGE_FETCH_LIMIT) break;
+      offset += PAGE_FETCH_LIMIT;
+    }
   } catch {
     // If the Builder API is unavailable at build time, skip static generation
     // and fall back to on-demand rendering for all catch-all routes.
     return [];
   }
 
-  const pagePaths = (pages ?? [])
+  const pagePaths = allPages
     .map((entry) => resolveUrlField((entry.data as { url?: unknown })?.url))
     .filter((url): url is string => typeof url === "string" && url !== "/")
     .map((url) => url.replace(/^\//, "").split("/").filter(Boolean))
