@@ -6,6 +6,18 @@ import { notFound } from "next/navigation";
 
 const builderModelName = config.models.page;
 
+/** Resolves a Builder data field that may be a plain string or a localized
+ *  object like `{ Default: "/about", "@type": "..." }`. Mirrors the same
+ *  pattern used in ResultsList.tsx. */
+function resolveUrlField(value: unknown): string | undefined {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object" && "Default" in value) {
+    const def = (value as Record<string, unknown>).Default;
+    if (typeof def === "string") return def;
+  }
+  return undefined;
+}
+
 export async function generateStaticParams() {
   let pages;
   try {
@@ -22,7 +34,7 @@ export async function generateStaticParams() {
   }
 
   const pagePaths = (pages ?? [])
-    .map((entry) => (entry.data as { url?: string })?.url)
+    .map((entry) => resolveUrlField((entry.data as { url?: unknown })?.url))
     .filter((url): url is string => typeof url === "string" && url !== "/")
     .map((url) => url.replace(/^\//, "").split("/").filter(Boolean))
     .filter((segments) => segments.length > 0);
