@@ -38,6 +38,9 @@
   /* Purple brand color */
   --purple: oklch(0.55 0.22 300);
   --purple-foreground: oklch(1 0 0);
+  /* Yellow brand color */
+  --yellow: oklch(0.88 0.16 85);
+  --yellow-foreground: oklch(0.2 0.05 85);
 
   /* Legacy theme tokens for backward compat with gradients/layout */
   --header-bg: oklch(1 0 0);
@@ -80,6 +83,9 @@
   /* Purple brand color */
   --purple: oklch(0.50 0.22 300);
   --purple-foreground: oklch(1 0 0);
+  /* Yellow brand color */
+  --yellow: oklch(0.82 0.18 85);
+  --yellow-foreground: oklch(0.15 0.05 85);
 
   /* Legacy theme tokens */
   --header-bg: oklch(0.21 0.006 285.885);

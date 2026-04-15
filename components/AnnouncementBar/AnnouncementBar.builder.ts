@@ -32,6 +32,7 @@ export const announcementBarConfig: ComponentConfig = {
       enum: [
         { label: "Default (primary)", value: "default" },
         { label: "Purple", value: "purple" },
+        { label: "Yellow", value: "yellow" },
       ],
       defaultValue: "default",
       helperText: "Choose a preset background color for the bar",
