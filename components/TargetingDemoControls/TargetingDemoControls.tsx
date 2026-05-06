@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button/Button";
 import { Text } from "@/components/ui/Text/Text";
@@ -15,18 +15,6 @@ import type { TargetingDemoControlsProps } from "./TargetingDemoControls.types";
 
 export type { TargetingDemoControlsProps } from "./TargetingDemoControls.types";
 
-const SESSION_KEY = "builder-targeting";
-
-function readSession(): TargetingAttributes | null {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.sessionStorage.getItem(SESSION_KEY);
-    return raw ? (JSON.parse(raw) as TargetingAttributes) : null;
-  } catch {
-    return null;
-  }
-}
-
 function writeCookie(value: TargetingAttributes) {
   if (typeof document === "undefined") return;
   document.cookie = `${TARGETING_COOKIE}=${serializeTargeting(value)}; path=/; SameSite=Lax`;
@@ -39,24 +27,8 @@ export default function TargetingDemoControls({
   const [open, setOpen] = useState(false);
   const [attrs, setAttrs] = useState<TargetingAttributes>(initialAttributes ?? {});
 
-  useEffect(() => {
-    const cached = readSession();
-    if (cached && JSON.stringify(cached) !== JSON.stringify(attrs)) {
-      setAttrs(cached);
-      writeCookie(cached);
-      router.refresh();
-    }
-    // Intentionally only on mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const update = (next: TargetingAttributes) => {
     setAttrs(next);
-    try {
-      window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(next));
-    } catch {
-      // ignore
-    }
     writeCookie(next);
     router.refresh();
   };
@@ -70,11 +42,6 @@ export default function TargetingDemoControls({
   };
 
   const reset = () => {
-    try {
-      window.sessionStorage.removeItem(SESSION_KEY);
-    } catch {
-      // ignore
-    }
     document.cookie = `${TARGETING_COOKIE}=; path=/; SameSite=Lax; Max-Age=0`;
     setAttrs({});
     router.refresh();
