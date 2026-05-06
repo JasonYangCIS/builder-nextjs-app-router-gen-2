@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { setClientUserAttributes } from "@builder.io/sdk-react";
 import { Button } from "@/components/ui/Button/Button";
 import { Text } from "@/components/ui/Text/Text";
 import {
@@ -42,11 +43,18 @@ export default function TargetingDemoControls(_props: TargetingDemoControlsProps
   const [open, setOpen] = useState(false);
   const [attrs, setAttrs] = useState<TargetingAttributes>(() => readCookie());
 
+  // Sync attrs into the Builder SDK's user-attributes cookie so client-side
+  // Personalization Containers re-evaluate variants without a full reload.
+  useEffect(() => {
+    setClientUserAttributes(attrs as Record<string, unknown>);
+  }, [attrs]);
+
   const update = (next: TargetingAttributes) => {
     setAttrs(next);
     // document.cookie assignment is synchronous; the cookie is in the jar before
     // router.refresh() fires the next request, so no race here.
     writeCookie(next);
+    setClientUserAttributes(next as Record<string, unknown>);
     router.refresh();
   };
 
@@ -61,6 +69,7 @@ export default function TargetingDemoControls(_props: TargetingDemoControlsProps
   const reset = () => {
     document.cookie = `${TARGETING_COOKIE}=; ${cookieAttrs()}; Max-Age=0`;
     setAttrs({});
+    setClientUserAttributes({});
     router.refresh();
   };
 
