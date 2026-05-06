@@ -1,4 +1,4 @@
-export type AnnouncementBarBackgroundPreset = "default" | "purple";
+export type AnnouncementBarBackgroundPreset = "default" | "purple" | "yellow";
 
 export interface AnnouncementBarProps {
   message?: string | null;
