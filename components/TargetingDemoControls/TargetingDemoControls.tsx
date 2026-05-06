@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button/Button";
 import { Text } from "@/components/ui/Text/Text";
 import {
+  parseTargeting,
   serializeTargeting,
   TARGETING_COOKIE,
   USER_TYPES,
@@ -15,17 +16,28 @@ import type { TargetingDemoControlsProps } from "./TargetingDemoControls.types";
 
 export type { TargetingDemoControlsProps } from "./TargetingDemoControls.types";
 
-function writeCookie(value: TargetingAttributes) {
-  if (typeof document === "undefined") return;
-  document.cookie = `${TARGETING_COOKIE}=${serializeTargeting(value)}; path=/; SameSite=Lax`;
+function readCookie(): TargetingAttributes {
+  if (typeof document === "undefined") return {};
+  const match = document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(`${TARGETING_COOKIE}=`));
+  return parseTargeting(match?.slice(TARGETING_COOKIE.length + 1));
 }
 
-export default function TargetingDemoControls({
-  initialAttributes,
-}: TargetingDemoControlsProps) {
+function cookieAttrs() {
+  const isHttps = typeof location !== "undefined" && location.protocol === "https:";
+  return `path=/; SameSite=Lax${isHttps ? "; Secure" : ""}`;
+}
+
+function writeCookie(value: TargetingAttributes) {
+  if (typeof document === "undefined") return;
+  document.cookie = `${TARGETING_COOKIE}=${serializeTargeting(value)}; ${cookieAttrs()}`;
+}
+
+export default function TargetingDemoControls(_props: TargetingDemoControlsProps = {}) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [attrs, setAttrs] = useState<TargetingAttributes>(initialAttributes ?? {});
+  const [attrs, setAttrs] = useState<TargetingAttributes>(() => readCookie());
 
   const update = (next: TargetingAttributes) => {
     setAttrs(next);
@@ -42,7 +54,7 @@ export default function TargetingDemoControls({
   };
 
   const reset = () => {
-    document.cookie = `${TARGETING_COOKIE}=; path=/; SameSite=Lax; Max-Age=0`;
+    document.cookie = `${TARGETING_COOKIE}=; ${cookieAttrs()}; Max-Age=0`;
     setAttrs({});
     router.refresh();
   };
@@ -79,14 +91,14 @@ export default function TargetingDemoControls({
       </div>
 
       <div className="mb-4 flex items-center justify-between">
-        <label htmlFor="targeting-isLoggedIn" className="text-sm font-medium">
+        <span id="targeting-isLoggedIn-label" className="text-sm font-medium">
           isLoggedIn
-        </label>
+        </span>
         <button
-          id="targeting-isLoggedIn"
           type="button"
           role="switch"
           aria-checked={!!attrs.isLoggedIn}
+          aria-labelledby="targeting-isLoggedIn-label"
           onClick={toggleLoggedIn}
           className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
             attrs.isLoggedIn ? "bg-primary" : "bg-muted"

@@ -7,7 +7,6 @@ import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent"
 import { SUPPORTED_LOCALE_CODES } from "@/utils/locale";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
-import { getTargetingAttributes } from "@/utils/targeting.server";
 import TargetingDemoControls from "@/components/TargetingDemoControls/TargetingDemoControls";
 import "../globals.css";
 
@@ -43,12 +42,10 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const targeting = await getTargetingAttributes();
-
   const announcementBar = await fetchOneEntry({
     model: config.models.announcementBar,
     apiKey: config.envs.builderApiKey,
-    userAttributes: { locale, ...targeting },
+    userAttributes: { locale },
     locale,
   });
 
@@ -76,7 +73,7 @@ export default async function LocaleLayout({
         )}
         {children}
         <Footer />
-        <TargetingDemoControls initialAttributes={targeting} />
+        <TargetingDemoControls />
       </body>
     </html>
   );
