@@ -10,6 +10,7 @@ import { notFound } from "next/navigation";
 import { BlogArticleHeader } from "@/components/blog/BlogArticleHeader/BlogArticleHeader";
 import { BlogArticleHero } from "@/components/blog/BlogArticleHero/BlogArticleHero";
 import type { BlogArticle, BlogArticleWithContent } from "@/types/blog.types";
+import { getTargetingAttributes } from "@/utils/targeting.server";
 
 const builderModelName = config.models.blogArticleSection;
 
@@ -48,17 +49,18 @@ export async function generateMetadata({
   };
 }
 
-export const revalidate = 5;
+export const dynamic = "force-dynamic";
 
 export default async function Page(props: {
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await props.params;
+  const targeting = await getTargetingAttributes();
 
   const content = await fetchOneEntry({
     apiKey: config.envs.builderApiKey,
     model: builderModelName,
-    userAttributes: { locale },
+    userAttributes: { locale, ...targeting },
     query: { "data.slug": slug },
     locale,
   });

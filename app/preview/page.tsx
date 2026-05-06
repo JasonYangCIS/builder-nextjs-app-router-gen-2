@@ -35,6 +35,7 @@ import { notFound } from "next/navigation";
 import { BlogArticleHeader } from "@/components/blog/BlogArticleHeader/BlogArticleHeader";
 import { BlogArticleHero } from "@/components/blog/BlogArticleHero/BlogArticleHero";
 import type { BlogArticle, BlogArticleWithContent } from "@/types/blog.types";
+import { getTargetingAttributes } from "@/utils/targeting.server";
 
 // Always dynamic — only accessed from the Builder editor iframe.
 export const dynamic = "force-dynamic";
@@ -70,13 +71,15 @@ export default async function PreviewPage(props: {
   // A model name is required — reject empty requests outright
   if (!model) return notFound();
 
+  const targeting = await getTargetingAttributes();
+
   // ── page model ────────────────────────────────────────────────────────────
   if (model === config.models.page) {
     const content = await fetchOneEntry({
       apiKey: config.envs.builderApiKey,
       model: config.models.page,
       options: builderOptions,
-      userAttributes: { urlPath, locale },
+      userAttributes: { urlPath, locale, ...targeting },
       locale,
     });
 
@@ -95,7 +98,7 @@ export default async function PreviewPage(props: {
       apiKey: config.envs.builderApiKey,
       model,
       options: builderOptions,
-      userAttributes: { locale },
+      userAttributes: { locale, ...targeting },
       query: { "data.slug": slug },
       locale,
     });
@@ -123,7 +126,7 @@ export default async function PreviewPage(props: {
     const articleData = await fetchOneEntry({
       model: config.models.blogArticle,
       apiKey: config.envs.builderApiKey,
-      userAttributes: { locale },
+      userAttributes: { locale, ...targeting },
       query: { "data.slug": slug },
       locale,
     });
@@ -133,7 +136,7 @@ export default async function PreviewPage(props: {
       model: config.models.blogArticleTemplate,
       apiKey: config.envs.builderApiKey,
       options: builderOptions,
-      userAttributes: { category: articleData?.data?.category, locale },
+      userAttributes: { category: articleData?.data?.category, locale, ...targeting },
       locale,
     });
 
@@ -155,7 +158,7 @@ export default async function PreviewPage(props: {
     apiKey: config.envs.builderApiKey,
     model,
     options: builderOptions,
-    userAttributes: { locale },
+    userAttributes: { locale, ...targeting },
     locale,
   });
 

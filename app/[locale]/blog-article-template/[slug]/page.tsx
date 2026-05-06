@@ -7,6 +7,7 @@ import { config } from "@/config";
 import { SUPPORTED_LOCALE_CODES } from "@/utils/locale";
 import { notFound } from "next/navigation";
 import type { BlogArticle } from "@/types/blog.types";
+import { getTargetingAttributes } from "@/utils/targeting.server";
 
 export async function generateStaticParams() {
   const articles = await fetchEntries({
@@ -43,18 +44,19 @@ export async function generateMetadata({
   };
 }
 
-export const revalidate = 5;
+export const dynamic = "force-dynamic";
 
 export default async function Page(props: {
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await props.params;
+  const targeting = await getTargetingAttributes();
 
   // Fetch article first
   const articleData = await fetchOneEntry({
     model: config.models.blogArticle,
     apiKey: config.envs.builderApiKey,
-    userAttributes: { locale },
+    userAttributes: { locale, ...targeting },
     query: { "data.slug": slug },
     locale,
   });
@@ -66,6 +68,7 @@ export default async function Page(props: {
     userAttributes: {
       category: articleData?.data?.category,
       locale,
+      ...targeting,
     },
     locale,
   });

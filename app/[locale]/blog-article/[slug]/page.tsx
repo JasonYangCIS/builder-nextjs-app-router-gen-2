@@ -7,6 +7,7 @@ import type { BlogArticle, BlogArticleWithContent } from "@/types/blog.types";
 import { BlogArticleBody } from "@/components/blog/BlogArticleBody/BlogArticleBody";
 import { BlogArticleHeader } from "@/components/blog/BlogArticleHeader/BlogArticleHeader";
 import { BlogArticleHero } from "@/components/blog/BlogArticleHero/BlogArticleHero";
+import { getTargetingAttributes } from "@/utils/targeting.server";
 
 const builderModelName = config.models.blogArticle;
 
@@ -45,17 +46,18 @@ export async function generateMetadata({
   };
 }
 
-export const revalidate = 5;
+export const dynamic = "force-dynamic";
 
 export default async function Page(props: {
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await props.params;
+  const targeting = await getTargetingAttributes();
 
   const content = await fetchOneEntry({
     apiKey: config.envs.builderApiKey,
     model: builderModelName,
-    userAttributes: { locale },
+    userAttributes: { locale, ...targeting },
     query: { "data.slug": slug },
     locale,
   });

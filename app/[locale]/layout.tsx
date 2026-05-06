@@ -7,6 +7,7 @@ import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent"
 import { SUPPORTED_LOCALE_CODES } from "@/utils/locale";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
+import TargetingDemoControls from "@/components/TargetingDemoControls/TargetingDemoControls";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -44,6 +45,7 @@ export default async function LocaleLayout({
   const announcementBar = await fetchOneEntry({
     model: config.models.announcementBar,
     apiKey: config.envs.builderApiKey,
+    userAttributes: { locale },
     locale,
   });
 
@@ -71,6 +73,7 @@ export default async function LocaleLayout({
         )}
         {children}
         <Footer />
+        <TargetingDemoControls />
       </body>
     </html>
   );
