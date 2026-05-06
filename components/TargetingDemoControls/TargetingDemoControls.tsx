@@ -24,6 +24,9 @@ function readCookie(): TargetingAttributes {
   return parseTargeting(match?.slice(TARGETING_COOKIE.length + 1));
 }
 
+// SameSite=Lax is intentional: this cookie is only set from the main site (the
+// panel is not mounted on /preview), so cross-site iframe delivery is not needed
+// and Lax avoids broader exposure. No HttpOnly because the client must write it.
 function cookieAttrs() {
   const isHttps = typeof location !== "undefined" && location.protocol === "https:";
   return `path=/; SameSite=Lax${isHttps ? "; Secure" : ""}`;
@@ -41,6 +44,8 @@ export default function TargetingDemoControls(_props: TargetingDemoControlsProps
 
   const update = (next: TargetingAttributes) => {
     setAttrs(next);
+    // document.cookie assignment is synchronous; the cookie is in the jar before
+    // router.refresh() fires the next request, so no race here.
     writeCookie(next);
     router.refresh();
   };
