@@ -17,6 +17,7 @@ import { cloudinaryImageConfig } from "@/components/CloudinaryImage/CloudinaryIm
 import { announcementBarConfig } from "@/components/AnnouncementBar/AnnouncementBar.builder";
 import { faqListConfig } from "@/components/FaqList/FaqList.builder";
 import { algoliaSearchConfig } from "@/components/Algolia/AlgoliaSearch/AlgoliaSearch.builder";
+import { colorOverlayConfig } from "@/components/ColorOverlay/ColorOverlay.builder";
 import { uiBlocksConfig } from "./components/UiBlocks/UiBlocks.config";
 
 export const CUSTOM_COMPONENTS: ComponentConfig[] = [
@@ -39,6 +40,7 @@ export const CUSTOM_COMPONENTS: ComponentConfig[] = [
   // ─── Special Components ───────────────────────────────────────────────────
   algoliaSearchConfig,
   cloudinaryImageConfig,
+  colorOverlayConfig,
 
   // ─── Announcement Bar ────────────────────────────────────────────────────
   announcementBarConfig,
@@ -71,13 +73,18 @@ registerInsertMenu([
     items: [heroFullBleedConfig, heroSplitConfig, heroCenteredConfig],
   },
   {
-    name: "Special Components",
+    name: "Container Components",
     priority: 3,
+    items: [colorOverlayConfig],
+  },
+  {
+    name: "Special Components",
+    priority: 4,
     items: [algoliaSearchConfig, cloudinaryImageConfig],
   },
   {
     name: "Announcement Bar",
-    priority: 4,
+    priority: 5,
     allowedModels: [config.models.announcementBar],
     items: [announcementBarConfig],
   },
