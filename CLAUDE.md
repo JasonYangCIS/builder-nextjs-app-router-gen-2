@@ -64,6 +64,7 @@ components/
   CloudinaryImage/             # Cloudinary image component (cloudinaryImageEditor plugin)
   HeroSplit/                   # Canonical four-file component pattern
   AnnouncementBar/             # Dismissable site-wide bar with optional countdown timer
+  ColorOverlay/                # Container that tints dropped child blocks (color + opacity controls)
 
 docs/skills/                   # Canonical skill references (loaded on demand)
 types/                         # Shared TypeScript interfaces

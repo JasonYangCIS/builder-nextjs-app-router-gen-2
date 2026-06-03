@@ -27,6 +27,7 @@ export const config = {
     cloudinaryImage: "Cloudinary Image",
     announcementBar: "Announcement Bar",
     faqList: "FAQ List",
+    colorOverlay: "Color Overlay",
   },
   models: {
     page: "page",
