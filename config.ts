@@ -6,6 +6,10 @@ export const config = {
     algoliaAppId: process.env.NEXT_PUBLIC_ALGOLIA_APP_ID ?? "",
     algoliaSearchApiKey: process.env.NEXT_PUBLIC_ALGOLIA_SEARCH_API_KEY ?? "",
     algoliaIndexName: process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME ?? "builder-page",
+    // Server-only secret used to sign the httpOnly targeting session cookie.
+    // MUST be overridden in production via SESSION_SECRET; the fallback is for
+    // local dev only. Never expose with a NEXT_PUBLIC_ prefix.
+    sessionSecret: process.env.SESSION_SECRET ?? "dev-only-insecure-session-secret",
   },
   components: {
     uiBlocks: "UI Blocks",

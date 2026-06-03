@@ -42,19 +42,21 @@ app/
   layout.tsx                   # Root layout — passthrough (returns children only)
   [locale]/                    # All user-facing pages live under this segment
     layout.tsx                 # Locale layout — owns <html lang>, Header, Footer
-    page.tsx                   # Root "/" — Builder page model
-    [...page]/page.tsx         # Catch-all for Builder-managed pages
+    page.tsx                   # Root "/" — Builder page model (static + client targeting)
+    [...page]/page.tsx         # Catch-all for Builder-managed pages (static + client targeting)
     blog/page.tsx              # Blog index hub
     blog-article/              # Data model blog (list + [slug] detail)
     blog-article-section/      # Section model blog (list + [slug] detail)
     blog-article-template/     # Hybrid model blog (list + [slug] detail)
+    {ssg,ssr,ppr}/custom-targeting/  # Targeting strategy demos (see builder-io skill)
     design-system/page.tsx     # Component showcase
+  api/targeting/route.ts       # Signed httpOnly session: GET derive / POST set / DELETE clear
   preview/                     # Builder visual editor preview (force-dynamic, own layout)
   test/                        # Playwright fixture pages (own layout)
 
 components/
   blog/                        # Blog-specific components
-  builder/                     # RenderBuilderContent wrapper + BuilderDesignTokens
+  builder/                     # RenderBuilderContent, TargetedBuilderContent, BuilderContentSkeleton, BuilderDesignTokens
   ui/                          # shadcn/ui primitives — one folder per component (button/, badge/, card/, etc.)
   Algolia/                     # AlgoliaSearch, SearchForm, ResultsList (Algolia integration)
   layout/                      # Header (RSC + NavItems, SearchButton, ThemeSwitch client), Footer
@@ -65,7 +67,7 @@ components/
 
 docs/skills/                   # Canonical skill references (loaded on demand)
 types/                         # Shared TypeScript interfaces
-utils/                         # cn.ts (className joiner), locale.ts (buildLocalePath, etc.)
+utils/                         # cn.ts, locale.ts, targeting* (custom-targeting sources + signed session)
 proxy.ts                       # Next.js 16 proxy (locale rewrites + redirects)
 ```
 

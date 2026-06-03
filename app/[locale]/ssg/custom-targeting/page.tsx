@@ -1,25 +1,32 @@
 import { fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
-import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
+import { TargetedBuilderContent } from "@/components/builder/TargetedBuilderContent";
+import { BuilderContentSkeleton } from "@/components/builder/BuilderContentSkeleton";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
 
-// SSG demo: no server-side targeting read. Builder returns content with all
-// Personalization Container variants embedded; the SDK swaps to the matching
-// variant client-side via setClientUserAttributes (see TargetingDemoControls).
+// SSG demo: the server fetches the DEFAULT entry with no targeting, so the route
+// is statically generated (no force-dynamic). TargetedBuilderContent then does
+// client-side targeting: when targeting attributes are present it re-fetches the
+// matching entry in the browser and swaps it in. This works for ENTRY-LEVEL
+// targeting (separate entries per audience), unlike setClientUserAttributes,
+// which only re-filters Personalization Container variants already in the
+// payload.
 //
 // Pros:
-// - Fastest TTFB / FCP — full HTML served from edge cache, zero origin work
+// - Fastest TTFB / FCP — default HTML served from edge cache, zero origin work
 // - Cheapest to host: no per-request compute
-// - Same speed for every user regardless of targeting
-// - LCP measured on the static shell is optimal
+// - Untargeted users pay nothing: no extra fetch, no flash, default is SEO baseline
+// - Works for entry-level targeting without force-dynamic
 //
 // Cons:
-// - Flash of default variant on first paint, then swap once SDK hydrates
-// - LCP can shift if the personalized element is the LCP candidate
-// - CLS risk if variants differ in height
-// - Crawlers/SEO see only the default variant
-// - All variants ship in the JSON payload (larger response)
+// - Targeted users see a default→targeted swap (one client fetch after hydration)
+// - LCP can shift / CLS risk if the targeted entry differs from the default
+// - Crawlers/SEO see only the default entry
 // - Editor changes require a rebuild or on-demand revalidation
+//
+// This route uses the "cookie" TargetingSource (transparent: inspect the
+// `builder-targeting` cookie in DevTools) to contrast with the production routes,
+// which use the "session" source. Same wrapper, swapped source — that's the lesson.
 const builderModelName = config.models.page;
 const urlPath = "/custom-targeting";
 
@@ -39,5 +46,14 @@ export default async function Page(props: {
     return notFound();
   }
 
-  return <RenderBuilderContent content={content} model={builderModelName} locale={locale} />;
+  return (
+    <TargetedBuilderContent
+      initialContent={content}
+      model={builderModelName}
+      urlPath={urlPath}
+      locale={locale}
+      sourceKey="cookie"
+      fallback={<BuilderContentSkeleton />}
+    />
+  );
 }

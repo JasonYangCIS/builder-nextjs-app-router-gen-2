@@ -1,23 +1,25 @@
 import { fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
-import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
+import { TargetedBuilderContent } from "@/components/builder/TargetedBuilderContent";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
-import { getTargetingAttributes } from "@/utils/targeting.server";
 
 const builderModelName = config.models.page;
+const urlPath = "/";
 
-export const dynamic = "force-dynamic";
+// Static/ISR with client-side targeting: the server fetches the DEFAULT entry
+// (no cookie read → no force-dynamic). TargetedBuilderContent re-fetches the
+// targeted entry on the client only when targeting attributes are present.
+export const revalidate = 5;
 
 export default async function Home(props: {
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await props.params;
-  const targeting = await getTargetingAttributes();
 
   const content = await fetchOneEntry({
     apiKey: config.envs.builderApiKey,
     model: builderModelName,
-    userAttributes: { urlPath: "/", locale, ...targeting },
+    userAttributes: { urlPath, locale },
     locale,
   });
 
@@ -25,5 +27,12 @@ export default async function Home(props: {
     return notFound();
   }
 
-  return <RenderBuilderContent content={content} model={builderModelName} locale={locale} />;
+  return (
+    <TargetedBuilderContent
+      initialContent={content}
+      model={builderModelName}
+      urlPath={urlPath}
+      locale={locale}
+    />
+  );
 }
