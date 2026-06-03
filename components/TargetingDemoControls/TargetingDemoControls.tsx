@@ -6,42 +6,37 @@ import { setClientUserAttributes } from "@builder.io/sdk-react";
 import { Button } from "@/components/ui/Button/Button";
 import { Text } from "@/components/ui/Text/Text";
 import {
-  parseTargeting,
-  serializeTargeting,
-  TARGETING_COOKIE,
+  TARGETING_CHANGE_EVENT,
   USER_TYPES,
   type TargetingAttributes,
   type UserType,
 } from "@/utils/targeting";
+import {
+  DEFAULT_TARGETING_SOURCE_KEY,
+  TARGETING_SOURCES,
+} from "@/utils/targeting-source";
 import type { TargetingDemoControlsProps } from "./TargetingDemoControls.types";
 
 export type { TargetingDemoControlsProps } from "./TargetingDemoControls.types";
 
-function readCookie(): TargetingAttributes {
-  if (typeof document === "undefined") return {};
-  const match = document.cookie
-    .split("; ")
-    .find((row) => row.startsWith(`${TARGETING_COOKIE}=`));
-  return parseTargeting(match?.slice(TARGETING_COOKIE.length + 1));
-}
-
-// SameSite=Lax is intentional: this cookie is only set from the main site (the
-// panel is not mounted on /preview), so cross-site iframe delivery is not needed
-// and Lax avoids broader exposure. No HttpOnly because the client must write it.
-function cookieAttrs() {
-  const isHttps = typeof location !== "undefined" && location.protocol === "https:";
-  return `path=/; SameSite=Lax${isHttps ? "; Secure" : ""}`;
-}
-
-function writeCookie(value: TargetingAttributes) {
-  if (typeof document === "undefined") return;
-  document.cookie = `${TARGETING_COOKIE}=${serializeTargeting(value)}; ${cookieAttrs()}`;
-}
+const ALL_SOURCES = Object.values(TARGETING_SOURCES);
 
 export default function TargetingDemoControls(_props: TargetingDemoControlsProps = {}) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [attrs, setAttrs] = useState<TargetingAttributes>(() => readCookie());
+  const [attrs, setAttrs] = useState<TargetingAttributes>({});
+
+  // Load current attributes on mount via the default source.
+  useEffect(() => {
+    let active = true;
+    TARGETING_SOURCES[DEFAULT_TARGETING_SOURCE_KEY]
+      .load()
+      .then((a) => active && setAttrs(a))
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, []);
 
   // Sync attrs into the Builder SDK's user-attributes service so client-side
   // Personalization Containers re-evaluate variants without a full reload.
@@ -49,24 +44,33 @@ export default function TargetingDemoControls(_props: TargetingDemoControlsProps
     setClientUserAttributes(attrs);
   }, [attrs]);
 
-  const update = (next: TargetingAttributes) => {
-    setAttrs(next);
-    writeCookie(next);
+  // Notify consumers AFTER the writes land. router.refresh() additionally re-runs
+  // the server for the SSR/PPR demo routes that read the session server-side.
+  const notifyChange = () => {
+    window.dispatchEvent(new Event(TARGETING_CHANGE_EVENT));
     router.refresh();
+  };
+
+  // Write through EVERY source so all demo routes stay in sync regardless of
+  // which source they read from (cookie route vs session routes).
+  const persist = async (next: TargetingAttributes) => {
+    setAttrs(next); // optimistic
+    await Promise.all(ALL_SOURCES.map((s) => s.set(next)));
+    notifyChange();
   };
 
   const toggleLoggedIn = () => {
-    update({ ...attrs, isLoggedIn: !attrs.isLoggedIn });
+    void persist({ ...attrs, isLoggedIn: !attrs.isLoggedIn });
   };
 
   const setUserType = (userType: UserType | undefined) => {
-    update({ ...attrs, userType });
+    void persist({ ...attrs, userType });
   };
 
-  const reset = () => {
-    document.cookie = `${TARGETING_COOKIE}=; ${cookieAttrs()}; Max-Age=0`;
+  const reset = async () => {
     setAttrs({});
-    router.refresh();
+    await Promise.all(ALL_SOURCES.map((s) => s.clear()));
+    notifyChange();
   };
 
   if (!open) {
@@ -154,7 +158,7 @@ export default function TargetingDemoControls(_props: TargetingDemoControlsProps
         </pre>
       </div>
 
-      <Button type="button" size="sm" variant="ghost" onClick={reset}>
+      <Button type="button" size="sm" variant="ghost" onClick={() => void reset()}>
         Reset
       </Button>
     </div>

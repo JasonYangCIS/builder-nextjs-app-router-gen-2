@@ -236,6 +236,51 @@ Key implications:
 
 ---
 
+## Custom Targeting (`TargetedBuilderContent`)
+
+Two distinct Builder mechanisms — don't conflate them:
+
+| Mechanism | How it resolves | Client-swappable? |
+|---|---|---|
+| **Personalization Container** | One entry embeds all variants; the SDK filters them client-side via `setClientUserAttributes` | Yes — variants already in the payload |
+| **Entry-level targeting** | Separate Builder entries per audience; the **API** picks the entry from `userAttributes` at fetch time | No — the other entries aren't in the payload |
+
+Entry-level targeting therefore requires the attributes at fetch time. To support it **without `force-dynamic`**, `components/builder/TargetedBuilderContent.tsx` keeps the page static:
+
+1. Server fetches the **default** entry (no targeting) → route stays static/ISR.
+2. On the client, it resolves attributes from a `TargetingSource`; if non-empty it **re-fetches the targeted entry** (`fetchOneEntry` in the browser) and swaps it in. Untargeted visitors pay nothing.
+3. Optional `fallback` (`BuilderContentSkeleton`) shows while the targeted fetch is in flight.
+
+```tsx
+// Static page — no force-dynamic, no server cookie read:
+const content = await fetchOneEntry({ apiKey, model, userAttributes: { urlPath, locale }, locale });
+return (
+  <TargetedBuilderContent
+    initialContent={content} model={model} urlPath={urlPath} locale={locale}
+    sourceKey="session"            // or "cookie"; serializable — objects can't cross the RSC boundary
+    fallback={<BuilderContentSkeleton />}
+  />
+);
+```
+
+### TargetingSource — the swappable seam (`utils/targeting-source.ts`)
+
+The wrapper depends on a `TargetingSource` (`load` / `set` / `clear` / `subscribe`), selected by serializable `sourceKey`. Two implementations demonstrate the tradeoff:
+
+- **`cookie`** — JS-readable `builder-targeting` cookie. Transparent (inspectable in DevTools), client-only, **spoofable — never for authz**. Used by the SSG demo route.
+- **`session`** — signed, httpOnly `builder-session` cookie via `/api/targeting` (`utils/session.server.ts`). Server-authoritative, tamper-evident, works server-side too. **Default**; used by production + SSR/PPR routes.
+
+### Rendering-strategy demos
+
+`app/[locale]/{ssg,ssr,ppr}/custom-targeting/` compare approaches against the same entry-level content. Each `page.tsx` documents its own pros/cons:
+- **SSG** — static + client re-fetch (`cookie` source). No `force-dynamic`.
+- **SSR** — `force-dynamic`, server reads the session and passes it to `fetchOneEntry`. No flash, but per-request.
+- **PPR** — server fetch isolated behind `<Suspense>`; true PPR needs `cacheComponents: true` + `'use cache'` on shared layouts.
+
+> Server-side targeting reads the session via `getTargetingAttributes()` (`utils/targeting.server.ts`). `TargetingDemoControls` writes through **every** source so all demo routes stay in sync.
+
+---
+
 ## TypeScript Type Conventions
 
 Types for Builder data fields live in `types/`. Convention:

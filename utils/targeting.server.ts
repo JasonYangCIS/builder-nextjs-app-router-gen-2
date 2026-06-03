@@ -1,11 +1,10 @@
-import { cookies } from "next/headers";
-import { parseTargeting, TARGETING_COOKIE, type TargetingAttributes } from "./targeting";
+import { getSessionTargeting } from "./session.server";
+import type { TargetingAttributes } from "./targeting";
 
-// Demo-only signal. The cookie is client-writable by design so the floating
-// TargetingDemoControls panel can spoof attributes for previewing Builder
-// variants. Never use these values for authn/authz — real personalization must
-// derive isLoggedIn / userType from the server-side session, not this cookie.
+// Server-side targeting derived from the signed, httpOnly session cookie. Used by
+// the SSR and PPR demo routes (which read the cookie server-side and pass it to
+// fetchOneEntry). Authoritative and tamper-evident — the client cannot read or
+// forge the session. See utils/session.server.ts for the derivation.
 export async function getTargetingAttributes(): Promise<TargetingAttributes> {
-  const c = await cookies();
-  return parseTargeting(c.get(TARGETING_COOKIE)?.value);
+  return getSessionTargeting();
 }
