@@ -1,21 +1,31 @@
 .section {
-  position: relative;
+  display: flex;
+  flex-direction: row;
   width: 100%;
   min-height: 600px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
   background-color: var(--secondary);
 
   @media (max-width: 640px) {
-    min-height: 480px;
+    flex-direction: column;
+    min-height: unset;
   }
 
   @media (prefers-reduced-motion: reduce) {
     * {
       transition: none !important;
     }
+  }
+}
+
+.imageColumn {
+  position: relative;
+  flex: 1;
+  min-height: 480px;
+
+  @media (max-width: 640px) {
+    min-height: 300px;
+    width: 100%;
   }
 }
 
@@ -30,54 +40,36 @@
   background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
 }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: black;
-  pointer-events: none;
-}
-
-.content {
-  position: relative;
-  z-index: 10;
+.contentColumn {
+  flex: 1;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 1.5rem;
-  padding: 4rem 2rem;
-  max-width: 800px;
-  width: 100%;
+  padding: 4rem 3rem;
 
   @media (max-width: 640px) {
     padding: 3rem 1.5rem;
-    align-items: center;
-    text-align: center;
+    align-items: flex-start;
+    text-align: left;
   }
 }
 
 .headline {
-  font-size: clamp(2.25rem, 5vw, 4rem);
+  font-size: clamp(2rem, 4vw, 3.5rem);
   font-weight: 800;
   line-height: 1.1;
   letter-spacing: -0.02em;
-  color: white;
+  color: var(--foreground);
   margin: 0;
-  /* WCAG 2.1 AA: text-shadow creates a dark halo around each glyph,
-     guaranteeing sufficient contrast regardless of the image behind the overlay. */
-  text-shadow:
-    0 1px 4px rgba(0, 0, 0, 0.85),
-    0 2px 10px rgba(0, 0, 0, 0.6);
 }
 
 .copy {
-  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
   line-height: 1.6;
-  /* Full white — avoid opacity reductions which lower effective contrast. */
-  color: white;
-  max-width: 560px;
+  color: var(--muted-foreground);
+  max-width: 480px;
   margin: 0;
-  text-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.9),
-    0 2px 8px rgba(0, 0, 0, 0.6);
 }
 
 .cta {

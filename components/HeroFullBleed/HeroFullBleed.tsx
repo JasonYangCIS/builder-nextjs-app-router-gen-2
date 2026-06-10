@@ -17,21 +17,16 @@ export default function HeroFullBleed({
   image,
   imageAlt,
   textAlign,
-  overlayOpacity,
   priority = false,
   headingLevel,
 }: HeroFullBleedProps) {
-  // Runtime guard — Builder API can pass arbitrary strings; cast-only checks are compile-time only.
   const Heading: "h1" | "h2" = headingLevel === "h1" ? "h1" : "h2";
-  const safeAlign = textAlign ?? "center";
+  const safeAlign = textAlign ?? "left";
   const alignClass = {
     left: "items-start text-left",
     center: "items-center text-center",
     right: "items-end text-right",
-  }[safeAlign] ?? "items-center text-center";
-
-  // Enforce a 50% minimum so admins can't accidentally set an overlay too low to be readable.
-  const clampedOpacity = Math.min(100, Math.max(50, overlayOpacity ?? 55));
+  }[safeAlign] ?? "items-start text-left";
 
   const safeImage = image ?? "";
   const safeImageAlt = imageAlt ?? "";
@@ -42,33 +37,28 @@ export default function HeroFullBleed({
 
   return (
     <section data-testid="hero-fullbleed" className={styles.section}>
-      {safeImage ? (
-        <Image
-          src={safeImage}
-          alt={safeImageAlt}
-          fill
-          sizes="100vw"
-          className={styles.image}
-          priority={priority ?? false}
-        />
-      ) : (
-        <div
-          data-testid="hero-fullbleed-placeholder"
-          className={styles.placeholder}
-          aria-hidden="true"
-        />
-      )}
-
-      <div
-        data-testid="hero-fullbleed-overlay"
-        className={styles.overlay}
-        style={{ opacity: clampedOpacity / 100 }}
-        aria-hidden="true"
-      />
+      <div className={styles.imageColumn}>
+        {safeImage ? (
+          <Image
+            src={safeImage}
+            alt={safeImageAlt}
+            fill
+            sizes="50vw"
+            className={styles.image}
+            priority={priority ?? false}
+          />
+        ) : (
+          <div
+            data-testid="hero-fullbleed-placeholder"
+            className={styles.placeholder}
+            aria-hidden="true"
+          />
+        )}
+      </div>
 
       <div
         data-testid="hero-fullbleed-content"
-        className={cn(styles.content, alignClass)}
+        className={cn(styles.contentColumn, alignClass)}
       >
         {safeHeadline && (
           <Heading className={styles.headline}>{safeHeadline}</Heading>
