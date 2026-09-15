@@ -8,7 +8,7 @@ const DEFAULT_LOCALE = appConfig.locales.default;
  * Paths that live outside the [locale] segment and must not be locale-prefixed.
  * The proxy passes these through without rewriting.
  */
-const LOCALE_BYPASS_PREFIXES = ["/preview", "/test", "/api", "/hero-static"];
+const LOCALE_BYPASS_PREFIXES = ["/preview", "/test", "/api"];
 
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
