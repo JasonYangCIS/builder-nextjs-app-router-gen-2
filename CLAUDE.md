@@ -81,6 +81,7 @@ Skills load on demand — consult the relevant skill for task-specific patterns 
 | `builder-io` | Builder SDK, content fetching, models, editor/preview, custom components |
 | `design-system` | UI components, tokens, WCAG contrast, Tailwind composition |
 | `engineering-standards` | React/Next.js, TypeScript, code quality, SEO, security, performance, WCAG AA |
+| `figma-annotations` | Handling Figma-plugin exports (`figma-design-*.html`) and annotation categories, incl. the `Img` category |
 | `localization` | Locale routing, proxy, `buildLocalePath`, internal links, preview locale |
 | `project-maintenance` | Doc update checklist (new components), skill sync checklist (add/remove skills) |
 | `testing` | Playwright E2E, fixture pages, selector scoping, gotchas |
