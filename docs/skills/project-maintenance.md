@@ -35,4 +35,4 @@ Every skill has references in **five locations**. When you add, remove, or renam
 | `CLAUDE.md` — Skills table | Add/remove row in the skills table |
 | Cross-references in other skill docs | Check if other `docs/skills/*.md` files reference the added/removed skill |
 
-**Current skills:** `builder-io`, `design-system`, `engineering-standards`, `localization`, `project-maintenance`, `testing`
+**Current skills:** `builder-io`, `design-system`, `engineering-standards`, `figma-annotations`, `localization`, `project-maintenance`, `testing`

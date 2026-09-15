@@ -13,6 +13,7 @@ import { builderCarouselConfig } from "@/components/BuilderCarousel/BuilderCarou
 import { heroFullBleedConfig } from "@/components/HeroFullBleed/HeroFullBleed.builder";
 import { heroSplitConfig } from "@/components/HeroSplit/HeroSplit.builder";
 import { heroCenteredConfig } from "@/components/HeroCentered/HeroCentered.builder";
+import { heroScrimConfig } from "@/components/HeroScrim/HeroScrim.builder";
 import { cloudinaryImageConfig } from "@/components/CloudinaryImage/CloudinaryImage.builder";
 import { announcementBarConfig } from "@/components/AnnouncementBar/AnnouncementBar.builder";
 import { faqListConfig } from "@/components/FaqList/FaqList.builder";
@@ -36,6 +37,7 @@ export const CUSTOM_COMPONENTS: ComponentConfig[] = [
   heroFullBleedConfig,
   heroSplitConfig,
   heroCenteredConfig,
+  heroScrimConfig,
 
   // ─── Special Components ───────────────────────────────────────────────────
   algoliaSearchConfig,
@@ -70,7 +72,7 @@ registerInsertMenu([
   {
     name: "Hero Components",
     priority: 2,
-    items: [heroFullBleedConfig, heroSplitConfig, heroCenteredConfig],
+    items: [heroFullBleedConfig, heroSplitConfig, heroCenteredConfig, heroScrimConfig],
   },
   {
     name: "Container Components",

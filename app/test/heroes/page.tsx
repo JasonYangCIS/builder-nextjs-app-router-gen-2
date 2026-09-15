@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import HeroFullBleed from "@/components/HeroFullBleed/HeroFullBleed";
 import HeroSplit from "@/components/HeroSplit/HeroSplit";
 import HeroCentered from "@/components/HeroCentered/HeroCentered";
+import HeroScrim from "@/components/HeroScrim/HeroScrim";
 
 export const metadata: Metadata = {
   title: "Hero Components Test Fixture",
@@ -188,6 +189,43 @@ export default function HeroesFixturePage() {
           image={null}
           imageAlt={null}
           imagePosition={null}
+          headingLevel={null}
+        />
+      </section>
+
+      {/* ── HeroScrim ────────────────────────────────────────────────── */}
+
+      {/* Full props, explicit h1 */}
+      <section id="scrim-full">
+        <HeroScrim
+          brandName="Wilder House"
+          eyebrow="A quieter kind of escape"
+          headline="Find your place in the wild."
+          copy="A secluded forest cabin for slow mornings, open trails, and evenings warmed by the fire."
+          ctaLabel="Explore stays"
+          ctaUrl="/explore"
+          image={IMG}
+          imageAlt="Cabin in a forest landscape"
+          headingLevel="h1"
+        />
+      </section>
+
+      {/* No image, no CTA, no brand */}
+      <section id="scrim-minimal">
+        <HeroScrim headline="Scrim Minimal Headline" copy="Scrim minimal copy." headingLevel="h2" />
+      </section>
+
+      {/* Null fields — defaults to h2 */}
+      <section id="scrim-null">
+        <HeroScrim
+          brandName={null}
+          eyebrow={null}
+          headline={null}
+          copy={null}
+          ctaLabel={null}
+          ctaUrl={null}
+          image={null}
+          imageAlt={null}
           headingLevel={null}
         />
       </section>
