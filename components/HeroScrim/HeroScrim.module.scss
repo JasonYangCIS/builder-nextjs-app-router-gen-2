@@ -1,0 +1,151 @@
+// Forest-retreat brand palette — specific to this hero's photographic scrim
+// treatment, not part of the shared design tokens.
+.section {
+  position: relative;
+  width: 100%;
+  min-height: 720px;
+  display: flex;
+  overflow: hidden;
+  background-color: #173326;
+
+  @media (max-width: 640px) {
+    min-height: 560px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+    }
+  }
+}
+
+.image {
+  object-fit: cover;
+  object-position: center;
+}
+
+.placeholder {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, #173326 0%, #0a1d14 100%);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    rgba(10, 29, 20, 0.85) 0%,
+    rgba(16, 37, 26, 0.38) 58%,
+    rgba(16, 37, 26, 0.04) 100%
+  );
+}
+
+.content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2.5rem;
+  width: 100%;
+  padding: 2.5rem 1.5rem;
+
+  @media (min-width: 768px) {
+    padding: 3.5rem 3rem;
+  }
+
+  @media (min-width: 1024px) {
+    padding: 4rem 4.5rem;
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brandMark {
+  display: block;
+  width: 28px;
+  height: 2px;
+  background: #b8ce96;
+}
+
+.brandName {
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.copyBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2rem;
+  max-width: 620px;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.eyebrow {
+  color: #b8ce96;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.headline {
+  color: #fff;
+  font-size: clamp(2rem, 6vw, 4rem);
+  font-weight: 600;
+  line-height: 1.02;
+  text-wrap: balance;
+  margin: 0;
+}
+
+.copy {
+  color: #f2f5ee;
+  font-size: 1.125rem;
+  line-height: 1.55;
+  max-width: 500px;
+  margin: 0;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  height: 52px;
+  padding: 0 1.5rem;
+  border-radius: 999px;
+  background: #f2f5ee;
+  color: #10231a;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  box-shadow: 0 8px 20px 0 rgba(8, 26, 17, 0.12);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px 0 rgba(8, 26, 17, 0.18);
+  }
+}
+
+.ctaIcon {
+  width: 20px;
+  height: 20px;
+}

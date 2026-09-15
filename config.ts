@@ -23,6 +23,7 @@ export const config = {
     heroFullBleed: "Hero: Full Bleed",
     heroSplit: "Hero: Split",
     heroCentered: "Hero: Centered",
+    heroScrim: "Hero: Scrim",
     algoliaSearch: "Algolia Search",
     cloudinaryImage: "Cloudinary Image",
     announcementBar: "Announcement Bar",
