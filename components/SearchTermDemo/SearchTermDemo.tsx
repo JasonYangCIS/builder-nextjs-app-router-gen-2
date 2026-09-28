@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
+import { fetchEntries } from "@builder.io/sdk-react";
 import { config } from "@/config";
 import { Text } from "@/components/ui/Text/Text";
 import { FormInput } from "@/components/ui/FormInput/FormInput";
@@ -8,33 +9,17 @@ import { Button } from "@/components/ui/Button/Button";
 import { Badge } from "@/components/ui/Badge/Badge";
 import { Label } from "@/components/ui/Label/Label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card/Card";
-import type { CustomerTier, MockEntry } from "./SearchTermDemo.types";
+import type { CustomerTier, SearchTermResult } from "./SearchTermDemo.types";
 
-const LOCALES = ["en-US", "en-GB"] as const;
+const LOCALES = ["en-US", "es-ES"] as const;
 const CUSTOMER_TIERS: CustomerTier[] = ["wholesale", "retail"];
 
-// Sample entries standing in for real Builder content. `targeting` is what
-// Builder's `userAttributes` resolve against (WHO/WHEN this entry is
-// eligible) — it is never used for keyword search. `data.searchTerms` is
-// ordinary content data describing WHAT the entry is about, queried through
-// the Content API's `query` option.
-const MOCK_ENTRIES: MockEntry[] = [
-  {
-    id: "entry-a",
-    targeting: { locale: "en-US", customerTier: "wholesale" },
-    data: { title: "Wholesale Dairy Bundle (US)", searchTerms: ["cheese", "butter", "dairy"] },
-  },
-  {
-    id: "entry-b",
-    targeting: { locale: "en-US", customerTier: "retail" },
-    data: { title: "Retail Fresh Dairy Case (US)", searchTerms: ["milk", "cream"] },
-  },
-  {
-    id: "entry-c",
-    targeting: { locale: "en-GB", customerTier: "wholesale" },
-    data: { title: "Wholesale Charcuterie Board (UK)", searchTerms: ["cheese", "charcuterie"] },
-  },
-];
+// This Builder space only allows a fixed set of custom targeting attributes
+// (configured in Settings > Custom Targeting Attributes). There's no
+// "customerTier" attribute registered, so this demo repurposes the existing
+// "bu" attribute as a stand-in: 123 = wholesale, 456 = retail. In your own
+// space you'd register a real "customerTier" attribute instead.
+const TIER_TO_BU: Record<CustomerTier, string> = { wholesale: "123", retail: "456" };
 
 function parseSearchTerms(input: string): string[] {
   // Normalize to lowercase so matching is case-insensitive, same as the
@@ -52,16 +37,18 @@ function buildCodeExample(terms: string[], locale: string, customerTier: Custome
 const entries = await fetchEntries({
   model: "${config.models.page}",
   apiKey: config.envs.builderApiKey,
+  locale: "${locale}",
 
-  // userAttributes: WHO/WHEN — resolves entry-level targeting rules.
-  // Never used to express "what the content is about".
+  // userAttributes: WHO/WHEN — resolves entry-level targeting rules
+  // (locale, customer tier). Never used to express "what this is about".
   userAttributes: {
     locale: "${locale}",
-    customerTier: "${customerTier}",
+    customerTier: "${customerTier}", // "${TIER_TO_BU[customerTier]}" via this space's "bu" attribute
   },
 
   // query: WHAT — search metadata lives on the entry's own data,
-  // queried directly through the Content API.
+  // queried directly through the Content API. Only an entry that is BOTH
+  // targeting-eligible AND search-relevant is returned.
   query: {
     "data.searchTerms": { $in: ${JSON.stringify(termsList)} },
   },
@@ -77,37 +64,52 @@ export default function SearchTermDemo() {
     locale: string;
     customerTier: CustomerTier;
   } | null>(null);
+  const [results, setResults] = useState<SearchTermResult[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setSubmitted({ terms: parseSearchTerms(searchInput), locale, customerTier });
+    const terms = parseSearchTerms(searchInput);
+    setSubmitted({ terms, locale, customerTier });
+
+    if (terms.length === 0) {
+      setResults([]);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const entries = await fetchEntries({
+        model: config.models.page,
+        apiKey: config.envs.builderApiKey,
+        locale,
+        userAttributes: { locale, bu: TIER_TO_BU[customerTier] },
+        query: { "data.searchTerms": { $in: terms } },
+        limit: 20,
+      });
+
+      const mapped: SearchTermResult[] = (entries ?? []).map((entry) => {
+        const searchTerms = (entry.data?.searchTerms as string[] | undefined) ?? [];
+        return {
+          id: entry.id ?? entry.name ?? "",
+          title: (entry.data?.title as string | undefined) ?? entry.name ?? "Untitled page",
+          searchTerms,
+          matchedTerms: searchTerms.filter((term) => terms.includes(term.toLowerCase())),
+        };
+      });
+
+      setResults(mapped);
+    } catch {
+      setError("Something went wrong fetching content. Please try again.");
+      setResults(null);
+    } finally {
+      setLoading(false);
+    }
   }
 
-  const results = useMemo(() => {
-    if (!submitted) return null;
-    const { terms, locale: qLocale, customerTier: qTier } = submitted;
-
-    return MOCK_ENTRIES.map((entry) => {
-      // Two independent checks, combined with AND — this is the whole point
-      // of the pattern: targeting eligibility and search relevance are
-      // separate concerns that both must pass.
-      const targetingMatched =
-        entry.targeting.locale === qLocale && entry.targeting.customerTier === qTier;
-      const matchedTerms = entry.data.searchTerms.filter((term) =>
-        terms.includes(term.toLowerCase())
-      );
-      const searchMatched = terms.length > 0 && matchedTerms.length > 0;
-
-      return {
-        entry,
-        matchedTerms,
-        targetingMatched,
-        searchMatched,
-      };
-    });
-  }, [submitted]);
-
-  const matchedResults = results?.filter((r) => r.targetingMatched && r.searchMatched) ?? [];
   const codeExample = buildCodeExample(
     submitted?.terms ?? parseSearchTerms(searchInput),
     submitted?.locale ?? locale,
@@ -122,8 +124,8 @@ export default function SearchTermDemo() {
             <Text variant="h4" as="h2">Run a query</Text>
           </CardTitle>
           <Text variant="body-sm" color="muted">
-            Set a visitor&rsquo;s targeting attributes and a search term, then run the query to see
-            which sample entries are eligible <em>and</em> relevant.
+            Set a visitor&rsquo;s targeting attributes and a search term, then run a real query
+            against the Builder Content API.
           </Text>
         </CardHeader>
         <CardContent>
@@ -166,45 +168,40 @@ export default function SearchTermDemo() {
               </div>
             </div>
 
-            <Button type="submit" className="self-start">Run query</Button>
+            <Button type="submit" className="self-start" disabled={loading}>
+              {loading ? "Running query…" : "Run query"}
+            </Button>
           </form>
+
+          {error && (
+            <Text variant="body-sm" color="error" className="mt-4">
+              {error}
+            </Text>
+          )}
 
           {results && (
             <div className="mt-6 flex flex-col gap-3">
               <Text variant="label" as="p">
-                {matchedResults.length} of {MOCK_ENTRIES.length} sample entries matched
+                {results.length === 0
+                  ? "No entries matched"
+                  : `${results.length} matching ${results.length === 1 ? "entry" : "entries"}`}
               </Text>
 
-              {results.map(({ entry, matchedTerms, targetingMatched, searchMatched }) => {
-                const isMatch = targetingMatched && searchMatched;
-                return (
-                  <div
-                    key={entry.id}
-                    className={`rounded-lg border p-4 ${isMatch ? "border-primary/40 bg-primary/5" : "border-border opacity-60"}`}
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <Text variant="label" as="p">{entry.data.title}</Text>
-                      <Badge variant={isMatch ? "default" : "outline"}>
-                        {isMatch ? "Matched" : "Excluded"}
+              {results.map((result) => (
+                <div key={result.id} className="rounded-lg border border-primary/40 bg-primary/5 p-4">
+                  <Text variant="label" as="p">{result.title}</Text>
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {result.searchTerms.map((term) => (
+                      <Badge
+                        key={term}
+                        variant={result.matchedTerms.includes(term) ? "secondary" : "outline"}
+                      >
+                        {term}
                       </Badge>
-                    </div>
-                    <Text variant="body-sm" color="muted" className="mt-1">
-                      Targeting: {entry.targeting.locale} / {entry.targeting.customerTier}{" "}
-                      {targetingMatched ? "✓ eligible" : "✗ not eligible"}
-                    </Text>
-                    <div className="mt-2 flex flex-wrap gap-1.5">
-                      {entry.data.searchTerms.map((term) => (
-                        <Badge
-                          key={term}
-                          variant={matchedTerms.includes(term) ? "secondary" : "outline"}
-                        >
-                          {term}
-                        </Badge>
-                      ))}
-                    </div>
+                    ))}
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           )}
         </CardContent>
