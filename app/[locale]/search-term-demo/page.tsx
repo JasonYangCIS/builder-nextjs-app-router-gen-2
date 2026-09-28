@@ -15,10 +15,9 @@ export default function SearchTermDemoPage() {
           Targeting + Search Metadata
         </Text>
         <Text variant="body-lg" color="muted" className="mt-3">
-          `userAttributes` decide <strong>who/when</strong> an entry is eligible (locale,
-          customer tier). `data.searchTerms` describes <strong>what</strong> the entry is
-          about, and is queried through the Content API &mdash; not modeled as fake
-          targeting rules.
+          `userAttributes` decide <strong>who/when</strong> an entry is eligible.
+          `data.searchTerms` describes <strong>what</strong> the entry is about, and is
+          queried through the Content API &mdash; not modeled as fake targeting rules.
         </Text>
       </header>
 

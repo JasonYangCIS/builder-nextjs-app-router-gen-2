@@ -7,19 +7,14 @@ import { Text } from "@/components/ui/Text/Text";
 import { FormInput } from "@/components/ui/FormInput/FormInput";
 import { Button } from "@/components/ui/Button/Button";
 import { Badge } from "@/components/ui/Badge/Badge";
-import { Label } from "@/components/ui/Label/Label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card/Card";
-import type { CustomerTier, SearchTermResult } from "./SearchTermDemo.types";
+import type { SearchTermResult } from "./SearchTermDemo.types";
 
-const LOCALES = ["en-US", "es-ES"] as const;
-const CUSTOMER_TIERS: CustomerTier[] = ["wholesale", "retail"];
-
-// This Builder space only allows a fixed set of custom targeting attributes
-// (configured in Settings > Custom Targeting Attributes). There's no
-// "customerTier" attribute registered, so this demo repurposes the existing
-// "bu" attribute as a stand-in: 123 = wholesale, 456 = retail. In your own
-// space you'd register a real "customerTier" attribute instead.
-const TIER_TO_BU: Record<CustomerTier, string> = { wholesale: "123", retail: "456" };
+// This Builder space's example entries are targeted to the "bu" custom
+// targeting attribute (bu = "123") — that's the WHO/WHEN eligibility check.
+// It's fixed here since this demo focuses on the searchTerms query; a real
+// app would resolve this from the visitor (session, cookie, etc.).
+const TARGETING_BU = "123";
 
 function parseSearchTerms(input: string): string[] {
   // Normalize to lowercase so matching is case-insensitive, same as the
@@ -30,20 +25,18 @@ function parseSearchTerms(input: string): string[] {
     .filter(Boolean);
 }
 
-function buildCodeExample(terms: string[], locale: string, customerTier: CustomerTier): string {
+function buildCodeExample(terms: string[]): string {
   const termsList = terms.length > 0 ? terms : ["cheese", "butter"];
   return `import { fetchEntries } from "@builder.io/sdk-react";
 
 const entries = await fetchEntries({
   model: "${config.models.page}",
   apiKey: config.envs.builderApiKey,
-  locale: "${locale}",
 
-  // userAttributes: WHO/WHEN — resolves entry-level targeting rules
-  // (locale, customer tier). Never used to express "what this is about".
+  // userAttributes: WHO/WHEN — resolves entry-level targeting rules.
+  // Never used to express "what this entry is about".
   userAttributes: {
-    locale: "${locale}",
-    customerTier: "${customerTier}", // "${TIER_TO_BU[customerTier]}" via this space's "bu" attribute
+    bu: "${TARGETING_BU}",
   },
 
   // query: WHAT — search metadata lives on the entry's own data,
@@ -57,13 +50,7 @@ const entries = await fetchEntries({
 
 export default function SearchTermDemo() {
   const [searchInput, setSearchInput] = useState("cheese");
-  const [locale, setLocale] = useState<string>(LOCALES[0]);
-  const [customerTier, setCustomerTier] = useState<CustomerTier>("wholesale");
-  const [submitted, setSubmitted] = useState<{
-    terms: string[];
-    locale: string;
-    customerTier: CustomerTier;
-  } | null>(null);
+  const [submittedTerms, setSubmittedTerms] = useState<string[] | null>(null);
   const [results, setResults] = useState<SearchTermResult[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -71,7 +58,7 @@ export default function SearchTermDemo() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const terms = parseSearchTerms(searchInput);
-    setSubmitted({ terms, locale, customerTier });
+    setSubmittedTerms(terms);
 
     if (terms.length === 0) {
       setResults([]);
@@ -85,8 +72,7 @@ export default function SearchTermDemo() {
       const entries = await fetchEntries({
         model: config.models.page,
         apiKey: config.envs.builderApiKey,
-        locale,
-        userAttributes: { locale, bu: TIER_TO_BU[customerTier] },
+        userAttributes: { bu: TARGETING_BU },
         query: { "data.searchTerms": { $in: terms } },
         limit: 20,
       });
@@ -110,11 +96,7 @@ export default function SearchTermDemo() {
     }
   }
 
-  const codeExample = buildCodeExample(
-    submitted?.terms ?? parseSearchTerms(searchInput),
-    submitted?.locale ?? locale,
-    submitted?.customerTier ?? customerTier
-  );
+  const codeExample = buildCodeExample(submittedTerms ?? parseSearchTerms(searchInput));
 
   return (
     <div className="flex flex-col gap-10">
@@ -124,13 +106,13 @@ export default function SearchTermDemo() {
             <Text variant="h4" as="h2">Run a query</Text>
           </CardTitle>
           <Text variant="body-sm" color="muted">
-            Set a visitor&rsquo;s targeting attributes and a search term, then run a real query
-            against the Builder Content API.
+            Enter a search term and run a real query against the Builder Content API.
           </Text>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 sm:flex-row sm:items-end">
             <FormInput
+              className="flex-1"
               label="Search terms"
               helperText="Space or comma separated, e.g. &ldquo;cheese, butter&rdquo;"
               placeholder="cheese, butter"
@@ -138,37 +120,7 @@ export default function SearchTermDemo() {
               onChange={(e) => setSearchInput(e.target.value)}
             />
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="locale-select">Locale (userAttributes)</Label>
-                <select
-                  id="locale-select"
-                  value={locale}
-                  onChange={(e) => setLocale(e.target.value)}
-                  className="border-input flex h-9 w-full rounded-md border bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
-                >
-                  {LOCALES.map((code) => (
-                    <option key={code} value={code}>{code}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="tier-select">Customer tier (userAttributes)</Label>
-                <select
-                  id="tier-select"
-                  value={customerTier}
-                  onChange={(e) => setCustomerTier(e.target.value as CustomerTier)}
-                  className="border-input flex h-9 w-full rounded-md border bg-transparent px-3 text-sm shadow-xs outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]"
-                >
-                  {CUSTOMER_TIERS.map((tier) => (
-                    <option key={tier} value={tier}>{tier}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <Button type="submit" className="self-start" disabled={loading}>
+            <Button type="submit" disabled={loading}>
               {loading ? "Running query…" : "Run query"}
             </Button>
           </form>

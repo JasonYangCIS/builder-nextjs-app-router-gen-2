@@ -11,8 +11,6 @@ test.describe("Targeting + Search Metadata demo (/search-term-demo)", () => {
 
   test("renders the query form controls", async ({ page }) => {
     await expect(page.getByLabel("Search terms")).toBeVisible();
-    await expect(page.getByLabel("Locale (userAttributes)")).toBeVisible();
-    await expect(page.getByLabel("Customer tier (userAttributes)")).toBeVisible();
     await expect(page.getByRole("button", { name: "Run query" })).toBeVisible();
   });
 
