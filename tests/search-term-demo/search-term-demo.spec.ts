@@ -1,12 +1,12 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Targeting + Search Metadata demo (/search-term-demo)", () => {
+test.describe("Search Term Demo (/search-term-demo)", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/search-term-demo");
   });
 
   test("renders the page heading", async ({ page }) => {
-    await expect(page.getByRole("heading", { name: "Targeting + Search Metadata" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Search Term Demo" })).toBeVisible();
   });
 
   test("renders the query form controls", async ({ page }) => {
@@ -16,7 +16,7 @@ test.describe("Targeting + Search Metadata demo (/search-term-demo)", () => {
 
   test("renders the request shape code panel", async ({ page }) => {
     await expect(page.getByRole("heading", { name: "Request shape" })).toBeVisible();
-    await expect(page.locator("pre code")).toContainText("userAttributes");
+    await expect(page.locator("pre code")).toContainText("fetchEntries");
     await expect(page.locator("pre code")).toContainText("data.searchTerms");
   });
 

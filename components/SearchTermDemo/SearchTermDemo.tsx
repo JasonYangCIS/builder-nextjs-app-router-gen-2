@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import Link from "next/link";
 import { fetchEntries } from "@builder.io/sdk-react";
 import { config } from "@/config";
 import { Text } from "@/components/ui/Text/Text";
@@ -8,13 +9,8 @@ import { FormInput } from "@/components/ui/FormInput/FormInput";
 import { Button } from "@/components/ui/Button/Button";
 import { Badge } from "@/components/ui/Badge/Badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card/Card";
+import { sanitizeHref } from "@/utils/url";
 import type { SearchTermResult } from "./SearchTermDemo.types";
-
-// This Builder space's example entries are targeted to the "bu" custom
-// targeting attribute (bu = "123") — that's the WHO/WHEN eligibility check.
-// It's fixed here since this demo focuses on the searchTerms query; a real
-// app would resolve this from the visitor (session, cookie, etc.).
-const TARGETING_BU = "123";
 
 function parseSearchTerms(input: string): string[] {
   // Normalize to lowercase so matching is case-insensitive, same as the
@@ -33,18 +29,18 @@ const entries = await fetchEntries({
   model: "${config.models.page}",
   apiKey: config.envs.builderApiKey,
 
-  // userAttributes: WHO/WHEN — resolves entry-level targeting rules.
-  // Never used to express "what this entry is about".
-  userAttributes: {
-    bu: "${TARGETING_BU}",
-  },
-
-  // query: WHAT — search metadata lives on the entry's own data,
-  // queried directly through the Content API. Only an entry that is BOTH
-  // targeting-eligible AND search-relevant is returned.
+  // query: WHAT the entry is about — data.searchTerms is ordinary content
+  // data, queried directly through the Content API.
   query: {
     "data.searchTerms": { $in: ${JSON.stringify(termsList)} },
   },
+
+  // In production, pair this with userAttributes for entry-level targeting
+  // (WHO/WHEN an entry is eligible). Skipped here: each "page" entry
+  // already carries its own urlPath targeting rule for routing, and once
+  // any userAttributes are supplied, every rule on the entry — including
+  // that urlPath rule — must match, which conflicts with searching across
+  // entries that each have a different URL.
 });`;
 }
 
@@ -72,7 +68,6 @@ export default function SearchTermDemo() {
       const entries = await fetchEntries({
         model: config.models.page,
         apiKey: config.envs.builderApiKey,
-        userAttributes: { bu: TARGETING_BU },
         query: { "data.searchTerms": { $in: terms } },
         limit: 20,
       });
@@ -82,6 +77,7 @@ export default function SearchTermDemo() {
         return {
           id: entry.id ?? entry.name ?? "",
           title: (entry.data?.title as string | undefined) ?? entry.name ?? "Untitled page",
+          url: (entry.data?.url as string | undefined) ?? "",
           searchTerms,
           matchedTerms: searchTerms.filter((term) => terms.includes(term.toLowerCase())),
         };
@@ -139,21 +135,30 @@ export default function SearchTermDemo() {
                   : `${results.length} matching ${results.length === 1 ? "entry" : "entries"}`}
               </Text>
 
-              {results.map((result) => (
-                <div key={result.id} className="rounded-lg border border-primary/40 bg-primary/5 p-4">
-                  <Text variant="label" as="p">{result.title}</Text>
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {result.searchTerms.map((term) => (
-                      <Badge
-                        key={term}
-                        variant={result.matchedTerms.includes(term) ? "secondary" : "outline"}
-                      >
-                        {term}
-                      </Badge>
-                    ))}
+              {results.map((result) => {
+                const href = sanitizeHref(result.url);
+                return (
+                  <div key={result.id} className="rounded-lg border border-primary/40 bg-primary/5 p-4">
+                    {href ? (
+                      <Link href={href} className="hover:underline">
+                        <Text variant="label" as="p">{result.title}</Text>
+                      </Link>
+                    ) : (
+                      <Text variant="label" as="p">{result.title}</Text>
+                    )}
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {result.searchTerms.map((term) => (
+                        <Badge
+                          key={term}
+                          variant={result.matchedTerms.includes(term) ? "secondary" : "outline"}
+                        >
+                          {term}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>
@@ -162,9 +167,8 @@ export default function SearchTermDemo() {
       <div>
         <Text variant="h5" as="h3" className="mb-3">Request shape</Text>
         <Text variant="body-sm" color="muted" className="mb-3">
-          `userAttributes` filters by targeting; `query` filters by content metadata. Both
-          conditions must pass for an entry to come back — the Content API applies both
-          server-side, so search aliases never need to be modeled as fake targeting rules.
+          `data.searchTerms` describes what an entry is about and is queried directly through
+          the Content API. Results link to each entry&rsquo;s own `data.url`.
         </Text>
         <pre className="overflow-x-auto rounded-lg bg-muted p-4 text-sm">
           <code className="font-mono">{codeExample}</code>
