@@ -28,19 +28,9 @@ function buildCodeExample(terms: string[]): string {
 const entries = await fetchEntries({
   model: "${config.models.page}",
   apiKey: config.envs.builderApiKey,
-
-  // query: WHAT the entry is about — data.searchTerms is ordinary content
-  // data, queried directly through the Content API.
   query: {
     "data.searchTerms": { $in: ${JSON.stringify(termsList)} },
   },
-
-  // In production, pair this with userAttributes for entry-level targeting
-  // (WHO/WHEN an entry is eligible). Skipped here: each "page" entry
-  // already carries its own urlPath targeting rule for routing, and once
-  // any userAttributes are supplied, every rule on the entry — including
-  // that urlPath rule — must match, which conflicts with searching across
-  // entries that each have a different URL.
 });`;
 }
 
