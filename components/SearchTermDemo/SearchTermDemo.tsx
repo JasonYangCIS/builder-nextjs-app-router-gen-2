@@ -2,8 +2,10 @@
 
 import { useState, type FormEvent } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { fetchEntries } from "@builder.io/sdk-react";
 import { config } from "@/config";
+import { getLocaleFromPath } from "@/utils/locale";
 import { Text } from "@/components/ui/Text/Text";
 import { FormInput } from "@/components/ui/FormInput/FormInput";
 import { Button } from "@/components/ui/Button/Button";
@@ -21,13 +23,14 @@ function parseSearchTerms(input: string): string[] {
     .filter(Boolean);
 }
 
-function buildCodeExample(terms: string[]): string {
+function buildCodeExample(terms: string[], locale: string): string {
   const termsList = terms.length > 0 ? terms : ["cheese", "butter"];
   return `import { fetchEntries } from "@builder.io/sdk-react";
 
 const entries = await fetchEntries({
   model: "${config.models.page}",
   apiKey: config.envs.builderApiKey,
+  locale: "${locale}",
   query: {
     "data.searchTerms": { $in: ${JSON.stringify(termsList)} },
   },
@@ -35,6 +38,7 @@ const entries = await fetchEntries({
 }
 
 export default function SearchTermDemo() {
+  const locale = getLocaleFromPath(usePathname());
   const [searchInput, setSearchInput] = useState("cheese");
   const [submittedTerms, setSubmittedTerms] = useState<string[] | null>(null);
   const [results, setResults] = useState<SearchTermResult[] | null>(null);
@@ -58,6 +62,7 @@ export default function SearchTermDemo() {
       const entries = await fetchEntries({
         model: config.models.page,
         apiKey: config.envs.builderApiKey,
+        locale,
         query: { "data.searchTerms": { $in: terms } },
         limit: 20,
       });
@@ -82,7 +87,7 @@ export default function SearchTermDemo() {
     }
   }
 
-  const codeExample = buildCodeExample(submittedTerms ?? parseSearchTerms(searchInput));
+  const codeExample = buildCodeExample(submittedTerms ?? parseSearchTerms(searchInput), locale);
 
   return (
     <div className="flex flex-col gap-10">
