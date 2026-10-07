@@ -268,6 +268,83 @@ export default async function CacheComponentsPage(props: PageProps) {
 
       <section className="flex flex-col gap-4">
         <Text variant="h2" as="h2">
+          How to verify it was done correctly
+        </Text>
+        <Text variant="body" color="muted">
+          Build-time checks tell you whether the Suspense boundaries are right. They can't tell you
+          whether a cached Builder fetch is leaking one visitor's content to another — that needs a
+          runtime check.
+        </Text>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <Text variant="h6" as="h3">1. Build-time: trust the build output</Text>
+              </CardTitle>
+              <CardDescription>Catches missing Suspense boundaries.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="flex flex-col gap-2">
+                <li>
+                  <Text variant="body-sm" color="muted" as="p">
+                    Run <code className="rounded bg-muted px-1 py-0.5 text-xs">next build</code>. With
+                    cacheComponents on, an uncached dynamic read outside{" "}
+                    <code className="rounded bg-muted px-1 py-0.5 text-xs">&lt;Suspense&gt;</code> fails the
+                    build — that's a feature, not noise.
+                  </Text>
+                </li>
+                <li>
+                  <Text variant="body-sm" color="muted" as="p">
+                    Check the route table in the build output: each route is tagged{" "}
+                    <code className="rounded bg-muted px-1 py-0.5 text-xs">○</code> static,{" "}
+                    <code className="rounded bg-muted px-1 py-0.5 text-xs">ƒ</code> dynamic, or{" "}
+                    <code className="rounded bg-muted px-1 py-0.5 text-xs">◐</code> partial prerender.
+                    Confirm each Builder route landed in the bucket you intended.
+                  </Text>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <Text variant="h6" as="h3">2. Runtime: smoke-test targeting isolation</Text>
+              </CardTitle>
+              <CardDescription>Catches a cached fetch leaking across visitors.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ul className="flex flex-col gap-2">
+                <li>
+                  <Text variant="body-sm" color="muted" as="p">
+                    Hit the route with two different targeting attributes (e.g. two incognito
+                    sessions via <Link href={buildLocalePath(locale, "/ssr/custom-targeting")} className="text-primary underline-offset-4 hover:underline">ssr/custom-targeting</Link>) and
+                    confirm the responses actually differ.
+                  </Text>
+                </li>
+                <li>
+                  <Text variant="body-sm" color="muted" as="p">
+                    Repeat the same request twice with identical attributes and inspect the{" "}
+                    <code className="rounded bg-muted px-1 py-0.5 text-xs">cache-control</code>,{" "}
+                    <code className="rounded bg-muted px-1 py-0.5 text-xs">age</code>, or{" "}
+                    <code className="rounded bg-muted px-1 py-0.5 text-xs">x-vercel-cache</code> response
+                    headers to confirm the second hit actually served from cache.
+                  </Text>
+                </li>
+                <li>
+                  <Text variant="body-sm" color="muted" as="p">
+                    Publish a change in Builder and time how long it takes to appear — it should
+                    roughly match your <code className="rounded bg-muted px-1 py-0.5 text-xs">revalidate</code> setting,
+                    not be instant or stuck forever.
+                  </Text>
+                </li>
+              </ul>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <Text variant="h2" as="h2">
           Cheat sheet
         </Text>
         <div className="overflow-x-auto rounded-lg border border-border">
