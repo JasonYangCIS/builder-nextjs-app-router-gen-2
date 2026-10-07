@@ -9,8 +9,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/Card/Card";
-import Counter from "@/components/Counter/Counter";
 import CacheComponentsDemo from "@/components/CacheComponentsDemo/CacheComponentsDemo";
+import ServerClientBoundaryDemo from "@/components/ServerClientBoundaryDemo/ServerClientBoundaryDemo";
 import { buildLocalePath } from "@/utils/locale";
 
 export const metadata: Metadata = {
@@ -108,49 +108,11 @@ export default async function CacheComponentsPage(props: PageProps) {
           Server vs. client, live on this page
         </Text>
         <Text variant="body" color="muted">
-          Not a simulation — this is the real boundary. The timestamp below is captured on the
-          server every time the page renders. The counter is a Client Component: it hydrates once
-          and then runs entirely in your browser, with zero further server involvement.
+          Click the button below to re-run just the server side of this page — no full page reload.
+          Watch the timestamp move while the counter's value survives untouched. That gap is exactly
+          what cacheComponents controls: whether the server-side work gets redone or reused.
         </Text>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <Text variant="h5" as="h3">Server Component</Text>
-              </CardTitle>
-              <CardDescription>
-                Runs on the server when the page renders. Reload the page to see it change.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Text variant="display" as="p" className="text-3xl tabular-nums">
-                {renderedAt}
-              </Text>
-              <Text variant="caption" color="muted" as="p" className="mt-2">
-                This is exactly what cacheComponents decides whether to cache: the work that
-                produced this value. Cache it, and every visitor sees the same timestamp until
-                revalidation; leave it dynamic, and it's fresh per request.
-              </Text>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                <Text variant="h5" as="h3">Client Component</Text>
-              </CardTitle>
-              <CardDescription>
-                Hydrated and interactive. State lives in the browser only.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Counter initialCount={0} />
-              <Text variant="caption" color="muted" as="p" className="mt-3">
-                cacheComponents never touches this. It's a server-side rendering/caching switch —
-                Client Components already run per browser session regardless of the flag.
-              </Text>
-            </CardContent>
-          </Card>
-        </div>
+        <ServerClientBoundaryDemo renderedAt={renderedAt} />
       </section>
 
       <section className="flex flex-col gap-4">
