@@ -13,31 +13,40 @@ const NODES: DiagramNode[] = [
     id: "layout",
     label: "Locale layout (Header / Footer)",
     detail:
-      "No dynamic API reads here, so it's eligible to be served from cache in both models.",
+      "No dynamic API reads here, so it's a safe candidate to mark 'use cache' — the shell can be shared across every visitor.",
     kind: { off: "static", on: "dynamic" },
+    cacheable: true,
+    cachedNote: "Now served from cache for every visitor until revalidated — this is the PPR demo's static shell.",
   },
   {
     id: "page-shell",
     label: "Page shell / markup",
-    detail: "The chrome around the Builder content — headings, wrappers, containers.",
+    detail: "The chrome around the Builder content — headings, wrappers, containers. Also safe to cache.",
     kind: { off: "static", on: "dynamic" },
+    cacheable: true,
+    cachedNote: "Cached alongside the layout — no per-visitor data lives here.",
   },
   {
     id: "fetch-entry",
     label: "fetchOneEntry() — Builder content",
-    detail: "The call every route in this repo makes to pull a Builder entry.",
+    detail:
+      "Caching this means every visitor gets the SAME entry until revalidation — fine for the default/untargeted content, risky if this call includes per-user targeting.",
     kind: { off: "static", on: "dynamic" },
+    cacheable: true,
+    cachedNote: "Cached — behaves like the SSG demo route. Don't do this if the fetch includes per-user userAttributes.",
   },
   {
     id: "dynamic-api",
     label: "isPreviewing() / isEditing() / cookies()",
-    detail: "Reads the URL's search params or a cookie — a genuinely per-request signal.",
+    detail:
+      "Reads the URL's search params or a cookie — a genuinely per-request signal. Can NEVER be cached, with the flag on or off.",
     kind: { off: "dynamic", on: "dynamic" },
   },
   {
     id: "suspense",
     label: "<Suspense> boundary",
-    detail: "Where the dynamic read is isolated from the rest of the tree.",
+    detail:
+      "Where the dynamic read above must be isolated so the rest of the tree is free to be cached.",
     kind: { off: "dynamic", on: "dynamic" },
   },
   {
@@ -72,16 +81,34 @@ const MODE_COPY: Record<CacheComponentsMode, { title: string; summary: string[] 
   on: {
     title: "cacheComponents: true (opt-in, Next.js 16)",
     summary: [
-      "Everything is dynamic by default. Nothing is cached unless a function or component explicitly opts in with the 'use cache' directive.",
-      "Granularity moves to the function/component level instead of the whole route — you can cache the layout shell while leaving one fetch dynamic.",
-      "Any remaining dynamic read MUST be wrapped in <Suspense>, or the build fails with an error instead of silently making the route dynamic.",
+      "The default flips: everything below starts amber ('per-request') because nothing has opted in to caching yet — that's expected, not broken.",
+      "Click 'Add use cache' on an eligible tile to opt it in and watch it turn green. That's the whole model: cache nothing by default, cache exactly what you mark.",
+      "The two amber tiles that never go green — the dynamic API read and its <Suspense> boundary — genuinely can't be cached; they're the dynamic 'hole' in an otherwise static page.",
     ],
   },
 };
 
 export default function CacheComponentsDemo() {
   const [mode, setMode] = useState<CacheComponentsMode>("off");
+  const [cachedIds, setCachedIds] = useState<Set<string>>(new Set());
   const copy = MODE_COPY[mode];
+
+  const setModeAndReset = (next: CacheComponentsMode) => {
+    setMode(next);
+    setCachedIds(new Set());
+  };
+
+  const toggleCached = (id: string) => {
+    setCachedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
 
   return (
     <div className="flex flex-col gap-6">
@@ -89,14 +116,14 @@ export default function CacheComponentsDemo() {
         <Button
           type="button"
           variant={mode === "off" ? "default" : "outline"}
-          onClick={() => setMode("off")}
+          onClick={() => setModeAndReset("off")}
         >
           cacheComponents: off
         </Button>
         <Button
           type="button"
           variant={mode === "on" ? "default" : "outline"}
-          onClick={() => setMode("on")}
+          onClick={() => setModeAndReset("on")}
         >
           cacheComponents: on
         </Button>
@@ -118,13 +145,16 @@ export default function CacheComponentsDemo() {
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {NODES.map((node) => {
-          const kind = node.kind[mode];
+          const isOptedIn = mode === "on" && node.cacheable && cachedIds.has(node.id);
+          const kind = isOptedIn ? "static" : node.kind[mode];
+          const showToggle = mode === "on" && node.cacheable;
+
           return (
             <div
               key={node.id}
-              className={`rounded-lg border p-3 transition-colors ${KIND_STYLES[kind]}`}
+              className={`flex flex-col gap-1.5 rounded-lg border p-3 transition-colors ${KIND_STYLES[kind]}`}
             >
-              <div className="mb-1.5 flex items-center justify-between gap-2">
+              <div className="flex items-center justify-between gap-2">
                 <Text variant="label" as="p">
                   {node.label}
                 </Text>
@@ -133,8 +163,19 @@ export default function CacheComponentsDemo() {
                 </Badge>
               </div>
               <Text variant="caption" color="muted" as="p">
-                {node.detail}
+                {isOptedIn ? node.cachedNote : node.detail}
               </Text>
+              {showToggle && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant={isOptedIn ? "secondary" : "outline"}
+                  className="mt-1 w-fit text-xs"
+                  onClick={() => toggleCached(node.id)}
+                >
+                  {isOptedIn ? "Remove 'use cache'" : "Add 'use cache'"}
+                </Button>
+              )}
             </div>
           );
         })}

@@ -7,4 +7,8 @@ export interface DiagramNode {
   label: string;
   detail: string;
   kind: Record<CacheComponentsMode, NodeKind>;
+  /** Can the viewer opt this node into `'use cache'` when mode is "on"? */
+  cacheable?: boolean;
+  /** Shown once the viewer opts this node into `'use cache'`. */
+  cachedNote?: string;
 }
