@@ -43,6 +43,42 @@ const ROUTE_COMPARISON = [
   },
 ];
 
+const USE_CASES_OFF = [
+  {
+    title: "Preview / editor routes",
+    detail:
+      "app/preview/page.tsx leans on isPreviewing()/isEditing() anywhere in the tree. No Suspense gymnastics required just to open the visual editor.",
+  },
+  {
+    title: "Per-request personalization (SSR)",
+    detail:
+      "ssr/custom-targeting reads cookies() and fetches a targeted entry every request. force-dynamic is simpler than isolating exactly which call needs caching.",
+  },
+  {
+    title: "Small or early-stage sites",
+    detail:
+      "Mostly plain Builder pages, little targeting. The current static-until-proven-dynamic default already caches for free.",
+  },
+];
+
+const USE_CASES_ON = [
+  {
+    title: "High-traffic marketing pages",
+    detail:
+      "Builder content with no personalization. Mark the layout and fetchOneEntry() 'use cache' so they're guaranteed cached, instead of hoping no dynamic API crept into a shared layout.",
+  },
+  {
+    title: "Static shell + personalized slice",
+    detail:
+      "What ppr/custom-targeting is reaching for today. Cache the header/footer/chrome, keep only the cookie-targeted fetch dynamic inside <Suspense> — true PPR instead of SSR-with-streaming.",
+  },
+  {
+    title: "Multi-locale default content",
+    detail:
+      "Caching fetchOneEntry() per locale avoids re-hitting the Content API on every request for an entry that rarely changes.",
+  },
+];
+
 const CHEAT_SHEET = [
   {
     concept: "Default caching behavior",
@@ -160,6 +196,73 @@ export default async function CacheComponentsPage(props: PageProps) {
             </Card>
           ))}
         </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <Text variant="h2" as="h2">
+          When to reach for each, from the Builder integration's side
+        </Text>
+        <Text variant="body" color="muted">
+          Both modes are legitimate choices — it depends on how much of a given route is genuinely
+          per-visitor vs. shared.
+        </Text>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div className="flex flex-col gap-3">
+            <Badge variant="outline" className="w-fit">
+              Good fit for cacheComponents: off
+            </Badge>
+            {USE_CASES_OFF.map((item) => (
+              <Card key={item.title}>
+                <CardHeader>
+                  <CardTitle>
+                    <Text variant="h6" as="h3">{item.title}</Text>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Text variant="body-sm" color="muted" as="p">
+                    {item.detail}
+                  </Text>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <div className="flex flex-col gap-3">
+            <Badge variant="secondary" className="w-fit">
+              Good fit for cacheComponents: on
+            </Badge>
+            {USE_CASES_ON.map((item) => (
+              <Card key={item.title}>
+                <CardHeader>
+                  <CardTitle>
+                    <Text variant="h6" as="h3">{item.title}</Text>
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Text variant="body-sm" color="muted" as="p">
+                    {item.detail}
+                  </Text>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+        <Card className="border-amber-600/40 bg-amber-500/10">
+          <CardHeader>
+            <CardTitle>
+              <Text variant="h6" as="h3" color="warning">The one to watch</Text>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Text variant="body-sm" as="p">
+              <code className="rounded bg-muted px-1 py-0.5 text-xs">fetchOneEntry()</code> calls that
+              include per-visitor <code className="rounded bg-muted px-1 py-0.5 text-xs">userAttributes</code> (the
+              SSR/PPR targeting demos) are the dangerous ones to mark{" "}
+              <code className="rounded bg-muted px-1 py-0.5 text-xs">&apos;use cache&apos;</code>. Cache that call and
+              every visitor gets the FIRST visitor's targeted result until revalidation — the
+              opposite of what targeting is for.
+            </Text>
+          </CardContent>
+        </Card>
       </section>
 
       <section className="flex flex-col gap-4">
