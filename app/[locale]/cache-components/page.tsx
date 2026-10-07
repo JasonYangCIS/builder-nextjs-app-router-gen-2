@@ -254,12 +254,13 @@ export default async function CacheComponentsPage(props: PageProps) {
           </CardHeader>
           <CardContent>
             <Text variant="body-sm" as="p">
-              <code className="rounded bg-muted px-1 py-0.5 text-xs">fetchOneEntry()</code> calls that
-              include per-visitor <code className="rounded bg-muted px-1 py-0.5 text-xs">userAttributes</code> (the
-              SSR/PPR targeting demos) are the dangerous ones to mark{" "}
-              <code className="rounded bg-muted px-1 py-0.5 text-xs">&apos;use cache&apos;</code>. Cache that call and
-              every visitor gets the FIRST visitor's targeted result until revalidation — the
-              opposite of what targeting is for.
+              It's not that targeted <code className="rounded bg-muted px-1 py-0.5 text-xs">fetchOneEntry()</code> calls
+              can never be marked <code className="rounded bg-muted px-1 py-0.5 text-xs">&apos;use cache&apos;</code> — Builder's
+              own performance guidance is to key caches on a few low-cardinality attributes (e.g.
+              audience, region, plan) and avoid high-cardinality per-visitor values like a visitor
+              ID or timestamp. The SSR/PPR demos' targeting attributes are exactly that kind of
+              high-cardinality, session-derived value, which is why they stay dynamic rather than
+              cached.
             </Text>
           </CardContent>
         </Card>
