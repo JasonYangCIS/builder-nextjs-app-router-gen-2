@@ -76,7 +76,13 @@ export default function RegionLocaleDemo() {
 
   useEffect(() => {
     let cancelled = false;
-    fetchEntries({ model: config.models.regionRef, apiKey: config.envs.builderApiKey, limit: 50 })
+    fetchEntries({
+      model: config.models.regionRef,
+      apiKey: config.envs.builderApiKey,
+      limit: 50,
+      cacheSeconds: 1,
+      staleCacheSeconds: 0,
+    })
       .then((entries) => {
         if (cancelled) return;
         const options: RegionOption[] = (entries ?? []).map((entry) => ({
