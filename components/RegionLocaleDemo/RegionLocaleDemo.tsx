@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/Card/C
 import type { RegionContentResult, RegionOption } from "./RegionLocaleDemo.types";
 
 const DEFAULT_LOCALE = "jp";
+const REGION_CONTENT_PATH = "/region-content";
 
 // Builder list fields return objects (e.g. { locale: "us" }); plain string arrays are also accepted.
 function normalizeLocales(raw: unknown): string[] {
@@ -44,8 +45,9 @@ const region = regions.find((r) =>
 
 // 2. Query content filtered by the reference field
 const entries = await fetchEntries({
-  model: "${config.models.regionContent}",
+  model: "${config.models.page}",
   apiKey: config.envs.builderApiKey,
+  userAttributes: { urlPath: "/region-content" },
   query: {
     "data.regionRef.id": region.id, // ${region?.id ?? "<region id>"}
   },
@@ -100,8 +102,9 @@ export default function RegionLocaleDemo() {
 
     try {
       const entries = await fetchEntries({
-        model: config.models.regionContent,
+        model: config.models.page,
         apiKey: config.envs.builderApiKey,
+        userAttributes: { urlPath: REGION_CONTENT_PATH },
         query: { "data.regionRef.id": region.id },
         limit: 20,
       });
@@ -129,8 +132,8 @@ export default function RegionLocaleDemo() {
             <Text variant="h4" as="h2">Query by locale and regionRef</Text>
           </CardTitle>
           <Text variant="body-sm" color="muted">
-            Pick one locale. The demo finds the region that lists it, then queries{" "}
-            `{config.models.regionContent}` entries whose `regionRef` points at that region.
+            Pick one locale. The demo finds the region that lists it, then queries `page`
+            entries at `{REGION_CONTENT_PATH}` whose `regionRef` points at that region.
           </Text>
         </CardHeader>
         <CardContent>

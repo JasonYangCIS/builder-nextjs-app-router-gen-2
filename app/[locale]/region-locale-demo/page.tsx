@@ -15,7 +15,7 @@ export default function RegionLocaleDemoPage() {
         </Text>
         <Text variant="body-lg" color="muted" className="mt-3">
           Entries carry a `regionRef` reference to a region that lists locales (e.g. NA: `us`,
-          `ca`; APAC: `jp`). Pick one locale to fetch `region-content` entries tied to its region.
+          `ca`; APAC: `jp`). Pick one locale to fetch the `/region-content` page entry tied to its region.
         </Text>
       </header>
 

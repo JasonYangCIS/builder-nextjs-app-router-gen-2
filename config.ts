@@ -39,7 +39,6 @@ export const config = {
     announcementBar: "announcement-bar",
     faq: "faq",
     regionRef: "custom-targeting-region-locales",
-    regionContent: "region-content",
   },
   locales: {
     default: "en-US",
