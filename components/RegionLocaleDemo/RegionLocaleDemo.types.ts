@@ -4,13 +4,8 @@ export interface RegionOption {
   locales: string[];
 }
 
-export interface RegionLocaleResult {
+export interface RegionContentResult {
   id: string;
   title: string;
-  url: string;
-}
-
-export interface RegionLocaleGroup {
-  locale: string;
-  entries: RegionLocaleResult[];
+  regionRefId: string;
 }

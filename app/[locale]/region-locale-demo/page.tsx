@@ -14,8 +14,8 @@ export default function RegionLocaleDemoPage() {
           Region Locale Demo
         </Text>
         <Text variant="body-lg" color="muted" className="mt-3">
-          A `regionRef` entry groups locales (e.g. NA: `us`, `ca`; APAC: `jp`). Select a region
-          to query the Content API for each of its locales.
+          Entries carry a `regionRef` reference to a region that lists locales (e.g. NA: `us`,
+          `ca`; APAC: `jp`). Pick one locale to fetch `region-content` entries tied to its region.
         </Text>
       </header>
 
