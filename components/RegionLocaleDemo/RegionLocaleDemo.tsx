@@ -55,8 +55,12 @@ export default function RegionLocaleDemo() {
           setLocale(allLocales[0]);
         }
       })
-      .catch(() => {
-        if (!cancelled) setError("Could not load regions. Please try again.");
+      .catch((err: unknown) => {
+        console.error("Failed to load regions", err);
+        if (!cancelled) {
+          const detail = err instanceof Error ? err.message : String(err);
+          setError(`Could not load regions: ${detail}`);
+        }
       });
     return () => {
       cancelled = true;
