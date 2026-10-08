@@ -1,5 +1,6 @@
 import { Text } from "@/components/ui/Text/Text";
 import RegionLocaleDemo from "@/components/RegionLocaleDemo/RegionLocaleDemo";
+import RegionApproachNotes from "@/components/RegionApproachNotes/RegionApproachNotes";
 
 export const metadata = {
   title: "Region Locale Demo",
@@ -19,7 +20,10 @@ export default function RegionLocaleDemoPage() {
         </Text>
       </header>
 
-      <RegionLocaleDemo />
+      <div className="flex flex-col gap-16">
+        <RegionLocaleDemo />
+        <RegionApproachNotes />
+      </div>
     </div>
   );
 }
