@@ -22,11 +22,10 @@ const regions = await fetchEntries({
 const region = regions.find((r) => r.data?.locales?.includes("${locale}"));
 // -> ${region ? `"${region.name}" (id: ${region.id})` : "no matching region"}
 
-// 2. Query content for that single locale, filtered by the reference field
+// 2. Query content filtered by the reference field
 const entries = await fetchEntries({
   model: "${config.models.regionContent}",
   apiKey: config.envs.builderApiKey,
-  locale: "${locale}",
   query: {
     "data.regionRef.id": region.id, // ${region?.id ?? "<region id>"}
   },
@@ -79,7 +78,6 @@ export default function RegionLocaleDemo() {
       const entries = await fetchEntries({
         model: config.models.regionContent,
         apiKey: config.envs.builderApiKey,
-        locale,
         query: { "data.regionRef.id": region.id },
         limit: 20,
       });
