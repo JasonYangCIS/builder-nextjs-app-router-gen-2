@@ -11,6 +11,24 @@ import type { RegionContentResult, RegionOption } from "./RegionLocaleDemo.types
 
 const DEFAULT_LOCALE = "jp";
 
+// Builder list fields return objects (e.g. { locale: "us" }); plain string arrays are also accepted.
+function normalizeLocales(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((item): string => {
+      if (typeof item === "string") return item;
+      if (item && typeof item === "object") {
+        const record = item as Record<string, unknown>;
+        const value =
+          record.locale ?? record.code ?? record.value ?? Object.values(record).find((v) => typeof v === "string");
+        return typeof value === "string" ? value : "";
+      }
+      return "";
+    })
+    .map((locale) => locale.trim())
+    .filter(Boolean);
+}
+
 function buildCodeExample(locale: string, region: RegionOption | undefined): string {
   return `import { fetchEntries } from "@builder.io/sdk-react";
 
@@ -19,7 +37,9 @@ const regions = await fetchEntries({
   model: "${config.models.regionRef}",
   apiKey: config.envs.builderApiKey,
 });
-const region = regions.find((r) => r.data?.locales?.includes("${locale}"));
+const region = regions.find((r) =>
+  r.data?.locales?.some((l) => l.locale === "${locale}"),
+);
 // -> ${region ? `"${region.name}" (id: ${region.id})` : "no matching region"}
 
 // 2. Query content filtered by the reference field
@@ -47,7 +67,7 @@ export default function RegionLocaleDemo() {
         const options: RegionOption[] = (entries ?? []).map((entry) => ({
           id: entry.id ?? "",
           name: (entry.data?.name as string | undefined) ?? entry.name ?? "Untitled region",
-          locales: ((entry.data?.locales as string[] | undefined) ?? []).map((l) => l.trim()),
+          locales: normalizeLocales(entry.data?.locales),
         }));
         setRegions(options);
         const allLocales = options.flatMap((region) => region.locales);
