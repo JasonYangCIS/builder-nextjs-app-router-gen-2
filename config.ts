@@ -38,6 +38,7 @@ export const config = {
     headerNavMenu: "header-nav-menu",
     announcementBar: "announcement-bar",
     faq: "faq",
+    regionRef: "region-ref",
   },
   locales: {
     default: "en-US",
