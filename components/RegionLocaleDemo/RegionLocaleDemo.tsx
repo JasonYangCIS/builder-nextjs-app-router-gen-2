@@ -69,6 +69,9 @@ export default function RegionLocaleDemo() {
   const [locale, setLocale] = useState(DEFAULT_LOCALE);
   const [results, setResults] = useState<RegionContentResult[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [sampleLoading, setSampleLoading] = useState(false);
+  const [sampleError, setSampleError] = useState<string | null>(null);
+  const [sampleOutput, setSampleOutput] = useState<unknown>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -131,6 +134,39 @@ export default function RegionLocaleDemo() {
       setResults(null);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function runSample() {
+    setSampleLoading(true);
+    setSampleError(null);
+    setSampleOutput(null);
+
+    try {
+      const allRegions = await fetchEntries({
+        model: config.models.regionRef,
+        apiKey: config.envs.builderApiKey,
+      });
+      const matched = (allRegions ?? []).find((r) =>
+        normalizeLocales(r.data?.locales).includes(locale),
+      );
+      if (!matched?.id) {
+        setSampleOutput({ region: null, entries: [] });
+        return;
+      }
+
+      const entries = await fetchEntries({
+        model: config.models.page,
+        apiKey: config.envs.builderApiKey,
+        userAttributes: { urlPath: REGION_CONTENT_PATH },
+        query: { "data.regionRef.id": matched.id },
+      });
+      setSampleOutput({ region: { id: matched.id, name: matched.name }, entries: entries ?? [] });
+    } catch (err) {
+      const detail = err instanceof Error ? err.message : String(err);
+      setSampleError(`Sample failed: ${detail}`);
+    } finally {
+      setSampleLoading(false);
     }
   }
 
@@ -239,6 +275,27 @@ export default function RegionLocaleDemo() {
         <pre className="overflow-x-auto rounded-lg bg-muted p-4 text-sm">
           <code className="font-mono">{buildCodeExample(locale, region)}</code>
         </pre>
+
+        <div className="mt-4">
+          <Button type="button" onClick={runSample} disabled={sampleLoading}>
+            {sampleLoading ? "Running code…" : "Run this code"}
+          </Button>
+        </div>
+
+        {sampleError && (
+          <Text variant="body-sm" color="error" className="mt-4">
+            {sampleError}
+          </Text>
+        )}
+
+        {sampleOutput !== null && (
+          <div className="mt-4">
+            <Text variant="label" as="p" className="mb-2">Response</Text>
+            <pre className="max-h-96 overflow-auto rounded-lg bg-muted p-4 text-sm">
+              <code className="font-mono">{JSON.stringify(sampleOutput, null, 2)}</code>
+            </pre>
+          </div>
+        )}
       </div>
     </div>
   );
