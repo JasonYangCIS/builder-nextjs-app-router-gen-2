@@ -30,6 +30,16 @@ function normalizeLocales(raw: unknown): string[] {
     .filter(Boolean);
 }
 
+// Without a `locale` param, Builder returns localized fields as { "@type": ..., Default: "..." }.
+function toDisplayString(value: unknown): string | undefined {
+  if (typeof value === "string") return value;
+  if (value && typeof value === "object") {
+    const fallback = (value as Record<string, unknown>).Default;
+    return typeof fallback === "string" ? fallback : undefined;
+  }
+  return undefined;
+}
+
 function buildCodeExample(locale: string, region: RegionOption | undefined): string {
   return `import { fetchEntries } from "@builder.io/sdk-react";
 
@@ -112,7 +122,7 @@ export default function RegionLocaleDemo() {
       setResults(
         (entries ?? []).map((entry) => ({
           id: entry.id ?? entry.name ?? "",
-          title: (entry.data?.title as string | undefined) ?? entry.name ?? "Untitled entry",
+          title: toDisplayString(entry.data?.title) ?? entry.name ?? "Untitled entry",
           regionRefId: (entry.data?.regionRef as { id?: string } | undefined)?.id ?? "",
         })),
       );
