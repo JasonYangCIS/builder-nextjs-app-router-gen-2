@@ -178,8 +178,8 @@ export default function RegionLocaleDemo() {
             <Text variant="h4" as="h2">Query by locale and regionRef</Text>
           </CardTitle>
           <Text variant="body-sm" color="muted">
-            Pick one locale. The demo finds the region that lists it, then queries `page`
-            entries at `{REGION_CONTENT_PATH}` whose `regionRef` points at that region.
+            1. Pick a locale. 2. We find its region. 3. We fetch the `{REGION_CONTENT_PATH}` entry
+            for that region.
           </Text>
         </CardHeader>
         <CardContent>
@@ -268,9 +268,8 @@ export default function RegionLocaleDemo() {
       <div>
         <Text variant="h5" as="h3" className="mb-3">Request shape</Text>
         <Text variant="body-sm" color="muted" className="mb-3">
-          A custom targeting attribute can&rsquo;t carry a list of regions, so each content entry
-          has a `regionRef` reference field instead. The region entry holds the locale list, and
-          the query filters on the reference&rsquo;s id.
+          Targeting attributes can&rsquo;t hold a list of regions, so each entry has a `regionRef`
+          reference field. The region entry holds the locales; the query filters on its id.
         </Text>
         <pre className="overflow-x-auto rounded-lg bg-muted p-4 text-sm">
           <code className="font-mono">{buildCodeExample(locale, region)}</code>
