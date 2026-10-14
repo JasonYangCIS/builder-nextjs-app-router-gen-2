@@ -1,0 +1,54 @@
+{
+  "skill": "landing-page-generator",
+  "common_checks": [
+    "Validator (scripts/validate.mjs) exits 0",
+    "Exactly one h1 and the hero image is first on the page",
+    "heroImageAlt is a meaningful description",
+    "Copy avoids the user's avoid-list tone",
+    "Final action navigates the preview to the generated page"
+  ],
+  "evals": [
+    {
+      "name": "new-prompt-happy-path",
+      "prompt": "Create a landing page for a dog-walking app. Friendly tone, avoid anything corporate.",
+      "expected": [
+        "Asks for a starting point first, with Figma file listed first",
+        "Collects missing intake fields without re-asking what the prompt already answered",
+        "Generates three options (-a, -b, -c) and shares their URLs",
+        "Waits for the user to choose before building the full page",
+        "Asks for confirmation before deleting the unchosen options",
+        "Final page exists at /landing/<slug> and the preview is navigated to it"
+      ]
+    },
+    {
+      "name": "update-existing-page",
+      "prompt": "Change the headline on /landing/sample-launch to something punchier.",
+      "expected": [
+        "Reads the existing JSON instead of starting from scratch",
+        "Shows a before/after table of changed fields before writing",
+        "Changes only the headline",
+        "Does not regenerate the hero image",
+        "Navigates the preview to /landing/sample-launch"
+      ]
+    },
+    {
+      "name": "collision-and-placeholder",
+      "prompt": "Create a landing page called sample-launch about a new smart thermostat. (Simulate the image API returning placeholder: true.)",
+      "expected": [
+        "Detects the existing sample-launch.json and asks before overwriting or picks a new slug",
+        "Reports the image error to the user and offers a retry",
+        "Does not silently overwrite any file"
+      ]
+    },
+    {
+      "name": "html-source-start",
+      "prompt": "Turn this HTML into a landing page: <section><h1>Learn guitar in 30 days</h1><p>Short lessons, real songs.</p><a href=\"/\">Start free</a></section>",
+      "expected": [
+        "Chooses the HTML source starting point without asking the intake questions the HTML already answers",
+        "Extracts headline, subhead and CTA from the HTML",
+        "Still writes sections and a hero image prompt, with the hero on the first fold"
+      ]
+    }
+  ],
+  "models_to_test": ["haiku", "sonnet", "opus"]
+}

@@ -36,7 +36,7 @@ Use AskUserQuestion first, with these options in this order:
    ```
    Response: `{ path, provider, placeholder, error? }`. Use `path` as `heroImagePath`. If `placeholder` is true, tell the user the `error` (e.g. timeout, rate limit) and offer to retry. Pass `"overwrite": true` only if the user asked to regenerate.
 6. **Write the data file** with: `slug`, `headline`, `subhead`, `cta {label, href}`, `sections [{heading, body}]`, `heroImagePath`, `heroImageAlt` (a meaningful description, not "hero image"). Type: `components/LandingPage/LandingPage.types.ts`.
-7. **Verify.** With the dev server running, fetch `http://localhost:3000/landing/<slug>` and confirm HTTP 200, the headline appears, and `heroImagePath` returns HTTP 200. Run `npx tsc --noEmit`.
+7. **Verify.** Run `node .builder/skills/landing-page-generator/scripts/validate.mjs <slug>` and fix every ERROR (WARN lines are copy-limit or route hints; fix or mention them). Then, with the dev server running, fetch `http://localhost:3000/landing/<slug>` and confirm HTTP 200, the headline appears, and `heroImagePath` returns HTTP 200. Run `npx tsc --noEmit`.
 8. **Self-review.** Fix or report any failures:
    - hero image is first and fills the first fold
    - meaningful image `alt`; one h1, sensible heading order
