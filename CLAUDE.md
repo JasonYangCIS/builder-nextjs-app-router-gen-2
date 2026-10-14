@@ -85,6 +85,7 @@ Skills load on demand — consult the relevant skill for task-specific patterns 
 | `localization` | Locale routing, proxy, `buildLocalePath`, internal links, preview locale |
 | `project-maintenance` | Doc update checklist (new components), skill sync checklist (add/remove skills) |
 | `testing` | Playwright E2E, fixture pages, selector scoping, gotchas |
+| `landing-page-generator` | Generate a `/landing/<slug>` page (JSON data + hero image) from Figma, HTML, or a prompt |
 
 Canonical docs live in `docs/skills/`. Pointers in `.builder/skills/` (Fusion) and `.claude/skills/` (Claude Code).
 

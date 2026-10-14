@@ -13,9 +13,9 @@ Layout rule for every starting point: the hero image fills the first fold, with 
 
 Use AskUserQuestion first, with these options in this order:
 
-1. **Figma file** — a Figma link or Smart Export. Read the design (see the `figma-annotations` skill and Builder Design tools), extract headline, subhead, CTA, sections and hero image, then continue at step 6. Ask intake questions only for fields the design doesn't answer.
-2. **HTML source code** — pasted or pointed to. Extract the same fields, then continue as above.
-3. **New prompt** (default) — follow `references/intake.md`, then continue at step 1.
+1. **Figma file** — a Figma link or Smart Export. Read the design (see the `figma-annotations` skill and Builder Design tools), extract headline, subhead, CTA, sections and hero image, then continue at "Generate the image" (skip it if the design supplies a usable image: copy it to `public/generated/<slug>.<ext>`). Ask intake questions only for fields the design doesn't answer.
+2. **HTML source code** — pasted or pointed to. Extract the same fields, then continue at "Generate the image" as above (generate one if the HTML has no usable hero image).
+3. **New prompt** (default) — follow `references/intake.md`, then continue at "Check for collisions".
 
 ## Steps
 
