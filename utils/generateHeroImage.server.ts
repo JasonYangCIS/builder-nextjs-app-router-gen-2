@@ -10,9 +10,6 @@ const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/intera
 
 export interface GenerateHeroImageOptions {
   slug: string;
-  provider?: "gemini" | "pollinations";
-  width?: number;
-  height?: number;
   timeoutMs?: number;
   overwrite?: boolean;
 }
@@ -47,7 +44,7 @@ async function generateWithGemini(prompt: string, timeoutMs: number): Promise<Bu
   const { geminiApiKey, geminiImageModel } = config.envs;
   if (!geminiApiKey) {
     throw new ImageProviderError(
-      "GEMINI_API_KEY is not set. Add it to .env.local or set IMAGE_PROVIDER=pollinations.",
+      "GEMINI_API_KEY is not set. Add it to .env.local.",
     );
   }
 
@@ -95,23 +92,6 @@ async function generateWithGemini(prompt: string, timeoutMs: number): Promise<Bu
   return Buffer.from(data, "base64");
 }
 
-async function generateWithPollinations(
-  prompt: string,
-  width: number,
-  height: number,
-  timeoutMs: number,
-): Promise<Buffer> {
-  const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=${width}&height=${height}&nologo=true`;
-  const res = await fetchWithTimeout(url, {}, timeoutMs);
-  if (res.status === 429) throw new ImageProviderError("Pollinations rate limit exceeded.");
-  if (!res.ok) throw new ImageProviderError(`Pollinations request failed (${res.status}).`);
-  const type = res.headers.get("content-type") ?? "";
-  if (!type.startsWith("image/")) {
-    throw new ImageProviderError(`Pollinations returned a non-image response (${type || "unknown"}).`);
-  }
-  return Buffer.from(await res.arrayBuffer());
-}
-
 async function toWebFriendly(buffer: Buffer): Promise<{ buffer: Buffer; ext: string }> {
   // sharp ships with Next.js; fall back to the raw bytes if it is unavailable.
   try {
@@ -129,13 +109,11 @@ export async function generateHeroImage(
 ): Promise<GenerateHeroImageResult> {
   const {
     slug,
-    width = 1280,
-    height = 720,
     timeoutMs = 60_000,
     overwrite = false,
-    provider = config.envs.imageProvider === "pollinations" ? "pollinations" : "gemini",
   } = options;
 
+  const provider = "gemini";
   const fallback = (error: string): GenerateHeroImageResult => ({
     path: PLACEHOLDER_IMAGE_PATH,
     provider,
@@ -158,10 +136,7 @@ export async function generateHeroImage(
   }
 
   try {
-    const raw =
-      provider === "pollinations"
-        ? await generateWithPollinations(prompt, width, height, timeoutMs)
-        : await generateWithGemini(prompt, timeoutMs);
+    const raw = await generateWithGemini(prompt, timeoutMs);
     const { buffer, ext } = await toWebFriendly(raw);
     await mkdir(OUTPUT_DIR, { recursive: true });
     await writeFile(path.join(OUTPUT_DIR, `${baseName}.${ext}`), buffer);
