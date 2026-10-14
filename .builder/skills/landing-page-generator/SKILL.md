@@ -62,6 +62,7 @@ Output options: ask whether to run phased generation (default on). See "Phased g
    - CTA `href` resolves to a real route
    List any failures and fix them, or report them.
 9. **Report** the page URL (`/landing/<slug>`), data file path, image path, chosen tone category, and any placeholder warning.
+10. **Navigate.** As the final action, load the `NavigatePreview` tool (via tool search if deferred) and navigate the preview to `/landing/<slug>` so the user sees the finished page. In phased generation, also navigate to the first option (`<slug>-a`) after sharing the three URLs, and to `/landing/<slug>` once the full page is built.
 
 ## Phased generation
 
@@ -81,5 +82,6 @@ When phased generation is on (default), do not build the whole page at once:
 - Never put secrets in code, data files, or output. If a keyed provider is ever added, read its key from env vars via `config.envs`.
 - No text inside the generated image.
 - Always ask for the starting point first (Figma file, HTML source code, New prompt, in that order).
+- Always navigate the preview to the generated page when done.
 - Every page leads with the hero image on the first fold, content below.
 - Brand voice lives in `references/brand-voice.md`; tone categories live in `references/tone-categories.md`. Customize them there.
