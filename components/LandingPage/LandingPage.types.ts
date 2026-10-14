@@ -15,4 +15,5 @@ export interface LandingPageData {
 
 export interface LandingPageProps {
   data: LandingPageData;
+  locale: string;
 }

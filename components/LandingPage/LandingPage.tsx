@@ -1,13 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/Button/Button";
+import { buildLocalePath } from "@/utils/locale";
 import { sanitizeHref } from "@/utils/url";
 import type { LandingPageProps } from "./LandingPage.types";
 
 export type { LandingPageProps, LandingPageData } from "./LandingPage.types";
 
-export default function LandingPage({ data }: LandingPageProps) {
-  const ctaHref = sanitizeHref(data.cta.href);
+export default function LandingPage({ data, locale }: LandingPageProps) {
+  const safeHref = sanitizeHref(data.cta.href);
+  const ctaHref =
+    safeHref.startsWith("/") && !safeHref.startsWith("//") ? buildLocalePath(locale, safeHref) : safeHref;
   const isSvg = data.heroImagePath.endsWith(".svg");
 
   return (

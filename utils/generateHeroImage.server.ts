@@ -1,9 +1,10 @@
 import "server-only";
-import { access, mkdir, writeFile } from "node:fs/promises";
+import { access, mkdir, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 export const PLACEHOLDER_IMAGE_PATH = "/generated/placeholder.svg";
 
+const IMAGE_EXTENSIONS = ["webp", "png", "jpg"];
 const OUTPUT_DIR = path.join(process.cwd(), "public", "generated");
 
 export interface GenerateHeroImageOptions {
@@ -52,14 +53,16 @@ async function generateWithPollinations(
 }
 
 async function toWebFriendly(buffer: Buffer): Promise<{ buffer: Buffer; ext: string }> {
-  // sharp ships with Next.js; fall back to the raw bytes if it is unavailable.
+  // sharp ships with Next.js; only fall back to raw bytes if it cannot be loaded.
+  let sharp: typeof import("sharp");
   try {
-    const sharp = (await import("sharp")).default;
-    return { buffer: await sharp(buffer).webp({ quality: 82 }).toBuffer(), ext: "webp" };
+    sharp = (await import("sharp")).default;
   } catch {
     const isPng = buffer.subarray(0, 4).toString("hex") === "89504e47";
     return { buffer, ext: isPng ? "png" : "jpg" };
   }
+  // Decode errors (corrupt image) propagate to the caller's placeholder fallback.
+  return { buffer: await sharp(buffer).webp({ quality: 82 }).toBuffer(), ext: "webp" };
 }
 
 export async function generateHeroImage(
@@ -82,12 +85,12 @@ export async function generateHeroImage(
     error,
   });
 
-  if (!/^[a-z0-9-]+$/.test(slug)) return fallback("Invalid slug: use lowercase letters, numbers, hyphens.");
-  if (!prompt.trim()) return fallback("Image prompt is empty.");
+  if (typeof slug !== "string" || !/^[a-z0-9-]+$/.test(slug)) return fallback("Invalid slug: use lowercase letters, numbers, hyphens.");
+  if (typeof prompt !== "string" || !prompt.trim()) return fallback("Image prompt is empty.");
 
   const baseName = `${slug}-hero`;
   if (!overwrite) {
-    for (const ext of ["webp", "png", "jpg"]) {
+    for (const ext of IMAGE_EXTENSIONS) {
       const existing = path.join(OUTPUT_DIR, `${baseName}.${ext}`);
       try {
         await access(existing);
@@ -100,7 +103,21 @@ export async function generateHeroImage(
     const raw = await generateWithPollinations(prompt, width, height, timeoutMs);
     const { buffer, ext } = await toWebFriendly(raw);
     await mkdir(OUTPUT_DIR, { recursive: true });
-    await writeFile(path.join(OUTPUT_DIR, `${baseName}.${ext}`), buffer);
+    const target = path.join(OUTPUT_DIR, `${baseName}.${ext}`);
+    if (overwrite) {
+      await Promise.all(
+        IMAGE_EXTENSIONS.filter((e) => e !== ext).map((e) =>
+          rm(path.join(OUTPUT_DIR, `${baseName}.${e}`), { force: true }),
+        ),
+      );
+      await writeFile(target, buffer);
+    } else {
+      try {
+        await writeFile(target, buffer, { flag: "wx" });
+      } catch (err) {
+        if ((err as NodeJS.ErrnoException).code !== "EEXIST") throw err;
+      }
+    }
     return { path: `/generated/${baseName}.${ext}`, provider, placeholder: false };
   } catch (err) {
     return fallback(err instanceof Error ? err.message : "Unknown image generation error.");

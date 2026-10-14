@@ -11,15 +11,16 @@ async function loadLandingPage(slug: string): Promise<LandingPageData | null> {
   if (!/^[a-z0-9-]+$/.test(slug)) return null;
   try {
     return JSON.parse(await readFile(path.join(DATA_DIR, `${slug}.json`), "utf8"));
-  } catch {
+  } catch (err) {
+    if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
+      console.error(`Failed to load landing page "${slug}":`, err);
+    }
     return null;
   }
 }
 
-export const dynamicParams = false;
-
 export async function generateStaticParams() {
-  const files = await readdir(DATA_DIR);
+  const files = await readdir(DATA_DIR).catch(() => [] as string[]);
   const slugs = files.filter((f) => f.endsWith(".json")).map((f) => f.replace(/\.json$/, ""));
   return SUPPORTED_LOCALE_CODES.flatMap((locale) => slugs.map((slug) => ({ locale, slug })));
 }
@@ -35,8 +36,8 @@ export default async function LandingPageRoute({
 }: {
   params: Promise<{ locale: string; slug: string }>;
 }) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const data = await loadLandingPage(slug);
   if (!data) notFound();
-  return <LandingPage data={data} />;
+  return <LandingPage data={data} locale={locale} />;
 }
