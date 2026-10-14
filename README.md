@@ -49,7 +49,8 @@ Generate a static landing page (hero image + text sections) from a prompt using 
 
 | Variable | Default | Purpose |
 |---|---|---|
-| `GEMINI_API_KEY` | none | Required |
+| `IMAGE_PROVIDER` | `pollinations` | `pollinations` (no key) or `gemini` |
+| `GEMINI_API_KEY` | none | Required when `IMAGE_PROVIDER=gemini` |
 | `GEMINI_IMAGE_MODEL` | `gemini-3.1-flash-lite-image` | Nano Banana 2 Lite (1K output, 16:9 requested) |
 
 **Use:** with the dev server running, ask Fusion: "create a landing page for <topic>". The page is available at `/landing/<slug>`, backed by `content/landing-pages/<slug>.json`; the image is saved to `public/generated/`. If the key is missing or the provider fails, a placeholder image is used and the error is reported. Customize tone in `.builder/skills/landing-page-generator/references/brand-voice.md`.

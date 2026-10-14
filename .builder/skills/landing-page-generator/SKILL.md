@@ -23,14 +23,14 @@ Output: a JSON data file `content/landing-pages/<slug>.json` plus a hero image i
      -H "Content-Type: application/json" \
      -d '{"prompt":"<image prompt>","slug":"<slug>"}'
    ```
-   Response: `{ path, provider, placeholder, error? }`. Use `path` as `heroImagePath`. If `placeholder` is true, the placeholder was used; tell the user the `error` and how to fix it (e.g. set `GEMINI_API_KEY`). Pass `"overwrite": true` only if the user asked to regenerate.
+   Response: `{ path, provider, placeholder, error? }`. Use `path` as `heroImagePath`. If `placeholder` is true, the placeholder was used; tell the user the `error` and how to fix it (e.g. check `IMAGE_PROVIDER`, and `GEMINI_API_KEY` if using gemini). Pass `"overwrite": true` only if the user asked to regenerate.
 6. **Write the data file** `content/landing-pages/<slug>.json` with: `slug`, `headline`, `subhead`, `cta {label, href}`, `sections [{heading, body}]`, `heroImagePath`, `heroImageAlt` (a meaningful description of the image, not "hero image"). Type: `components/LandingPage/LandingPage.types.ts`. For `cta.href` use an existing internal route or ask.
 7. **Verify.** Ensure the dev server is running, fetch `http://localhost:3000/landing/<slug>` and confirm HTTP 200, the headline appears, and `heroImagePath` returns an image (HTTP 200). Run `npx tsc --noEmit`. Report the page URL (`/landing/<slug>`), the data file path, the image path, and any placeholder warning.
 
 ## Rules
 
 - Never overwrite an existing page or image without asking.
-- Never put secrets in code, data files, or output. Keys come from env vars only (`GEMINI_API_KEY`, `GEMINI_IMAGE_MODEL`), read via `config.envs`.
+- Never put secrets in code, data files, or output. Keys come from env vars only (`IMAGE_PROVIDER`, `GEMINI_API_KEY`, `GEMINI_IMAGE_MODEL`), read via `config.envs`.
 - Keep copy within the limits above.
 - No text inside the generated image.
 - Brand voice lives in `references/brand-voice.md`; customize it there.
