@@ -41,6 +41,22 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). Use the **Blog** link to try the three blog patterns.
 
+## AI landing pages
+
+Generate a static landing page (hero image + text sections) from a prompt using the `landing-page-generator` skill.
+
+**Setup:** add to `.env.local` (all server-side only, never `NEXT_PUBLIC_`):
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `IMAGE_PROVIDER` | `gemini` | `gemini` or `pollinations` (no key, for demos) |
+| `GEMINI_API_KEY` | none | Required for `gemini` |
+| `GEMINI_IMAGE_MODEL` | `gemini-3.1-flash-lite-image` | Nano Banana 2 Lite (1K output, 16:9 requested) |
+
+**Use:** with the dev server running, ask Fusion: "create a landing page for <topic>". The page is available at `/landing/<slug>`, backed by `content/landing-pages/<slug>.json`; the image is saved to `public/generated/`. If the key is missing or the provider fails, a placeholder image is used and the error is reported. Customize tone in `.builder/skills/landing-page-generator/references/brand-voice.md`.
+
+The image endpoint (`POST /api/generate-hero-image`) is disabled in production builds.
+
 ## Blog patterns
 
 | Route | Pattern | Description |
