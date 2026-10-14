@@ -9,6 +9,13 @@ Output: a JSON data file `content/landing-pages/<slug>.json` plus a hero image i
 
 ## Steps
 
+0. **Ask for a starting point.** As soon as the skill runs, before anything else, use AskUserQuestion to ask what the user wants to start from. Offer these options in exactly this order:
+   1. **Figma file** — the user provides a Figma link or Smart Export; build the page from that design (see the `figma-annotations` skill and Builder Design tools). Skip steps 3-6 unless the design lacks a hero image.
+   2. **HTML source code** — the user pastes or points to HTML; convert it into the page, preserving its structure and content.
+   3. **New prompt** — continue with steps 1-7 below.
+
+   For **New prompt**, the layout must always start with the hero image filling the first fold (above the fold), with the remaining content (sections, CTA) below it.
+
 1. **Gather inputs.** Topic, audience, tone, CTA. Infer what you can; ask at most ONE clarifying question, only if critical info is missing. Derive a lowercase-hyphen `slug` from the topic.
 2. **Check for collisions.** If `content/landing-pages/<slug>.json` exists, ask before overwriting (or pick a new slug). Never overwrite silently.
 3. **Write copy**, following `references/brand-voice.md`. Limits:
@@ -33,4 +40,6 @@ Output: a JSON data file `content/landing-pages/<slug>.json` plus a hero image i
 - Never put secrets in code, data files, or output. If a keyed provider is ever added, read its key from env vars via `config.envs`.
 - Keep copy within the limits above.
 - No text inside the generated image.
+- Always ask for the starting point first (Figma file, HTML source code, New prompt, in that order).
+- New-prompt pages always lead with the hero image on the first fold, content below.
 - Brand voice lives in `references/brand-voice.md`; customize it there.
