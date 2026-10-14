@@ -1,0 +1,22 @@
+{
+  "slug": "sample-launch",
+  "headline": "Launch faster with a page that writes itself",
+  "subhead": "A sample landing page rendered from a JSON data file and a generated hero image.",
+  "cta": { "label": "Get started", "href": "/" },
+  "sections": [
+    {
+      "heading": "Describe it",
+      "body": "Give the generator a topic, audience, and tone. It drafts the copy and a hero image prompt for you."
+    },
+    {
+      "heading": "Generate it",
+      "body": "The hero image is created server-side and saved into the repo, so nothing is hotlinked."
+    },
+    {
+      "heading": "Ship it",
+      "body": "Each page is a static route backed by a single data file you can edit by hand."
+    }
+  ],
+  "heroImagePath": "/generated/placeholder.svg",
+  "heroImageAlt": "Neutral gray gradient placeholder for the landing page hero"
+}

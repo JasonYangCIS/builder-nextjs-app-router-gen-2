@@ -41,6 +41,16 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000). Use the **Blog** link to try the three blog patterns.
 
+## AI landing pages
+
+Generate a static landing page (hero image + text sections) from a prompt using the `landing-page-generator` skill.
+
+**Setup:** none. Hero images come from [Pollinations](https://pollinations.ai), which needs no API key.
+
+**Use:** with the dev server running, ask Fusion: "create a landing page for <topic>". The page is available at `/landing/<slug>`, backed by `content/landing-pages/<slug>.json`; the image is saved to `public/generated/`. If the provider fails (timeout, rate limit), a placeholder image is used and the error is reported. Customize tone in `.builder/skills/landing-page-generator/references/brand-voice.md`.
+
+The image endpoint (`POST /api/generate-hero-image`) is disabled in production builds.
+
 ## Blog patterns
 
 | Route | Pattern | Description |
