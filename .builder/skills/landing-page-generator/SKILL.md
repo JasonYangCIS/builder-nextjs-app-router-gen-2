@@ -17,20 +17,20 @@ Output: a JSON data file `content/landing-pages/<slug>.json` plus a hero image i
    - CTA label: max 24 characters
    - 2-3 sections, each heading max 40 characters, body max 280 characters
 4. **Write the hero image prompt:** subject, style, mood, composition, 16:9 aspect ratio, and "no text, no logos, no watermarks" in the image. One or two sentences.
-5. **Generate the image** via the dev server (the key stays server-side):
+5. **Generate the image** via the dev server (server-side; Pollinations needs no key):
    ```bash
    curl -s -X POST http://localhost:3000/api/generate-hero-image \
      -H "Content-Type: application/json" \
      -d '{"prompt":"<image prompt>","slug":"<slug>"}'
    ```
-   Response: `{ path, provider, placeholder, error? }`. Use `path` as `heroImagePath`. If `placeholder` is true, the placeholder was used; tell the user the `error` and how to fix it (e.g. check `IMAGE_PROVIDER`, and `GEMINI_API_KEY` if using gemini). Pass `"overwrite": true` only if the user asked to regenerate.
+   Response: `{ path, provider, placeholder, error? }`. Use `path` as `heroImagePath`. If `placeholder` is true, the placeholder was used; tell the user the `error` (e.g. Pollinations timeout or rate limit) and offer to retry. Pass `"overwrite": true` only if the user asked to regenerate.
 6. **Write the data file** `content/landing-pages/<slug>.json` with: `slug`, `headline`, `subhead`, `cta {label, href}`, `sections [{heading, body}]`, `heroImagePath`, `heroImageAlt` (a meaningful description of the image, not "hero image"). Type: `components/LandingPage/LandingPage.types.ts`. For `cta.href` use an existing internal route or ask.
 7. **Verify.** Ensure the dev server is running, fetch `http://localhost:3000/landing/<slug>` and confirm HTTP 200, the headline appears, and `heroImagePath` returns an image (HTTP 200). Run `npx tsc --noEmit`. Report the page URL (`/landing/<slug>`), the data file path, the image path, and any placeholder warning.
 
 ## Rules
 
 - Never overwrite an existing page or image without asking.
-- Never put secrets in code, data files, or output. Keys come from env vars only (`IMAGE_PROVIDER`, `GEMINI_API_KEY`, `GEMINI_IMAGE_MODEL`), read via `config.envs`.
+- Never put secrets in code, data files, or output. If a keyed provider is ever added, read its key from env vars via `config.envs`.
 - Keep copy within the limits above.
 - No text inside the generated image.
 - Brand voice lives in `references/brand-voice.md`; customize it there.

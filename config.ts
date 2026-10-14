@@ -10,10 +10,6 @@ export const config = {
     // MUST be overridden in production via SESSION_SECRET; the fallback is for
     // local dev only. Never expose with a NEXT_PUBLIC_ prefix.
     sessionSecret: process.env.SESSION_SECRET ?? "dev-only-insecure-session-secret",
-    // Server-only image generation settings (never NEXT_PUBLIC_).
-    imageProvider: process.env.IMAGE_PROVIDER ?? "pollinations",
-    geminiApiKey: process.env.GEMINI_API_KEY ?? "",
-    geminiImageModel: process.env.GEMINI_IMAGE_MODEL ?? "gemini-3.1-flash-lite-image",
   },
   components: {
     uiBlocks: "UI Blocks",

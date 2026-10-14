@@ -1,12 +1,10 @@
 import "server-only";
 import { access, mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { config } from "@/config";
 
 export const PLACEHOLDER_IMAGE_PATH = "/generated/placeholder.svg";
 
 const OUTPUT_DIR = path.join(process.cwd(), "public", "generated");
-const GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/interactions";
 
 export interface GenerateHeroImageOptions {
   slug: string;
@@ -34,64 +32,6 @@ async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs: numbe
     }
     throw new ImageProviderError(`Image provider request failed: ${(err as Error).message}`);
   }
-}
-
-type GeminiBlock = { type?: string; data?: string; text?: string };
-type GeminiInteraction = {
-  output_image?: { data?: string };
-  steps?: { type?: string; content?: GeminiBlock[] }[];
-};
-
-async function generateWithGemini(prompt: string, timeoutMs: number): Promise<Buffer> {
-  const { geminiApiKey, geminiImageModel } = config.envs;
-  if (!geminiApiKey) {
-    throw new ImageProviderError(
-      "GEMINI_API_KEY is not set. Add it to .env.local.",
-    );
-  }
-
-  const res = await fetchWithTimeout(
-    GEMINI_ENDPOINT,
-    {
-      method: "POST",
-      headers: { "x-goog-api-key": geminiApiKey, "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: geminiImageModel,
-        input: prompt,
-        // gemini-3.1-flash-lite-image supports 1K output only.
-        response_format: { type: "image", aspect_ratio: "16:9", image_size: "1K" },
-      }),
-    },
-    timeoutMs,
-  );
-
-  if (res.status === 401 || res.status === 403) {
-    throw new ImageProviderError("Gemini rejected the API key (auth error). Check GEMINI_API_KEY.");
-  }
-  if (res.status === 429) {
-    throw new ImageProviderError("Gemini rate limit or quota exceeded. Try again later.");
-  }
-  if (!res.ok) {
-    const detail = (await res.text()).slice(0, 300);
-    throw new ImageProviderError(`Gemini request failed (${res.status}): ${detail}`);
-  }
-
-  const json = (await res.json()) as GeminiInteraction;
-  let data = json.output_image?.data;
-  let text = "";
-  for (const step of json.steps ?? []) {
-    if (step.type !== "model_output") continue;
-    for (const block of step.content ?? []) {
-      if (block.type === "image" && block.data && !data) data = block.data;
-      if (block.type === "text" && block.text) text += block.text;
-    }
-  }
-  if (!data) {
-    throw new ImageProviderError(
-      `Gemini returned no image (possibly blocked by safety filters).${text ? ` Model said: ${text.slice(0, 200)}` : ""}`,
-    );
-  }
-  return Buffer.from(data, "base64");
 }
 
 async function generateWithPollinations(
@@ -134,7 +74,7 @@ export async function generateHeroImage(
     overwrite = false,
   } = options;
 
-  const provider = config.envs.imageProvider === "gemini" ? "gemini" : "pollinations";
+  const provider = "pollinations";
   const fallback = (error: string): GenerateHeroImageResult => ({
     path: PLACEHOLDER_IMAGE_PATH,
     provider,
@@ -157,10 +97,7 @@ export async function generateHeroImage(
   }
 
   try {
-    const raw =
-      provider === "gemini"
-        ? await generateWithGemini(prompt, timeoutMs)
-        : await generateWithPollinations(prompt, width, height, timeoutMs);
+    const raw = await generateWithPollinations(prompt, width, height, timeoutMs);
     const { buffer, ext } = await toWebFriendly(raw);
     await mkdir(OUTPUT_DIR, { recursive: true });
     await writeFile(path.join(OUTPUT_DIR, `${baseName}.${ext}`), buffer);
