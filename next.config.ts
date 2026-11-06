@@ -21,6 +21,14 @@ const baseConfig: NextConfig = {
         protocol: 'https',
         hostname: 'res.cloudinary.com',
       },
+      {
+        protocol: 'https',
+        hostname: '**.bynder.com',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.getbynder.com',
+      },
     ],
   },
 };

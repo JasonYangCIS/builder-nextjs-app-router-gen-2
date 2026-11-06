@@ -26,6 +26,7 @@ export const config = {
     heroScrim: "Hero: Scrim",
     algoliaSearch: "Algolia Search",
     cloudinaryImage: "Cloudinary Image",
+    bynderImage: "Bynder Image",
     announcementBar: "Announcement Bar",
     faqList: "FAQ List",
     colorOverlay: "Color Overlay",
