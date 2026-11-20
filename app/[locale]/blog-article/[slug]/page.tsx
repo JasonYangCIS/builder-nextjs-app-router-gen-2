@@ -8,6 +8,8 @@ import { BlogArticleBody } from "@/components/blog/BlogArticleBody/BlogArticleBo
 import { BlogArticleHeader } from "@/components/blog/BlogArticleHeader/BlogArticleHeader";
 import { BlogArticleHero } from "@/components/blog/BlogArticleHero/BlogArticleHero";
 import { getTargetingAttributes } from "@/utils/targeting.server";
+import { getEntryBySlug } from "@/utils/builderCache.server";
+import { Suspense } from "react";
 
 const builderModelName = config.models.blogArticle;
 
@@ -33,12 +35,7 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
-  const article = await fetchOneEntry({
-    model: builderModelName,
-    apiKey: config.envs.builderApiKey,
-    query: { "data.slug": slug },
-    locale,
-  });
+  const article = await getEntryBySlug(builderModelName, slug, locale);
 
   return {
     title: (article?.data as BlogArticle)?.title ?? "Blog Article",
@@ -46,10 +43,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Page(props: {
-  params: Promise<{ locale: string; slug: string }>;
-}) {
-  const { locale, slug } = await props.params;
+async function ArticleContent({ locale, slug }: { locale: string; slug: string }) {
   const targeting = await getTargetingAttributes();
 
   const content = await fetchOneEntry({
@@ -86,5 +80,22 @@ export default async function Page(props: {
         <RenderBuilderContent content={content} model={builderModelName} locale={locale} />
       </div>
     </>
+  );
+}
+
+// The not-found check runs on the cached DEFAULT entry, outside <Suspense>, so a
+// missing slug returns a real HTTP 404. The cookie-dependent (targeted) render
+// streams inside the boundary.
+export default async function Page(props: {
+  params: Promise<{ locale: string; slug: string }>;
+}) {
+  const { locale, slug } = await props.params;
+  const base = await getEntryBySlug(builderModelName, slug, locale);
+  if (!base && !isEditing() && !isPreviewing()) notFound();
+
+  return (
+    <Suspense fallback={null}>
+      <ArticleContent locale={locale} slug={slug} />
+    </Suspense>
   );
 }

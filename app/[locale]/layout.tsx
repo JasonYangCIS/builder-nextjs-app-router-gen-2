@@ -53,23 +53,25 @@ export default async function LocaleLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {announcementBar && barPosition === "above-header" && (
-          <RenderBuilderContent
-            content={announcementBar}
-            model={config.models.announcementBar}
-            locale={locale}
-          />
+          <Suspense fallback={null}>
+            <RenderBuilderContent
+              content={announcementBar}
+              model={config.models.announcementBar}
+              locale={locale}
+            />
+          </Suspense>
         )}
         <Header locale={locale} />
         {announcementBar && barPosition === "below-header" && (
-          <RenderBuilderContent
-            content={announcementBar}
-            model={config.models.announcementBar}
-            locale={locale}
-          />
+          <Suspense fallback={null}>
+            <RenderBuilderContent
+              content={announcementBar}
+              model={config.models.announcementBar}
+              locale={locale}
+            />
+          </Suspense>
         )}
-        {/* Request-time content (cookies/searchParams) streams inside this boundary; */}
-        {/* everything else is part of the static shell. */}
-        <Suspense fallback={null}>{children}</Suspense>
+        {children}
         <Footer />
         <TargetingDemoControls />
       </body>

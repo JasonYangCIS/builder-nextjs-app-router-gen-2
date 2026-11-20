@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { connection } from "next/server";
 import { Text } from "@/components/ui/Text/Text";
 import { Badge } from "@/components/ui/Badge/Badge";
@@ -110,13 +111,15 @@ const CHEAT_SHEET = [
 
 type PageProps = { params: Promise<{ locale: string }> };
 
+// Request-time on purpose so the timestamp is real: the current time can't be read
+// in the static shell under cacheComponents, so connection() isolates it here.
+async function RenderedAtDemo() {
+  await connection();
+  return <ServerClientBoundaryDemo renderedAt={new Date().toLocaleTimeString()} />;
+}
+
 export default async function CacheComponentsPage(props: PageProps) {
   const { locale } = await props.params;
-  // Opt this page into request-time rendering so the timestamp is real (the
-  // current time can't be read in the static shell under cacheComponents).
-  await connection();
-  const renderedAt = new Date().toLocaleTimeString();
-
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-16 px-6 py-16">
       <header className="flex flex-col gap-3">
@@ -152,7 +155,9 @@ export default async function CacheComponentsPage(props: PageProps) {
           Watch the timestamp move while the counter's value survives untouched. That gap is exactly
           what cacheComponents controls: whether the server-side work gets redone or reused.
         </Text>
-        <ServerClientBoundaryDemo renderedAt={renderedAt} />
+        <Suspense fallback={null}>
+          <RenderedAtDemo />
+        </Suspense>
       </section>
 
       <section className="flex flex-col gap-4">

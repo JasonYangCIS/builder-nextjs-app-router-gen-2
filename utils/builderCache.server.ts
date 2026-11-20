@@ -53,3 +53,17 @@ export async function getHeaderNavEntries(locale: string) {
     locale,
   });
 }
+
+// Default (untargeted) entry for a slug-based model. Used for generateMetadata and
+// for the not-found check that must run BEFORE any <Suspense> boundary, so a
+// missing slug produces a real HTTP 404 instead of a streamed soft-404.
+export async function getEntryBySlug(model: string, slug: string, locale: string) {
+  "use cache";
+  cacheLife(BUILDER_CACHE_LIFE);
+  return fetchOneEntry({
+    model,
+    apiKey: config.envs.builderApiKey,
+    query: { "data.slug": slug },
+    locale,
+  });
+}
