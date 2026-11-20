@@ -1,8 +1,7 @@
-import { fetchEntries, isEditing, isPreviewing } from "@builder.io/sdk-react";
+import { fetchEntries, fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
 import { TargetedBuilderContent } from "@/components/builder/TargetedBuilderContent";
 import { BuilderContentSkeleton } from "@/components/builder/BuilderContentSkeleton";
 import { config } from "@/config";
-import { getPageEntry } from "@/utils/builderCache.server";
 import { SUPPORTED_LOCALE_CODES } from "@/utils/locale";
 import { notFound } from "next/navigation";
 
@@ -11,6 +10,7 @@ const builderModelName = config.models.page;
 // Static/ISR with client-side targeting: the server fetches the DEFAULT entry
 // (no cookie read → no force-dynamic). TargetedBuilderContent re-fetches the
 // targeted entry on the client only when targeting attributes are present.
+export const revalidate = 5;
 
 const PAGE_SIZE = 100;
 
@@ -56,7 +56,12 @@ export default async function Page(props: {
 
   const urlPath = "/" + (page?.join("/") || "");
 
-  const content = await getPageEntry(urlPath, locale);
+  const content = await fetchOneEntry({
+    apiKey: config.envs.builderApiKey,
+    model: builderModelName,
+    userAttributes: { urlPath, locale },
+    locale,
+  });
 
   if (!content && !isEditing() && !isPreviewing()) {
     return notFound();
