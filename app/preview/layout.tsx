@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import { Header } from "@/components/layout/Header/Header";
 import { Footer } from "@/components/layout/Footer/Footer";
-import { Suspense } from "react";
 import "../globals.css";
 
 const geistSans = Geist({
@@ -25,7 +24,7 @@ export default function PreviewLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Header />
-        <Suspense fallback={null}>{children}</Suspense>
+        {children}
         <Footer />
       </body>
     </html>

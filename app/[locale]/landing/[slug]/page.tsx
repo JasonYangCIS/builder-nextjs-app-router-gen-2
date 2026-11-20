@@ -1,18 +1,13 @@
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { notFound } from "next/navigation";
-import { cacheLife } from "next/cache";
 import LandingPage from "@/components/LandingPage/LandingPage";
 import type { LandingPageData } from "@/components/LandingPage/LandingPage.types";
 import { SUPPORTED_LOCALE_CODES } from "@/utils/locale";
 
 const DATA_DIR = path.join(process.cwd(), "content", "landing-pages");
 
-// Cached: filesystem reads count as uncached I/O under cacheComponents. The JSON is
-// bundled content that only changes on deploy.
 async function loadLandingPage(slug: string): Promise<LandingPageData | null> {
-  "use cache";
-  cacheLife("days");
   if (!/^[a-z0-9-]+$/.test(slug)) return null;
   try {
     return JSON.parse(await readFile(path.join(DATA_DIR, `${slug}.json`), "utf8"));

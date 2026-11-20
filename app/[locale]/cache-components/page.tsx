@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Suspense } from "react";
-import { connection } from "next/server";
 import { Text } from "@/components/ui/Text/Text";
 import { Badge } from "@/components/ui/Badge/Badge";
 import {
@@ -34,7 +32,7 @@ const ROUTE_COMPARISON = [
     name: "SSR route",
     today: "force-dynamic — cookies() read makes the whole route dynamic, every request hits origin.",
     withFlag:
-      "force-dynamic is not allowed with cacheComponents (build error). Remove it and isolate the cookies() read behind <Suspense> so the rest of the tree can be cached.",
+      "force-dynamic still works, but the idiomatic fix is to isolate the cookies() read behind <Suspense> so the rest of the tree can be cached.",
   },
   {
     href: "/ppr/custom-targeting",
@@ -111,15 +109,10 @@ const CHEAT_SHEET = [
 
 type PageProps = { params: Promise<{ locale: string }> };
 
-// Request-time on purpose so the timestamp is real: the current time can't be read
-// in the static shell under cacheComponents, so connection() isolates it here.
-async function RenderedAtDemo() {
-  await connection();
-  return <ServerClientBoundaryDemo renderedAt={new Date().toLocaleTimeString()} />;
-}
-
 export default async function CacheComponentsPage(props: PageProps) {
   const { locale } = await props.params;
+  const renderedAt = new Date().toLocaleTimeString();
+
   return (
     <main className="mx-auto flex max-w-5xl flex-col gap-16 px-6 py-16">
       <header className="flex flex-col gap-3">
@@ -155,9 +148,7 @@ export default async function CacheComponentsPage(props: PageProps) {
           Watch the timestamp move while the counter's value survives untouched. That gap is exactly
           what cacheComponents controls: whether the server-side work gets redone or reused.
         </Text>
-        <Suspense fallback={null}>
-          <RenderedAtDemo />
-        </Suspense>
+        <ServerClientBoundaryDemo renderedAt={renderedAt} />
       </section>
 
       <section className="flex flex-col gap-4">

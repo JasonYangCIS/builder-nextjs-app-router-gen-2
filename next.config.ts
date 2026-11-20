@@ -2,7 +2,7 @@ import BuilderDevTools from "@builder.io/dev-tools/next";
 import type { NextConfig } from "next";
 
 const baseConfig: NextConfig = {
-  cacheComponents: true,
+  /* config options here */
   images: {
     remotePatterns: [
       {

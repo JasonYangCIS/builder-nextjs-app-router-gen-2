@@ -2,7 +2,6 @@ import { fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { getTargetingAttributes } from "@/utils/targeting.server";
 
 // SSR demo: full per-request render with server-side targeting. Cookie is read
@@ -25,7 +24,12 @@ import { getTargetingAttributes } from "@/utils/targeting.server";
 const builderModelName = config.models.page;
 const urlPath = "/custom-targeting";
 
-async function TargetedPage({ locale }: { locale: string }) {
+export const dynamic = "force-dynamic";
+
+export default async function Page(props: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await props.params;
   const targeting = await getTargetingAttributes();
 
   const content = await fetchOneEntry({
@@ -40,17 +44,4 @@ async function TargetedPage({ locale }: { locale: string }) {
   }
 
   return <RenderBuilderContent content={content} model={builderModelName} locale={locale} />;
-}
-
-// Cookie read makes the content request-time; <Suspense> is required by
-// cacheComponents and lets the layout shell stay static.
-export default async function Page(props: {
-  params: Promise<{ locale: string }>;
-}) {
-  const { locale } = await props.params;
-  return (
-    <Suspense fallback={null}>
-      <TargetedPage locale={locale} />
-    </Suspense>
-  );
 }

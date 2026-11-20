@@ -1,10 +1,8 @@
-import { isEditing, isPreviewing } from "@builder.io/sdk-react";
-import { getPageEntry } from "@/utils/builderCache.server";
+import { fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
 import { TargetedBuilderContent } from "@/components/builder/TargetedBuilderContent";
 import { BuilderContentSkeleton } from "@/components/builder/BuilderContentSkeleton";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 
 // SSG demo: the server fetches the DEFAULT entry with no targeting, so the route
 // is statically generated (no force-dynamic). TargetedBuilderContent then does
@@ -37,22 +35,25 @@ export default async function Page(props: {
 }) {
   const { locale } = await props.params;
 
-  const content = await getPageEntry(urlPath, locale);
+  const content = await fetchOneEntry({
+    apiKey: config.envs.builderApiKey,
+    model: builderModelName,
+    userAttributes: { urlPath, locale },
+    locale,
+  });
 
   if (!content && !isEditing() && !isPreviewing()) {
     return notFound();
   }
 
   return (
-    <Suspense fallback={<BuilderContentSkeleton />}>
-      <TargetedBuilderContent
-        initialContent={content}
-        model={builderModelName}
-        urlPath={urlPath}
-        locale={locale}
-        sourceKey="cookie"
-        fallback={<BuilderContentSkeleton />}
-      />
-    </Suspense>
+    <TargetedBuilderContent
+      initialContent={content}
+      model={builderModelName}
+      urlPath={urlPath}
+      locale={locale}
+      sourceKey="cookie"
+      fallback={<BuilderContentSkeleton />}
+    />
   );
 }

@@ -1,13 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { getAnnouncementBar } from "@/utils/builderCache.server";
+import { fetchOneEntry } from "@builder.io/sdk-react";
 import { Header } from "@/components/layout/Header/Header";
 import { Footer } from "@/components/layout/Footer/Footer";
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { SUPPORTED_LOCALE_CODES } from "@/utils/locale";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import TargetingDemoControls from "@/components/TargetingDemoControls/TargetingDemoControls";
 import "../globals.css";
 
@@ -43,7 +42,12 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const announcementBar = await getAnnouncementBar(locale);
+  const announcementBar = await fetchOneEntry({
+    model: config.models.announcementBar,
+    apiKey: config.envs.builderApiKey,
+    userAttributes: { locale },
+    locale,
+  });
 
   const barPosition = (announcementBar?.data?.position as string | undefined) ?? "above-header";
 
@@ -53,23 +57,19 @@ export default async function LocaleLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {announcementBar && barPosition === "above-header" && (
-          <Suspense fallback={null}>
-            <RenderBuilderContent
-              content={announcementBar}
-              model={config.models.announcementBar}
-              locale={locale}
-            />
-          </Suspense>
+          <RenderBuilderContent
+            content={announcementBar}
+            model={config.models.announcementBar}
+            locale={locale}
+          />
         )}
         <Header locale={locale} />
         {announcementBar && barPosition === "below-header" && (
-          <Suspense fallback={null}>
-            <RenderBuilderContent
-              content={announcementBar}
-              model={config.models.announcementBar}
-              locale={locale}
-            />
-          </Suspense>
+          <RenderBuilderContent
+            content={announcementBar}
+            model={config.models.announcementBar}
+            locale={locale}
+          />
         )}
         {children}
         <Footer />
