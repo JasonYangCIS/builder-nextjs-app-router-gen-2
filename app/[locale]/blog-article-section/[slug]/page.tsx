@@ -11,8 +11,6 @@ import { BlogArticleHeader } from "@/components/blog/BlogArticleHeader/BlogArtic
 import { BlogArticleHero } from "@/components/blog/BlogArticleHero/BlogArticleHero";
 import type { BlogArticle, BlogArticleWithContent } from "@/types/blog.types";
 import { getTargetingAttributes } from "@/utils/targeting.server";
-import { getEntryBySlug } from "@/utils/builderCache.server";
-import { Suspense } from "react";
 
 const builderModelName = config.models.blogArticleSection;
 
@@ -38,7 +36,12 @@ export async function generateMetadata({
   params: Promise<{ locale: string; slug: string }>;
 }) {
   const { locale, slug } = await params;
-  const article = await getEntryBySlug(builderModelName, slug, locale);
+  const article = await fetchOneEntry({
+    model: builderModelName,
+    apiKey: config.envs.builderApiKey,
+    query: { "data.slug": slug },
+    locale,
+  });
 
   return {
     title: (article?.data as BlogArticle)?.title ?? "Blog Article",
@@ -46,7 +49,10 @@ export async function generateMetadata({
   };
 }
 
-async function ArticleContent({ locale, slug }: { locale: string; slug: string }) {
+export default async function Page(props: {
+  params: Promise<{ locale: string; slug: string }>;
+}) {
+  const { locale, slug } = await props.params;
   const targeting = await getTargetingAttributes();
 
   const content = await fetchOneEntry({
@@ -81,22 +87,5 @@ async function ArticleContent({ locale, slug }: { locale: string; slug: string }
         <RenderBuilderContent content={content} model={builderModelName} locale={locale} />
       </div>
     </>
-  );
-}
-
-// The not-found check runs on the cached DEFAULT entry, outside <Suspense>, so a
-// missing slug returns a real HTTP 404. The cookie-dependent (targeted) render
-// streams inside the boundary.
-export default async function Page(props: {
-  params: Promise<{ locale: string; slug: string }>;
-}) {
-  const { locale, slug } = await props.params;
-  const base = await getEntryBySlug(builderModelName, slug, locale);
-  if (!base && !isEditing() && !isPreviewing()) notFound();
-
-  return (
-    <Suspense fallback={null}>
-      <ArticleContent locale={locale} slug={slug} />
-    </Suspense>
   );
 }

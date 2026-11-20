@@ -4,7 +4,6 @@ import { TargetedBuilderContent } from "@/components/builder/TargetedBuilderCont
 import { BuilderContentSkeleton } from "@/components/builder/BuilderContentSkeleton";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 
 // SSG demo: the server fetches the DEFAULT entry with no targeting, so the route
 // is statically generated (no force-dynamic). TargetedBuilderContent then does
@@ -44,15 +43,13 @@ export default async function Page(props: {
   }
 
   return (
-    <Suspense fallback={<BuilderContentSkeleton />}>
-      <TargetedBuilderContent
-        initialContent={content}
-        model={builderModelName}
-        urlPath={urlPath}
-        locale={locale}
-        sourceKey="cookie"
-        fallback={<BuilderContentSkeleton />}
-      />
-    </Suspense>
+    <TargetedBuilderContent
+      initialContent={content}
+      model={builderModelName}
+      urlPath={urlPath}
+      locale={locale}
+      sourceKey="cookie"
+      fallback={<BuilderContentSkeleton />}
+    />
   );
 }

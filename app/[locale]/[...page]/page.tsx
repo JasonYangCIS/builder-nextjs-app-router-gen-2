@@ -5,7 +5,6 @@ import { config } from "@/config";
 import { getPageEntry } from "@/utils/builderCache.server";
 import { SUPPORTED_LOCALE_CODES } from "@/utils/locale";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 
 const builderModelName = config.models.page;
 
@@ -64,14 +63,12 @@ export default async function Page(props: {
   }
 
   return (
-    <Suspense fallback={<BuilderContentSkeleton />}>
-      <TargetedBuilderContent
-        initialContent={content}
-        model={builderModelName}
-        urlPath={urlPath}
-        locale={locale}
-        fallback={<BuilderContentSkeleton />}
-      />
-    </Suspense>
+    <TargetedBuilderContent
+      initialContent={content}
+      model={builderModelName}
+      urlPath={urlPath}
+      locale={locale}
+      fallback={<BuilderContentSkeleton />}
+    />
   );
 }
