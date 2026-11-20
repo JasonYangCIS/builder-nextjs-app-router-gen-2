@@ -1,8 +1,10 @@
 import { isEditing, isPreviewing } from "@builder.io/sdk-react";
 import { getPageEntry } from "@/utils/builderCache.server";
+import { BuilderContentSkeleton } from "@/components/builder/BuilderContentSkeleton";
 import { TargetedBuilderContent } from "@/components/builder/TargetedBuilderContent";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 
 const builderModelName = config.models.page;
 const urlPath = "/";
@@ -24,11 +26,13 @@ export default async function Home(props: {
   }
 
   return (
-    <TargetedBuilderContent
-      initialContent={content}
-      model={builderModelName}
-      urlPath={urlPath}
-      locale={locale}
-    />
+    <Suspense fallback={<BuilderContentSkeleton />}>
+      <TargetedBuilderContent
+        initialContent={content}
+        model={builderModelName}
+        urlPath={urlPath}
+        locale={locale}
+      />
+    </Suspense>
   );
 }
