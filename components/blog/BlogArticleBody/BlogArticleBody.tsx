@@ -1,7 +1,10 @@
 import { sanitizeHtml } from "@/utils/sanitize-html";
 import type { BlogArticleBodyProps } from "./BlogArticleBody.types";
 
-export function BlogArticleBody({ htmlContent }: BlogArticleBodyProps) {
+// Cached: DOMPurify reads the current time internally, which Cache Components
+// disallows in the static shell. Output depends only on `htmlContent`.
+export async function BlogArticleBody({ htmlContent }: BlogArticleBodyProps) {
+  "use cache";
   const sanitized = sanitizeHtml(htmlContent);
 
   return (

@@ -2,11 +2,10 @@ import { Suspense } from "react";
 import { TargetedContent } from "./TargetedContent";
 
 // PPR-style demo: the targeted Builder fetch is isolated behind a Suspense
-// boundary. With Next.js 16 `cacheComponents: true` (not enabled in this repo
-// — would require `'use cache'` on the locale layout to keep its fetches out
-// of the dynamic boundary), the page outside this boundary becomes the static
-// shell. Without the flag, this is "SSR with streaming via Suspense" — the
-// boundary still streams independently of the rest of the page.
+// boundary. This repo enables Next.js 16 `cacheComponents: true`, so the page
+// outside this boundary (layout, header, footer — cached via 'use cache') is the
+// static shell, and only the targeted fetch streams per request. Without the
+// flag this would be "SSR with streaming via Suspense".
 //
 // Pros (true PPR with cacheComponents enabled):
 // - Static shell (header, footer, layout chrome) served instantly from edge

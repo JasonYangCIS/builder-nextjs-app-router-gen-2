@@ -44,8 +44,6 @@ export async function generateMetadata({
   };
 }
 
-export const dynamic = "force-dynamic";
-
 export default async function Page(props: {
   params: Promise<{ locale: string; slug: string }>;
 }) {

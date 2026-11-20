@@ -1,4 +1,5 @@
-import { fetchOneEntry, isEditing, isPreviewing } from "@builder.io/sdk-react";
+import { isEditing, isPreviewing } from "@builder.io/sdk-react";
+import { getPageEntry } from "@/utils/builderCache.server";
 import { TargetedBuilderContent } from "@/components/builder/TargetedBuilderContent";
 import { BuilderContentSkeleton } from "@/components/builder/BuilderContentSkeleton";
 import { config } from "@/config";
@@ -35,12 +36,7 @@ export default async function Page(props: {
 }) {
   const { locale } = await props.params;
 
-  const content = await fetchOneEntry({
-    apiKey: config.envs.builderApiKey,
-    model: builderModelName,
-    userAttributes: { urlPath, locale },
-    locale,
-  });
+  const content = await getPageEntry(urlPath, locale);
 
   if (!content && !isEditing() && !isPreviewing()) {
     return notFound();
