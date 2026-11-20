@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { fetchOneEntry } from "@builder.io/sdk-react";
+import { getAnnouncementBar } from "@/utils/builderCache.server";
 import { Header } from "@/components/layout/Header/Header";
 import { Footer } from "@/components/layout/Footer/Footer";
 import { RenderBuilderContent } from "@/components/builder/RenderBuilderContent";
 import { SUPPORTED_LOCALE_CODES } from "@/utils/locale";
 import { config } from "@/config";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import TargetingDemoControls from "@/components/TargetingDemoControls/TargetingDemoControls";
 import "../globals.css";
 
@@ -42,12 +43,7 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  const announcementBar = await fetchOneEntry({
-    model: config.models.announcementBar,
-    apiKey: config.envs.builderApiKey,
-    userAttributes: { locale },
-    locale,
-  });
+  const announcementBar = await getAnnouncementBar(locale);
 
   const barPosition = (announcementBar?.data?.position as string | undefined) ?? "above-header";
 
@@ -71,7 +67,9 @@ export default async function LocaleLayout({
             locale={locale}
           />
         )}
-        {children}
+        {/* Request-time content (cookies/searchParams) streams inside this boundary; */}
+        {/* everything else is part of the static shell. */}
+        <Suspense fallback={null}>{children}</Suspense>
         <Footer />
         <TargetingDemoControls />
       </body>

@@ -1,4 +1,4 @@
-import { fetchEntries } from "@builder.io/sdk-react";
+import { getEntries } from "@/utils/builderCache.server";
 import { config } from "@/config";
 import { buildLocalePath } from "@/utils/locale";
 import { BlogArticleList } from "@/components/blog/BlogArticleList/BlogArticleList";
@@ -6,8 +6,6 @@ import { Text } from "@/components/ui/Text/Text";
 import type { BlogArticle } from "@/types/blog.types";
 
 const builderModelName = config.models.blogArticleSection;
-
-export const revalidate = 5;
 
 export const metadata = {
   title: "Blog - Section Model",
@@ -18,11 +16,7 @@ export default async function BlogArticleSectionPage(props: {
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await props.params;
-  const articles = await fetchEntries({
-    model: builderModelName,
-    apiKey: config.envs.builderApiKey,
-    limit: 100,
-  });
+  const articles = await getEntries(builderModelName);
 
   const items = (articles ?? [])
     .map((entry) => ({

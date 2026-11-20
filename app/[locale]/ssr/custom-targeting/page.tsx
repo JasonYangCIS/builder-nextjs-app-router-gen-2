@@ -24,8 +24,6 @@ import { getTargetingAttributes } from "@/utils/targeting.server";
 const builderModelName = config.models.page;
 const urlPath = "/custom-targeting";
 
-export const dynamic = "force-dynamic";
-
 export default async function Page(props: {
   params: Promise<{ locale: string }>;
 }) {

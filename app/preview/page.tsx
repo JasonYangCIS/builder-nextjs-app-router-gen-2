@@ -37,9 +37,6 @@ import { BlogArticleHero } from "@/components/blog/BlogArticleHero/BlogArticleHe
 import type { BlogArticle, BlogArticleWithContent } from "@/types/blog.types";
 import { getTargetingAttributes } from "@/utils/targeting.server";
 
-// Always dynamic — only accessed from the Builder editor iframe.
-export const dynamic = "force-dynamic";
-
 export default async function PreviewPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {

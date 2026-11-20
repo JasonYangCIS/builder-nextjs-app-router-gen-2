@@ -3,9 +3,8 @@ import { coerceTargeting } from "@/utils/targeting";
 import { SESSION_COOKIE, decodeSession, encodeSession } from "@/utils/session.server";
 
 // This endpoint reads/writes the httpOnly session cookie, so it is inherently
-// dynamic — but it's a tiny, uncached route. Keeping the session read here (not
-// in the page) is what lets the pages stay statically rendered.
-export const dynamic = "force-dynamic";
+// dynamic (Route Handlers are uncached unless they opt in). Keeping the session
+// read here (not in the page) is what lets the pages stay statically rendered.
 
 function sessionCookieOptions(req: NextRequest) {
   return {

@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { fetchEntries } from "@builder.io/sdk-react";
+import { getHeaderNavEntries } from "@/utils/builderCache.server";
 import { config } from "@/config";
 import { buildLocalePath } from "@/utils/locale";
 import { NavItems } from "./NavItems";
@@ -11,13 +11,7 @@ import { LocaleSwitch } from "@/components/LocaleSwitch/LocaleSwitch";
 export const Header = async ({ locale }: { locale?: string }) => {
   const homeHref = buildLocalePath(locale ?? config.locales.default, "/");
   const resolvedLocale = locale ?? config.locales.default;
-  const raw = await fetchEntries({
-    apiKey: config.envs.builderApiKey,
-    model: config.models.headerNavMenu,
-    limit: 5,
-    fields: "id,data",
-    locale: resolvedLocale,
-  });
+  const raw = await getHeaderNavEntries(resolvedLocale);
 
   const navMenuEntries = (raw ?? [])
     .filter((entry) => entry.data?.text && entry.data?.url)
